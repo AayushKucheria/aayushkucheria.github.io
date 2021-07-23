@@ -24,7 +24,7 @@ timezone: Europe/Helsinki
 
 title: Aayush Kucheria                          # the main title
 
-tagline: Personal Blog   # it will display as the sub-title
+tagline: A Personal Blog   # it will display as the sub-title
 
 # TODO
 description: >-                        # used by seo meta and the atom feed
