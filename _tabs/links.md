@@ -18,5 +18,5 @@ order: 7
 - [Bret Victor](http://worrydream.com/#)
 - [Nassim Nicholas Taleb](https://www.fooledbyrandomness.com/)
 - [Naval Ravikant](https://en.wikipedia.org/wiki/Naval_Ravikant)
--	[Balaji Srinivasan](https://balajis.com/)
+- [Balaji Srinivasan](https://balajis.com/)
 
