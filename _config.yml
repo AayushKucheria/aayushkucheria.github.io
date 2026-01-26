@@ -26,11 +26,9 @@ title: Aayush Kucheria                          # the main title
 
 tagline: A Personal Blog   # it will display as the sub-title
 
-# TODO
 description: >-                        # used by seo meta and the atom feed
-  A minimal, portfolio, sidebar,
-  bootstrap Jekyll theme with responsive web design
-  and focuses on text presentation.
+  Personal blog of Aayush Kucheria. Thoughts on ideas,
+  technology, learning, and building things that matter.
 
 # fill in the protocol & hostname for your site, e.g., 'https://username.github.io'
 url: 'https://aayushkucheria.github.io'
