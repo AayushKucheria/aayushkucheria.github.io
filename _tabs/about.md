@@ -6,7 +6,7 @@ order: 2
 
 I'm an AI researcher specializing in Human-AI Interaction, AI in Education, and understanding the inner workings of Language Models. Based in Helsinki, Finland.
 
-Currently a **Research Fellow** at [Live Machinery](https://livemachinery.com), a non-profit AI safety research institute, where I work on human-AI interface design and collaborative sensemaking — developing frameworks for fluid interaction paradigms that reduce epistemic bureaucratization.
+Currently a **Research Fellow** at [Live Machinery](https://groundless.ai), a non-profit AI safety research institute, where I work on human-AI interface design and collaborative sensemaking — developing frameworks for fluid interaction paradigms that reduce epistemic bureaucratization.
 
 ## Research
 
