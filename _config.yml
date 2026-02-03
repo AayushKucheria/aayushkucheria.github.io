@@ -24,7 +24,7 @@ timezone: Europe/Helsinki
 
 title: Aayush Kucheria                          # the main title
 
-tagline: AI Researcher   # it will display as the sub-title
+tagline: ""   # it will display as the sub-title
 
 description: >-                        # used by seo meta and the atom feed
   Aayush Kucheria — AI Researcher specializing in Human-AI Interaction,
@@ -74,7 +74,7 @@ google_analytics:
 #     light  - Use the light color scheme
 #     dark   - Use the dark color scheme
 #
-theme_mode: dark
+theme_mode: light
 
 # TODO
 # The CDN endpoint for images.
