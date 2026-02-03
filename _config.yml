@@ -24,11 +24,11 @@ timezone: Europe/Helsinki
 
 title: Aayush Kucheria                          # the main title
 
-tagline: A Personal Blog   # it will display as the sub-title
+tagline: AI Researcher   # it will display as the sub-title
 
 description: >-                        # used by seo meta and the atom feed
-  Personal blog of Aayush Kucheria. Thoughts on ideas,
-  technology, learning, and building things that matter.
+  Aayush Kucheria — AI Researcher specializing in Human-AI Interaction,
+  AI in Education, and the inner workings of Language Models.
 
 # fill in the protocol & hostname for your site, e.g., 'https://username.github.io'
 url: 'https://aayushkucheria.github.io'
@@ -48,9 +48,7 @@ social:
     # The first element serves as the copyright owner's link
     - https://twitter.com/aay17ush      # change to your twitter homepage
     - https://github.com/aayushkucheria       # change to your github homepage
-    # Uncomment below to add more social links
-    # - https://www.facebook.com/username
-    # - https://www.linkedin.com/in/username
+    - https://www.linkedin.com/in/aayushkucheria
 
 # TODO
 google_site_verification: google_meta_tag_verification # change to your verification string
