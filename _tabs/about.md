@@ -4,27 +4,36 @@ icon: fas fa-info
 order: 2
 ---
 
-Hey there! I'm Aayush.
+I'm an AI researcher specializing in Human-AI Interaction, AI in Education, and understanding the inner workings of Language Models. Based in Helsinki, Finland.
 
-I'm a curious human who thinks a lot about **ideas**, **technology**, and **how to make things better**. Based in Helsinki, I spend my time exploring the intersection of knowledge, collaboration, and building useful things.
+Currently a **Research Fellow** at [Live Machinery](https://groundless.ai), a non-profit AI safety research institute, where I work on human-AI interface design and collaborative sensemaking — developing frameworks for fluid interaction paradigms that reduce epistemic bureaucratization.
 
-## What I'm Into
+## Research
 
-- **Writing** - Trying to think out loud and share half-baked ideas publicly (it's scarier than it sounds)
-- **Learning** - Building mental models and connecting dots across different domains
-- **Building** - Creating tools and systems that help people do meaningful work
-- **Long-term thinking** - Interested in how we can make decisions that benefit not just us, but future generations
+**Comparing Behavioral Patterns of LLM and Human Tutors** — ACL 2025, BEA Workshop
+: Built an experimental framework comparing LLM teaching patterns (GPT-4o, Gemini Pro 1.5, LLaMA 3.1) with human tutors using the CIMA dataset. Identified systematic deviations in tutoring actions, response complexity, and behavioral patterns. Presented in Vienna.
 
-## Why This Site?
+**Concept Processing in LLMs** — Ethical Landscaping, AI Safety Camp (2024)
+: Architected a pipeline for systematic analysis of large language models. Developed methodology for statistical validation of token distribution patterns and extraction of complex relationships from model behavior data.
 
-This is my little corner of the internet where I share thoughts, experiments, and things I'm learning. It's part blog, part notebook, part playground.
+**AI in the Newsroom** — Apart Research (2024)
+: Analyzed 75,000 news articles to detect AI influence patterns. Identified statistically significant increases in ChatGPT-favored language. [Published analysis](https://github.com/AayushKucheria/AI-in-the-Newsroom).
 
-Feel free to poke around. Check out my [beliefs](/beliefs/) to see what drives me, or dive into my [posts](/archives/) to see what's on my mind lately.
+**Probabilistic Modelling** — University of Helsinki (2023)
+: Enhanced Gaussian Process implementation combining neural networks with Stan. [Research report](https://github.com/AayushKucheria/Gaussian-Modeling-Uni-Helsinki).
+
+## Other Work
+
+- **DeepSeek V3 Analysis** (2025) — Presented architecture breakdown at Tutke (Finnish Center for Safe AI)
+- **ML Bootcamp Creator** (2022) — Designed and led an intensive 2-week ML program at Aalto University. [Repository](https://github.com/AayushKucheria/ML-Bootcamp).
+- **Senior Mentor** (2023–2024) — The Center for Effective Altruism. Guided AI safety student groups from TU Delft, Stanford, Groningen, Liverpool.
+
+## Education
+
+**Aalto University** (2019–2024) — BSc & MSc in Artificial Intelligence, minor in Quantum Technology.
 
 ## Get in Touch
 
-I love meeting interesting people. If something here resonates with you (or you think I'm completely wrong about something), reach out!
-
-- **GitHub:** [@aayushkucheria](https://github.com/aayushkucheria)
-- **Twitter:** [@aay17ush](https://twitter.com/aay17ush)
-- **Email:** aayush.kucheria@gmail.com
+- [GitHub](https://github.com/aayushkucheria)
+- [LinkedIn](https://www.linkedin.com/in/aayushkucheria)
+- [aayush.kucheria@gmail.com](mailto:aayush.kucheria@gmail.com)
