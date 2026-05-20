@@ -1,0 +1,319 @@
+---
+---
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Aayush Kucheria — AI researcher and interface thinker." />
+  <title>Aayush Kucheria</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f8f6f1;
+      --dot: #ccc8be;
+      --ink: #1c1a16;
+      --ink-mid: #4a4640;
+      --ink-light: #9a9690;
+      --accent: #d94040;
+      --blue: #3b6ea8;
+      --pad: clamp(1.5rem, 5vw, 5rem);
+    }
+
+    body {
+      font-family: 'Shantell Sans', cursive;
+      background-color: var(--bg);
+      background-image: radial-gradient(circle, var(--dot) 1.2px, transparent 1.2px);
+      background-size: 22px 22px;
+      color: var(--ink);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-light);
+    }
+
+    /* ── Hero ── */
+    .hero {
+      padding: clamp(3.5rem, 8vh, 6rem) var(--pad) clamp(2rem, 4vh, 3rem);
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+
+    .hero-name {
+      font-size: clamp(2.6rem, 6vw, 5rem);
+      font-weight: 600;
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+      display: inline-block;
+    }
+
+    .hero-tagline {
+      font-size: clamp(0.85rem, 1.3vw, 1rem);
+      font-weight: 300;
+      color: var(--ink-mid);
+      line-height: 1.65;
+      text-align: right;
+      padding-bottom: 0.2rem;
+      max-width: 28ch;
+    }
+
+    /* ── Synthesis ── */
+    /* Starts ~30% from left — offset like prototype E */
+    .synthesis {
+      padding: clamp(3rem, 6vh, 5rem) var(--pad);
+      border-top: 1.5px solid var(--dot);
+      display: flex;
+      gap: clamp(2rem, 5vw, 6rem);
+    }
+
+    .synthesis-spacer {
+      flex: 0 0 28%;
+      display: flex;
+      align-items: flex-end;
+      padding-bottom: 0.2rem;
+    }
+
+    .synthesis-text {
+      flex: 1;
+      font-size: clamp(1rem, 1.7vw, 1.18rem);
+      font-weight: 400;
+      line-height: 1.8;
+    }
+
+    .synthesis-text em {
+      font-style: italic;
+      font-weight: 300;
+    }
+
+    /* ── Work ── */
+    .work-header {
+      padding: 0 var(--pad) 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    /* Wall-to-wall grid like prototype D */
+    .work-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      border-left: 1.5px solid var(--dot);
+    }
+
+    .work-card {
+      padding: 1.8rem var(--pad) 2.2rem;
+      border-right: 1.5px solid var(--dot);
+      border-top: 1.5px solid var(--dot);
+    }
+
+    .card-tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      color: var(--ink-light);
+      display: block;
+      margin-bottom: 0.6rem;
+    }
+
+    .card-title {
+      font-size: clamp(0.85rem, 1.2vw, 0.95rem);
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 0.7rem;
+      display: inline-block;
+    }
+
+    .card-desc {
+      font-size: 0.8rem;
+      font-weight: 300;
+      color: var(--ink-mid);
+      line-height: 1.6;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      border-top: 1.5px solid var(--dot);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .now-block {
+      padding: clamp(2rem, 4vh, 3.5rem) var(--pad);
+      border-right: 1.5px solid var(--dot);
+    }
+
+    .now-block .label { display: block; margin-bottom: 1rem; }
+
+    .now-text {
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--ink-mid);
+      line-height: 1.7;
+    }
+
+    .now-text strong { font-weight: 600; color: var(--ink); }
+
+    .contact-block {
+      padding: clamp(2rem, 4vh, 3.5rem) var(--pad);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .contact-nudge {
+      font-size: 0.88rem;
+      font-weight: 300;
+      color: var(--ink-light);
+      font-style: italic;
+      margin-bottom: 1.1rem;
+      line-height: 1.55;
+    }
+
+    .contact-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.8rem;
+    }
+
+    .contact-links a {
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--ink);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .contact-links a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-name" id="hero-name">Aayush Kucheria</div>
+    <p class="hero-tagline">AI researcher &amp; interface thinker.<br>Working the same question at two scales.</p>
+  </div>
+
+  <!-- Synthesis -->
+  <div class="synthesis">
+    <div class="synthesis-spacer">
+      <span class="label">The care</span>
+    </div>
+    <p class="synthesis-text">
+      Interface design and AI safety are not two interests to balance —
+      they are <span id="spine-one">one care at two scales.</span>
+      The question underneath both:
+      <em id="spine-q">do our tools expand what a mind can think and do, or quietly narrow it?</em>
+      A bad interface bureaucratizes one person's thought.
+      A misaligned model bureaucratizes a civilization's.
+    </p>
+  </div>
+
+  <!-- Work -->
+  <div class="work-header">
+    <span class="label">The care in action</span>
+    <span class="label" style="opacity: 0.5">5 projects</span>
+  </div>
+  <div class="work-grid">
+    <div class="work-card">
+      <span class="card-tag">Current</span>
+      <div class="card-title" id="w1">Live Machinery / Groundless AI</div>
+      <p class="card-desc">AI-native tools for communities — software in service of human intention, not in place of it.</p>
+    </div>
+    <div class="work-card">
+      <span class="card-tag">ACL 2025</span>
+      <div class="card-title" id="w2">AI Tutoring &amp; Student Agency</div>
+      <p class="card-desc">When does an LLM tutor scaffold thinking, and when does it short-circuit it?</p>
+    </div>
+    <div class="work-card">
+      <span class="card-tag">Research</span>
+      <div class="card-title" id="w3">Concept Processing in LLMs</div>
+      <p class="card-desc">How language models internally represent abstract concepts.</p>
+    </div>
+    <div class="work-card">
+      <span class="card-tag">Research</span>
+      <div class="card-title" id="w4">AI in the Newsroom</div>
+      <p class="card-desc">Where does human judgment erode as journalists adopt AI tools?</p>
+    </div>
+    <div class="work-card">
+      <span class="card-tag">Teaching</span>
+      <div class="card-title" id="w5">ML Bootcamp</div>
+      <p class="card-desc">A machine learning curriculum. Intuition first, formalism second.</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="now-block">
+      <span class="label">Now</span>
+      <p class="now-text">
+        Research Fellow at <strong>Live Machinery</strong>,
+        building towards <strong>Groundless AI</strong>.
+        Between Helsinki and wherever the work is.
+      </p>
+    </div>
+    <div class="contact-block" id="contact-block">
+      <p class="contact-nudge">If any of this intersects with what you're thinking about —</p>
+      <div class="contact-links">
+        <a href="mailto:aayush.kucheria@gmail.com">Email</a>
+        <a href="https://github.com/AayushKucheria" target="_blank">GitHub</a>
+        <a href="https://linkedin.com/in/aayushkucheria" target="_blank">LinkedIn</a>
+        <a href="https://twitter.com/aay17ush" target="_blank">X</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/rough-notation@0.6.0/lib/rough-notation.iife.js"></script>
+  <script>
+    const { annotate } = RoughNotation;
+
+    function ann(id, type, opts) {
+      const el = document.getElementById(id);
+      if (!el) return null;
+      return annotate(el, { type, animationDuration: 500, iterations: 2, ...opts });
+    }
+
+    function showOnScroll(id, annotation) {
+      const el = document.getElementById(id);
+      if (!el || !annotation) return;
+      new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) annotation.show(); });
+      }, { threshold: 0.5 }).observe(el);
+    }
+
+    const nameCircle = ann('hero-name', 'circle',    { color: '#d94040', padding: 16, strokeWidth: 2.5 });
+    const spineBox   = ann('spine-one', 'box',        { color: '#3b6ea8', strokeWidth: 1.5, padding: 3 });
+    const spineUnder = ann('spine-q',   'underline',  { color: '#d94040', strokeWidth: 2, multiline: true });
+    const w1box      = ann('w1', 'box',       { color: '#d94040', strokeWidth: 1.5, padding: 4 });
+    const w2high     = ann('w2', 'highlight', { color: 'rgba(255,200,50,0.38)', strokeWidth: 0, iterations: 1 });
+    const w3high     = ann('w3', 'highlight', { color: 'rgba(255,200,50,0.38)', strokeWidth: 0, iterations: 1 });
+    const w4high     = ann('w4', 'highlight', { color: 'rgba(255,200,50,0.38)', strokeWidth: 0, iterations: 1 });
+    const w5high     = ann('w5', 'highlight', { color: 'rgba(255,200,50,0.38)', strokeWidth: 0, iterations: 1 });
+    const contactBracket = ann('contact-block', 'bracket', { color: '#d94040', strokeWidth: 2, padding: 6, brackets: ['left'] });
+
+    window.addEventListener('load', () => {
+      setTimeout(() => nameCircle && nameCircle.show(), 350);
+    });
+
+    showOnScroll('spine-one', spineBox);
+    showOnScroll('spine-q',   spineUnder);
+    showOnScroll('w1', w1box);
+    showOnScroll('w2', w2high);
+    showOnScroll('w3', w3high);
+    showOnScroll('w4', w4high);
+    showOnScroll('w5', w5high);
+    showOnScroll('contact-block', contactBracket);
+  </script>
+
+</body>
+</html>
