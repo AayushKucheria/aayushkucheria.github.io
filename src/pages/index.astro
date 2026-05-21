@@ -1,5 +1,6 @@
 ---
 ---
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -8,312 +9,339 @@
   <title>Aayush Kucheria</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg: #f8f6f1;
-      --dot: #ccc8be;
-      --ink: #1c1a16;
-      --ink-mid: #4a4640;
-      --ink-light: #9a9690;
-      --accent: #d94040;
-      --blue: #3b6ea8;
-      --pad: clamp(1.5rem, 5vw, 5rem);
-    }
-
-    body {
+    html, body {
+      width: 100%; height: 100%; overflow: hidden;
+      background: #d4c4a8;
       font-family: 'Shantell Sans', cursive;
-      background-color: var(--bg);
-      background-image: radial-gradient(circle, var(--dot) 1.2px, transparent 1.2px);
-      background-size: 22px 22px;
-      color: var(--ink);
-      min-height: 100vh;
-      overflow-x: hidden;
+      color: #1c1a14;
     }
 
-    .label {
-      font-size: 0.7rem;
-      font-weight: 500;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--ink-light);
+    #board {
+      position: fixed;
+      inset: 28px;
+      background: #f3eadb;
+      box-shadow: 0 4px 30px #00000025, 0 1px 6px #00000015;
     }
 
-    /* ── Hero ── */
-    .hero {
-      padding: clamp(3.5rem, 8vh, 6rem) var(--pad) clamp(2rem, 4vh, 3rem);
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 2rem;
+    .tape {
+      position: fixed;
+      background: #e8d9a8cc;
+      box-shadow: 0 1px 3px #00000015;
+    }
+    .tape::before {
+      content: '';
+      position: absolute; inset: 0;
+      border-top: 1px solid #c8b87855;
+      border-bottom: 1px solid #c8b87855;
+    }
+    #tape-tl { top: 14px; left: 80px; width: 120px; height: 18px; transform: rotate(-2deg); }
+    #tape-tr { top: 16px; right: 90px; width: 100px; height: 18px; transform: rotate(3deg); }
+    #tape-bl { bottom: 14px; left: 100px; width: 110px; height: 18px; transform: rotate(1.5deg); }
+    #tape-br { bottom: 16px; right: 80px; width: 115px; height: 18px; transform: rotate(-2.5deg); }
+    #tape-l  { top: 45%; left: 14px; width: 18px; height: 100px; transform: rotate(2deg); }
+    #tape-r  { top: 40%; right: 14px; width: 18px; height: 90px; transform: rotate(-1.5deg); }
+
+    #canvas   { position: fixed; inset: 28px; pointer-events: none; z-index: 2; }
+    #dot-layer { position: fixed; inset: 28px; cursor: crosshair; z-index: 3; }
+
+    .user-dot {
+      position: absolute; width: 8px; height: 8px; border-radius: 50%;
+      background: #c8341a; transform: translate(-50%, -50%);
+      opacity: 0.65; pointer-events: none;
+    }
+    .user-dot.old { background: #5a3a18; opacity: 0.2; }
+
+    .island { position: fixed; z-index: 4; pointer-events: none; }
+    .island a { pointer-events: auto; }
+
+    .paper {
+      background: #faf7f0;
+      box-shadow: 2px 3px 12px #00000018;
+      padding: 12px 16px 16px;
+    }
+    .sticky {
+      background: #f5e97a;
+      box-shadow: 2px 4px 14px #00000022;
+      padding: 10px 14px 14px;
+    }
+    .index-card {
+      background: #f0f6ff;
+      box-shadow: 2px 3px 10px #00000015;
+      padding: 10px 14px 14px;
+      border-top: 3px solid #a8c0e0;
+    }
+    .torn {
+      background: #fdfaf4;
+      box-shadow: 2px 3px 10px #00000018;
+      padding: 10px 14px 24px;
+      clip-path: polygon(0 0, 100% 0, 100% 88%, 95% 92%, 90% 89%, 85% 93%, 78% 90%, 72% 95%, 65% 91%, 58% 96%, 50% 92%, 42% 96%, 35% 91%, 28% 95%, 20% 90%, 12% 94%, 5% 90%, 0 93%);
     }
 
-    .hero-name {
-      font-size: clamp(2.6rem, 6vw, 5rem);
-      font-weight: 600;
-      line-height: 1.0;
-      letter-spacing: -0.02em;
-      display: inline-block;
+    /* NAME */
+    #name-block { top: 44px; left: 50px; transform: rotate(-2deg); }
+    #hero-name { font-size: 7.5rem; font-weight: 800; line-height: 0.88; letter-spacing: -0.04em; color: #c8341a; }
+    #hero-name .ln2 { display: block; color: #1c1a14; font-size: 5.8rem; }
+
+    /* INTRO sticky — top right */
+    #intro-block { top: 50px; right: 48px; width: 225px; transform: rotate(4deg); }
+    .intro-txt { font-size: 0.93rem; font-weight: 400; font-style: italic; line-height: 1.8; color: #2a2210; }
+
+    /* WORK */
+    #work-block { top: 268px; left: 50px; width: 430px; transform: rotate(-2deg); }
+    .sec-label { font-size: 5rem; font-weight: 800; line-height: 1; display: block; margin-bottom: 0.75rem; letter-spacing: -0.03em; }
+    .w-item { margin-bottom: 0.65rem; }
+    .w-title { font-size: 1.05rem; font-weight: 600; line-height: 1.2; }
+    .w-title a { color: inherit; text-decoration: none; border-bottom: 1.5px solid #c8341a55; }
+    .w-title a:hover { color: #c8341a; }
+    .w-sub { font-size: 0.7rem; font-weight: 300; color: #7a6a50; font-style: italic; margin-top: 0.1rem; line-height: 1.5; }
+
+    /* RESEARCH — torn paper, upper center */
+    #research-block { top: 52px; left: 42%; transform: translateX(-50%) rotate(-3deg); width: 190px; }
+    .res-label { font-size: 1.8rem; font-weight: 800; color: #2a5e8c; display: block; margin-bottom: 0.4rem; }
+    .res-item { font-size: 0.82rem; font-weight: 400; margin-bottom: 0.28rem; }
+    .res-sub { font-size: 0.6rem; color: #6a7a8a; font-style: italic; }
+
+    /* THINKING — index card, right */
+    #thinking-block { top: 400px; right: 48px; width: 185px; transform: rotate(-4deg); }
+    .think-label { font-size: 2rem; font-weight: 800; display: block; margin-bottom: 0.45rem; color: #1c1a14; }
+    .think-item { font-size: 0.9rem; margin-bottom: 0.22rem; }
+
+    /* FLOAT NOTE */
+    #float-note { top: 368px; left: 45%; transform: rotate(5deg); }
+    .float-txt { font-size: 0.68rem; font-style: italic; color: #7a6050; font-weight: 300; line-height: 1.5; }
+
+    /* READING */
+    #reading-block { bottom: 80px; left: 120px; transform: rotate(-1.5deg); }
+    .r-label { font-size: 1.6rem; font-weight: 700; color: #9a8a6c; display: block; margin-bottom: 0.4rem; }
+    .bk { font-size: 0.7rem; font-weight: 300; color: #4a3820; display: block; margin-bottom: 0.16rem; }
+    .bk a { color: inherit; text-decoration: none; border-bottom: 1px solid #9a8a6c55; }
+    .bk a:hover { color: #c8341a; }
+
+    /* LINKS */
+    #links-block { bottom: 44px; right: 48px; text-align: right; transform: rotate(2.5deg); }
+    .cal-lnk { font-size: 1.4rem; font-weight: 700; color: #2a5e8c; display: block; text-decoration: none; margin-bottom: 0.3rem; }
+    .cal-lnk:hover { text-decoration: underline; }
+    .sm-links { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 0.4rem; }
+    .sm-lnk { font-size: 0.78rem; font-weight: 300; color: #5a4830; font-style: italic; text-decoration: none; }
+    .sm-lnk:hover { color: #c8341a; }
+
+    #hint {
+      position: fixed; bottom: 8px; left: 50%; transform: translateX(-50%);
+      font-size: 0.6rem; font-style: italic; color: #8a7248; opacity: 0.6;
+      pointer-events: none; z-index: 10;
     }
-
-    .hero-tagline {
-      font-size: clamp(0.85rem, 1.3vw, 1rem);
-      font-weight: 300;
-      color: var(--ink-mid);
-      line-height: 1.65;
-      text-align: right;
-      padding-bottom: 0.2rem;
-      max-width: 28ch;
-    }
-
-    /* ── Synthesis ── */
-    /* Starts ~30% from left — offset like prototype E */
-    .synthesis {
-      padding: clamp(3rem, 6vh, 5rem) var(--pad);
-      border-top: 1.5px solid var(--dot);
-      display: flex;
-      gap: clamp(2rem, 5vw, 6rem);
-    }
-
-    .synthesis-spacer {
-      flex: 0 0 28%;
-      display: flex;
-      align-items: flex-end;
-      padding-bottom: 0.2rem;
-    }
-
-    .synthesis-text {
-      flex: 1;
-      font-size: clamp(1rem, 1.7vw, 1.18rem);
-      font-weight: 400;
-      line-height: 1.8;
-    }
-
-    .synthesis-text em {
-      font-style: italic;
-      font-weight: 300;
-    }
-
-    /* ── Work ── */
-    .work-header {
-      padding: 0 var(--pad) 1.2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-    }
-
-    /* Wall-to-wall grid like prototype D */
-    .work-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      border-left: 1.5px solid var(--dot);
-    }
-
-    .work-card {
-      padding: 1.8rem var(--pad) 2.2rem;
-      border-right: 1.5px solid var(--dot);
-      border-top: 1.5px solid var(--dot);
-    }
-
-    .card-tag {
-      font-size: 0.65rem;
-      letter-spacing: 0.1em;
-      color: var(--ink-light);
-      display: block;
-      margin-bottom: 0.6rem;
-    }
-
-    .card-title {
-      font-size: clamp(0.85rem, 1.2vw, 0.95rem);
-      font-weight: 600;
-      line-height: 1.3;
-      margin-bottom: 0.7rem;
-      display: inline-block;
-    }
-
-    .card-desc {
-      font-size: 0.8rem;
-      font-weight: 300;
-      color: var(--ink-mid);
-      line-height: 1.6;
-    }
-
-    /* ── Footer ── */
-    .footer {
-      border-top: 1.5px solid var(--dot);
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .now-block {
-      padding: clamp(2rem, 4vh, 3.5rem) var(--pad);
-      border-right: 1.5px solid var(--dot);
-    }
-
-    .now-block .label { display: block; margin-bottom: 1rem; }
-
-    .now-text {
-      font-size: 1rem;
-      font-weight: 300;
-      color: var(--ink-mid);
-      line-height: 1.7;
-    }
-
-    .now-text strong { font-weight: 600; color: var(--ink); }
-
-    .contact-block {
-      padding: clamp(2rem, 4vh, 3.5rem) var(--pad);
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-    }
-
-    .contact-nudge {
-      font-size: 0.88rem;
-      font-weight: 300;
-      color: var(--ink-light);
-      font-style: italic;
-      margin-bottom: 1.1rem;
-      line-height: 1.55;
-    }
-
-    .contact-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem 1.8rem;
-    }
-
-    .contact-links a {
-      font-size: 1rem;
-      font-weight: 500;
-      color: var(--ink);
-      text-decoration: none;
-      transition: color 0.15s;
-    }
-
-    .contact-links a:hover { color: var(--accent); }
   </style>
 </head>
 <body>
 
-  <!-- Hero -->
-  <div class="hero">
-    <div class="hero-name" id="hero-name">Aayush Kucheria</div>
-    <p class="hero-tagline">AI researcher &amp; interface thinker.<br>Working the same question at two scales.</p>
-  </div>
+<div id="board"></div>
+<div class="tape" id="tape-tl"></div>
+<div class="tape" id="tape-tr"></div>
+<div class="tape" id="tape-bl"></div>
+<div class="tape" id="tape-br"></div>
+<div class="tape" id="tape-l"></div>
+<div class="tape" id="tape-r"></div>
 
-  <!-- Synthesis -->
-  <div class="synthesis">
-    <div class="synthesis-spacer">
-      <span class="label">The care</span>
-    </div>
-    <p class="synthesis-text">
-      Interface design and AI safety are not two interests to balance —
-      they are <span id="spine-one">one care at two scales.</span>
-      The question underneath both:
-      <em id="spine-q">do our tools expand what a mind can think and do, or quietly narrow it?</em>
-      A bad interface bureaucratizes one person's thought.
-      A misaligned model bureaucratizes a civilization's.
-    </p>
-  </div>
+<canvas id="canvas"></canvas>
+<div id="dot-layer"></div>
 
-  <!-- Work -->
-  <div class="work-header">
-    <span class="label">The care in action</span>
-    <span class="label" style="opacity: 0.5">5 projects</span>
-  </div>
-  <div class="work-grid">
-    <div class="work-card">
-      <span class="card-tag">Current</span>
-      <div class="card-title" id="w1">Live Machinery / Groundless AI</div>
-      <p class="card-desc">AI-native tools for communities — software in service of human intention, not in place of it.</p>
-    </div>
-    <div class="work-card">
-      <span class="card-tag">ACL 2025</span>
-      <div class="card-title" id="w2">AI Tutoring &amp; Student Agency</div>
-      <p class="card-desc">When does an LLM tutor scaffold thinking, and when does it short-circuit it?</p>
-    </div>
-    <div class="work-card">
-      <span class="card-tag">Research</span>
-      <div class="card-title" id="w3">Concept Processing in LLMs</div>
-      <p class="card-desc">How language models internally represent abstract concepts.</p>
-    </div>
-    <div class="work-card">
-      <span class="card-tag">Research</span>
-      <div class="card-title" id="w4">AI in the Newsroom</div>
-      <p class="card-desc">Where does human judgment erode as journalists adopt AI tools?</p>
-    </div>
-    <div class="work-card">
-      <span class="card-tag">Teaching</span>
-      <div class="card-title" id="w5">ML Bootcamp</div>
-      <p class="card-desc">A machine learning curriculum. Intuition first, formalism second.</p>
-    </div>
-  </div>
+<div class="island" id="name-block">
+  <div id="hero-name">Aayush<span class="ln2">Kucheria</span></div>
+</div>
 
-  <!-- Footer -->
-  <div class="footer">
-    <div class="now-block">
-      <span class="label">Now</span>
-      <p class="now-text">
-        Research Fellow at <strong>Live Machinery</strong>,
-        building towards <strong>Groundless AI</strong>.
-        Between Helsinki and wherever the work is.
-      </p>
-    </div>
-    <div class="contact-block" id="contact-block">
-      <p class="contact-nudge">If any of this intersects with what you're thinking about —</p>
-      <div class="contact-links">
-        <a href="mailto:aayush.kucheria@gmail.com">Email</a>
-        <a href="https://github.com/AayushKucheria" target="_blank">GitHub</a>
-        <a href="https://linkedin.com/in/aayushkucheria" target="_blank">LinkedIn</a>
-        <a href="https://twitter.com/aay17ush" target="_blank">X</a>
-      </div>
-    </div>
+<div class="island sticky" id="intro-block">
+  <p class="intro-txt" id="intro-txt">
+    I care about whether tools<br>
+    expand what a mind can do —<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or quietly narrow it.
+  </p>
+</div>
+
+<div class="island torn" id="research-block">
+  <span class="res-label">Research</span>
+  <div class="res-item">LLMs × human agency
+    <div class="res-sub">ACL 2025 · newsrooms · law</div>
   </div>
+  <div class="res-item" style="margin-top:0.25rem;">IIT — consciousness
+    <div class="res-sub">integrated information theory</div>
+  </div>
+</div>
 
-  <script src="https://unpkg.com/rough-notation@0.6.0/lib/rough-notation.iife.js"></script>
-  <script>
-    const { annotate } = RoughNotation;
+<div class="island" id="work-block">
+  <span class="sec-label" style="color:#c8341a" id="work-lbl">Work</span>
+  <div class="w-item">
+    <div class="w-title"><a href="https://groundless.ai" target="_blank">Live Machinery / Groundless AI</a></div>
+    <div class="w-sub">AI-native tools for communities. Research Fellow, 2024–present.</div>
+  </div>
+  <div class="w-item">
+    <div class="w-title">AI Safety field-building</div>
+    <div class="w-sub">Team lead, AI Safety Camp 2026. Curriculum, community, ecosystem. Helsinki.</div>
+  </div>
+  <div class="w-item">
+    <div class="w-title">Research — LLMs × human agency</div>
+    <div class="w-sub">ACL 2025. Newsrooms, law school, civic contexts.</div>
+  </div>
+  <div class="w-item">
+    <div class="w-title">IIT — consciousness theory</div>
+    <div class="w-sub">Theoretical work. What does it mean for a system to experience?</div>
+  </div>
+</div>
 
-    function ann(id, type, opts) {
-      const el = document.getElementById(id);
-      if (!el) return null;
-      return annotate(el, { type, animationDuration: 500, iterations: 2, ...opts });
+<div class="island index-card" id="thinking-block">
+  <span class="think-label" id="think-lbl">thinking about</span>
+  <div class="think-item">cognition</div>
+  <div class="think-item">learning systems</div>
+  <div class="think-item"><span id="consciousness-word">consciousness</span></div>
+  <div class="think-item">AI safety</div>
+  <div class="think-item">education</div>
+</div>
+
+<div class="island" id="float-note">
+  <p class="float-txt">← what does it mean<br>&nbsp;&nbsp;&nbsp;for a system to experience?</p>
+</div>
+
+<div class="island" id="reading-block">
+  <span class="r-label">reading</span>
+  <div id="book-list">
+    <span class="bk">The Timeless Way of Building</span>
+    <span class="bk">Seeing Like a State</span>
+    <span class="bk">The Nature of Technology</span>
+    <span class="bk">Finite and Infinite Games</span>
+  </div>
+</div>
+
+<div class="island" id="links-block">
+  <a class="cal-lnk" href="https://cal.com/aayushkucheria" target="_blank">→ book a call</a>
+  <a class="sm-lnk" href="mailto:aayush.kucheria@gmail.com">aayush.kucheria@gmail.com</a>
+  <div class="sm-links">
+    <a class="sm-lnk" href="https://github.com/AayushKucheria" target="_blank">GitHub</a>
+    <a class="sm-lnk" href="https://linkedin.com/in/aayushkucheria" target="_blank">LinkedIn</a>
+    <a class="sm-lnk" href="https://twitter.com/aay17ush" target="_blank">X</a>
+  </div>
+</div>
+
+<div id="hint">click anywhere to leave a mark</div>
+
+<script>
+  import rough from 'roughjs';
+  import { annotate } from 'rough-notation';
+
+  const INSET = 28;
+  const dotLayer = document.getElementById('dot-layer');
+  const stored = JSON.parse(localStorage.getItem('wb-v1') || '[]');
+  const MAX = 100;
+
+  function renderDot(x, y, isOld) {
+    const d = document.createElement('div');
+    d.className = 'user-dot' + (isOld ? ' old' : '');
+    d.style.left = x * 100 + '%';
+    d.style.top = y * 100 + '%';
+    dotLayer.appendChild(d);
+  }
+  stored.forEach(([x, y]) => renderDot(x, y, true));
+
+  dotLayer.addEventListener('click', e => {
+    const r = dotLayer.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width;
+    const y = (e.clientY - r.top) / r.height;
+    renderDot(x, y, false);
+    stored.push([x, y]);
+    if (stored.length > MAX) stored.splice(0, stored.length - MAX);
+    localStorage.setItem('wb-v1', JSON.stringify(stored));
+  });
+
+  function drawAll() {
+    const canvas = document.getElementById('canvas');
+    const W = window.innerWidth - INSET * 2;
+    const H = window.innerHeight - INSET * 2;
+    canvas.width = W;
+    canvas.height = H;
+    const rc = rough.canvas(canvas);
+
+    function pt(id, fx, fy) {
+      const r = document.getElementById(id).getBoundingClientRect();
+      return {
+        x: (r.left + r.width * (fx ?? 0.5)) - INSET,
+        y: (r.top + r.height * (fy ?? 0.5)) - INSET,
+      };
     }
 
-    function showOnScroll(id, annotation) {
-      const el = document.getElementById(id);
-      if (!el || !annotation) return;
-      new IntersectionObserver((entries) => {
-        entries.forEach(e => { if (e.isIntersecting) annotation.show(); });
-      }, { threshold: 0.5 }).observe(el);
+    const conn = { roughness: 2.8, stroke: '#c8a87a77', strokeWidth: 1.7 };
+    const atm  = { roughness: 3.8, stroke: '#c8a87a28', strokeWidth: 1.0 };
+    const red  = { roughness: 3.2, stroke: '#c8341a33', strokeWidth: 1.2 };
+
+    let a, b;
+
+    a = pt('name-block', 0.2, 1);    b = pt('work-block', 0.15, 0);
+    rc.curve([[a.x,a.y],[a.x-20,(a.y+b.y)/2+20],[b.x+40,(a.y+b.y)/2-10],[b.x,b.y]], conn);
+
+    a = pt('name-block', 0.85, 0.35); b = pt('intro-block', 0.1, 0.5);
+    rc.curve([[a.x,a.y],[a.x+40,(a.y+b.y)/2-20],[b.x-20,(a.y+b.y)/2+10],[b.x,b.y]], conn);
+
+    a = pt('name-block', 0.55, 0.7);  b = pt('research-block', 0.5, 1);
+    rc.curve([[a.x,a.y],[a.x+30,(a.y+b.y)/2-20],[b.x-20,(a.y+b.y)/2+15],[b.x,b.y]], conn);
+
+    a = pt('intro-block', 0.3, 1);    b = pt('thinking-block', 0.6, 0);
+    rc.curve([[a.x,a.y],[a.x+20,(a.y+b.y)/2+10],[b.x-20,(a.y+b.y)/2-10],[b.x,b.y]], conn);
+
+    a = pt('work-block', 0.25, 1);    b = pt('reading-block', 0.25, 0);
+    rc.curve([[a.x,a.y],[a.x-15,(a.y+b.y)/2+20],[b.x+25,(a.y+b.y)/2],[b.x,b.y]], conn);
+
+    a = pt('thinking-block', 0.5, 1); b = pt('links-block', 0.5, 0);
+    rc.curve([[a.x,a.y],[a.x+25,(a.y+b.y)/2],[b.x-15,(a.y+b.y)/2],[b.x,b.y]], conn);
+
+    a = pt('float-note', 0, 0.5);     b = pt('research-block', 0.5, 0.7);
+    rc.curve([[a.x,a.y],[a.x-50,(a.y+b.y)/2+10],[b.x+30,(a.y+b.y)/2-10],[b.x,b.y]], red);
+
+    const rng = (a, b) => a + Math.random() * (b - a);
+    for (let i = 0; i < 24; i++) {
+      const x1 = rng(0, W), y1 = rng(0, H), len = rng(20, 160), ang = rng(0, Math.PI * 2);
+      const x2 = x1 + Math.cos(ang) * len, y2 = y1 + Math.sin(ang) * len;
+      rc.curve([
+        [x1, y1],
+        [x1 + (Math.random() - .5) * 70, y1 + (Math.random() - .5) * 70],
+        [x2 + (Math.random() - .5) * 50, y2 + (Math.random() - .5) * 50],
+        [x2, y2],
+      ], atm);
     }
+    for (let i = 0; i < 10; i++) {
+      rc.circle(rng(0, W), rng(0, H), rng(2, 7), { roughness: 3.5, stroke: '#c8a87a33', strokeWidth: 1, fill: 'none' });
+    }
+  }
 
-    const nameCircle = ann('hero-name', 'circle',    { color: '#d94040', padding: 16, strokeWidth: 2.5 });
-    const spineBox   = ann('spine-one', 'box',        { color: '#3b6ea8', strokeWidth: 1.5, padding: 3 });
-    const spineUnder = ann('spine-q',   'underline',  { color: '#d94040', strokeWidth: 2, multiline: true });
-    const w1box      = ann('w1', 'box',       { color: '#d94040', strokeWidth: 1.5, padding: 4 });
-    const w2high     = ann('w2', 'highlight', { color: 'rgba(255,200,50,0.38)', strokeWidth: 0, iterations: 1 });
-    const w3high     = ann('w3', 'highlight', { color: 'rgba(255,200,50,0.38)', strokeWidth: 0, iterations: 1 });
-    const w4high     = ann('w4', 'highlight', { color: 'rgba(255,200,50,0.38)', strokeWidth: 0, iterations: 1 });
-    const w5high     = ann('w5', 'highlight', { color: 'rgba(255,200,50,0.38)', strokeWidth: 0, iterations: 1 });
-    const contactBracket = ann('contact-block', 'bracket', { color: '#d94040', strokeWidth: 2, padding: 6, brackets: ['left'] });
+  function runAnnotations() {
+    setTimeout(() => annotate(document.getElementById('intro-txt'), {
+      type: 'highlight', color: '#c8b84066',
+      roughness: 4, strokeWidth: 1, padding: 5, multiline: true, animationDuration: 900,
+    }).show(), 200);
 
-    window.addEventListener('load', () => {
-      setTimeout(() => nameCircle && nameCircle.show(), 350);
-    });
+    setTimeout(() => annotate(document.getElementById('work-lbl'), {
+      type: 'highlight', color: '#f5c94255',
+      roughness: 4, strokeWidth: 1, padding: 6, animationDuration: 700,
+    }).show(), 500);
 
-    showOnScroll('spine-one', spineBox);
-    showOnScroll('spine-q',   spineUnder);
-    showOnScroll('w1', w1box);
-    showOnScroll('w2', w2high);
-    showOnScroll('w3', w3high);
-    showOnScroll('w4', w4high);
-    showOnScroll('w5', w5high);
-    showOnScroll('contact-block', contactBracket);
-  </script>
+    setTimeout(() => annotate(document.getElementById('think-lbl'), {
+      type: 'underline', color: '#2a5e8c',
+      roughness: 3.5, strokeWidth: 3.5, padding: 2, animationDuration: 600,
+    }).show(), 800);
+
+    setTimeout(() => annotate(document.getElementById('book-list'), {
+      type: 'bracket', color: '#c8341a',
+      roughness: 3.5, strokeWidth: 2.5, padding: [28, 5, 14, 5], brackets: ['left'], animationDuration: 700,
+    }).show(), 1050);
+
+    setTimeout(() => annotate(document.getElementById('consciousness-word'), {
+      type: 'circle', color: '#c8341a',
+      roughness: 3.5, strokeWidth: 2.2, padding: 5, animationDuration: 600,
+    }).show(), 1300);
+  }
+
+  window.addEventListener('load', () => { drawAll(); runAnnotations(); });
+  window.addEventListener('resize', drawAll);
+</script>
 
 </body>
 </html>

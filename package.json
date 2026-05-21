@@ -12,6 +12,8 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^6.3.6"
+    "astro": "^6.3.6",
+    "rough-notation": "^0.5.1",
+    "roughjs": "^4.6.6"
   }
 }
