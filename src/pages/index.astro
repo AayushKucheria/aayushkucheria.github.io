@@ -14,34 +14,34 @@
     /*
       BOARD LAYOUT (approx 1440 × 900 viewport)
       ┌──────────────────────────────────────────────────────────┐
-      │ [name] [photo][photo][photo]  [proj][proj][proj]         │
-      │                                             [research]   │
-      │ [W O R K  ——  hero, 580px wide]  [intro]   [think-card] │
-      │                         [float]             [community]  │
-      │ [links]                                [reading]         │
+      │ [ph][ph] [  name  ]      [ph]  [proj][proj][proj] [rsrch]│
+      │                                        [community]       │
+      │ [W O R K  ——  hero, 580px wide]  [intro]                 │
+      │                         [float]         [think-card]     │
+      │ [links]                                 [bookshelf]      │
       └──────────────────────────────────────────────────────────┘
       All island positions live here. Change a number here to move a section.
     */
     :root {
       /* name cluster — top-left */
-      --name-top: 44px;        --name-left: 48px;
-      --photo1-top: 46px;      --photo1-left: 248px;
-      --photo2-top: 40px;      --photo2-left: 308px;
-      --photo3-top: 64px;      --photo3-left: 358px;
+      --name-top: 44px;        --name-left: 195px;
+      --photo1-top: 50px;      --photo1-left: 36px;
+      --photo2-top: 44px;      --photo2-left: 98px;
+      --photo3-top: 46px;      --photo3-left: 620px;
       /* projects — right of name/photos */
-      --proj-top: 50px;        --proj-left: 436px;
+      --proj-top: 50px;        --proj-left: 800px;
       /* research — upper-right (torn paper, decorative) */
       --research-top: 52px;    --research-right: 175px;
       /* work — left-center hero */
-      --work-top: 188px;       --work-left: 48px;   --work-w: 580px;
+      --work-top: 250px;       --work-left: 48px;   --work-w: 580px;
       /* thinking — mid-right (index card, decorative) */
-      --thinking-top: 235px;   --thinking-right: 48px;
+      --thinking-top: 420px;   --thinking-right: 48px;
       /* intro — center board */
       --intro-top: 38%;        --intro-left: 54%;
       /* float note — center-low */
       --float-top: 59%;        --float-left: 50%;
-      /* community — mid-right sticky */
-      --community-top: 468px;  --community-right: 52px;
+      /* community — upper-right sticky */
+      --community-top: 200px;  --community-right: 52px;
       /* reading — bottom-right */
       --reading-bottom: 52px;  --reading-right: 48px;
       /* links/contact — bottom-left */
@@ -107,14 +107,21 @@
       clip-path: polygon(0 0, 100% 0, 100% 88%, 95% 92%, 90% 89%, 85% 93%, 78% 90%, 72% 95%, 65% 91%, 58% 96%, 50% 92%, 42% 96%, 35% 91%, 28% 95%, 20% 90%, 12% 94%, 5% 90%, 0 93%);
     }
 
-    /* PHOTOS — placeholder rectangles; replace with <img> tags when ready */
+    /* PHOTOS — polaroid-style prints */
     .photo-ph {
       position: fixed; z-index: 4;
-      box-shadow: 2px 4px 14px #00000032;
+      background: #fff;
+      padding: 5px 5px 20px;
+      box-shadow: 3px 5px 18px #00000038;
     }
-    #photo-1 { width: 72px; height: 90px; background: #b8bea8; top: var(--photo1-top); left: var(--photo1-left); transform: rotate(7deg); }
-    #photo-2 { width: 62px; height: 78px; background: #a8b2be; top: var(--photo2-top); left: var(--photo2-left); transform: rotate(-5deg); z-index: 5; }
-    #photo-3 { width: 68px; height: 84px; background: #c2b2a4; top: var(--photo3-top); left: var(--photo3-left); transform: rotate(2.5deg); }
+    .photo-ph img {
+      display: block;
+      width: 76px; height: 86px;
+      object-fit: cover;
+    }
+    #photo-1 { top: var(--photo1-top); left: var(--photo1-left); transform: rotate(7deg); }
+    #photo-2 { top: var(--photo2-top); left: var(--photo2-left); transform: rotate(-5deg); z-index: 5; }
+    #photo-3 { top: var(--photo3-top); left: var(--photo3-left); transform: rotate(2.5deg); }
 
     /* NAME */
     #name-block { top: var(--name-top); left: var(--name-left); transform: rotate(-2deg); }
@@ -183,10 +190,10 @@
 
     /* READING — bottom-right */
     #reading-block { bottom: var(--reading-bottom); right: var(--reading-right); transform: rotate(1deg); }
-    .r-label { font-size: 1.7rem; font-weight: 700; color: #9a8a6c; display: block; margin-bottom: 0.6rem; }
-    #book-list { position: relative; width: 490px; height: 220px; }
+    .r-label { font-size: 1.3rem; font-weight: 700; color: #9a8a6c; display: block; margin-bottom: 0.5rem; }
+    #book-list { position: relative; width: 390px; height: 178px; }
     .cover {
-      position: absolute; width: 70px; height: 92px;
+      position: absolute; width: 58px; height: 76px;
       border-radius: 1px 3px 3px 1px;
       box-shadow: 2px 3px 8px #00000030, inset -3px 0 6px #00000018;
       display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
@@ -201,16 +208,16 @@
     .t1 { background: linear-gradient(160deg, #3a5c7a, #4e7a9e); }
     .t2 { background: linear-gradient(160deg, #3d6645, #547a5c); }
     .t3 { background: linear-gradient(160deg, #7a3528, #9e4a3a); }
-    #c-dream  { left: 2px;   top: 5px;   transform: rotate(-3deg);   z-index: 3; }
-    #c-phil   { left: 80px;  top: 0px;   transform: rotate(1.5deg);  z-index: 2; }
-    #c-mind   { left: 156px; top: 7px;   transform: rotate(-1deg);   z-index: 3; }
-    #c-spell  { left: 234px; top: 2px;   transform: rotate(2.5deg);  z-index: 3; }
-    #c-become { left: 310px; top: 9px;   transform: rotate(-2deg);   z-index: 2; }
-    #c-love   { left: 388px; top: 3px;   transform: rotate(1deg);    z-index: 3; }
-    #c-precip { left: 10px;  top: 112px; transform: rotate(-2deg);   z-index: 3; }
-    #c-other  { left: 90px;  top: 105px; transform: rotate(2deg);    z-index: 2; }
-    #c-live   { left: 168px; top: 114px; transform: rotate(-1.5deg); z-index: 3; }
-    #c-align  { left: 246px; top: 107px; transform: rotate(3deg);    z-index: 2; }
+    #c-dream  { left: 2px;   top: 4px;  transform: rotate(-3deg);   z-index: 3; }
+    #c-phil   { left: 66px;  top: 0px;  transform: rotate(1.5deg);  z-index: 2; }
+    #c-mind   { left: 130px; top: 5px;  transform: rotate(-1deg);   z-index: 3; }
+    #c-spell  { left: 194px; top: 2px;  transform: rotate(2.5deg);  z-index: 3; }
+    #c-become { left: 258px; top: 7px;  transform: rotate(-2deg);   z-index: 2; }
+    #c-love   { left: 322px; top: 3px;  transform: rotate(1deg);    z-index: 3; }
+    #c-precip { left: 8px;   top: 92px; transform: rotate(-2deg);   z-index: 3; }
+    #c-other  { left: 74px;  top: 87px; transform: rotate(2deg);    z-index: 2; }
+    #c-live   { left: 138px; top: 94px; transform: rotate(-1.5deg); z-index: 3; }
+    #c-align  { left: 202px; top: 88px; transform: rotate(3deg);    z-index: 2; }
     #cover-tip {
       position: fixed; background: #faf7f0; border-radius: 3px;
       padding: 5px 9px; font-size: 0.8rem; color: #4a3820;
@@ -247,10 +254,9 @@
 <div id="dot-layer"></div>
 <div id="cover-tip"></div>
 
-<!-- Photo placeholders — replace .photo-ph divs with <img> tags when photos are ready -->
-<div class="photo-ph" id="photo-1"></div>
-<div class="photo-ph" id="photo-2"></div>
-<div class="photo-ph" id="photo-3"></div>
+<div class="photo-ph" id="photo-1"><img src="/pics/eagx_image.jpg" alt="" style="object-position: center 15%"></div>
+<div class="photo-ph" id="photo-2"><img src="/pics/wappu_image.JPG" alt="" style="object-position: center 20%"></div>
+<div class="photo-ph" id="photo-3"><img src="/pics/amazon.jpg" alt="" style="object-position: center 10%"></div>
 
 <div class="island" id="name-block">
   <div id="hero-name">Aayush<span class="ln2">Kucheria</span></div>
@@ -330,7 +336,7 @@
 </div>
 
 <div class="island" id="reading-block">
-  <span class="r-label">reading</span>
+  <span class="r-label">bookshelf</span>
   <div id="book-list">
     <a class="cover t1" id="c-dream"  href="https://www.goodreads.com/book/show/722412.The_Dream_Machine" target="_blank" rel="noopener" data-tip="The Dream Machine — M. Mitchell Waldrop"><span class="cover-title">Dream Machine</span></a>
     <a class="cover t1" id="c-phil"   href="https://www.goodreads.com/book/show/62707933-the-philosopher-of-palo-alto" target="_blank" rel="noopener" data-tip="The Philosopher of Palo Alto — John Tinnell"><span class="cover-title">Philosopher of Palo Alto</span></a>

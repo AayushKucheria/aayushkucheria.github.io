@@ -22,27 +22,28 @@ All island positions are CSS custom properties at the top of the `<style>` block
 ```
 BOARD ZONES (approx 1440 × 900)
 ┌──────────────────────────────────────────────────────────┐
-│ [name] [photo][photo][photo]  [proj][proj][proj]         │
-│                                             [research]   │
-│ [W O R K  ——  hero, 580px wide]  [intro]   [think-card] │
-│                         [float]             [community]  │
-│ [links]                                [reading]         │
+│ [ph][ph] [  name  ]      [ph]  [proj][proj][proj] [rsrch]│
+│                                        [community]       │
+│ [W O R K  ——  hero, 580px wide]  [intro]                 │
+│                         [float]         [think-card]     │
+│ [links]                                 [bookshelf]      │
 └──────────────────────────────────────────────────────────┘
 ```
 
 ## Content islands
 | ID | Type | Zone | Content |
 |---|---|---|---|
-| `#name-block` | bare | top-left, -2° | "Aayush Kucheria" 6rem/4.6rem |
-| `#photo-1/2/3` | `.photo-ph` div | top-left cluster | placeholder rectangles — swap for `<img>` |
-| `#projects-block` | bare flex row | top-center, +1° | 3 pinned project cards |
+| `#name-block` | bare | top, left:195px, -2° | "Aayush Kucheria" 6rem/4.6rem |
+| `#photo-1/2` | `.photo-ph` polaroid | top-left of name (left:36/98px) | eagx + wappu photos |
+| `#photo-3` | `.photo-ph` polaroid | top-right of name (left:620px) | amazon photo |
+| `#projects-block` | bare flex row | top, left:800px, +1° | 3 pinned project cards |
 | `#research-block` | `.torn` | upper-right, -3° | decorative skeleton (no text) |
 | `#work-block` | bare | left-center hero, -1.5° | 2-column grid, `#work-lbl` annotated |
-| `#thinking-block` | `.index-card` | mid-right, -4° | decorative skeleton (no text) |
+| `#thinking-block` | `.index-card` | lower-right, -4° | decorative skeleton (no text) |
 | `#intro-block` | `.sticky` | center board, +1.5° | tagline italic |
 | `#float-note` | bare | center-low, +4° | floating question |
-| `#community-block` | `.sticky` + pin | mid-right, +2° | Helsinki AI safety community |
-| `#reading-block` | bare | bottom-right, +1° | 10 book covers + bracket annotation |
+| `#community-block` | `.sticky` + pin | upper-right, +2° | Helsinki AI safety community |
+| `#reading-block` | bare | bottom-right, +1° | 10 book covers (58×76px) + bracket annotation, labelled "bookshelf" |
 | `#links-block` | bare | bottom-left, -2° | cal.com + email + socials |
 
 ## Annotations (roughnotation)
@@ -59,8 +60,8 @@ Fire sequentially on load:
 ## Paint splash interaction
 Click anywhere on `#dot-layer` → organic SVG paint splash appears with spring bounce animation. Fresh splashes: red `#c8341a`. Return-visit splashes: dark `#5a3a18`, faded. Max 100, stored in localStorage key `wb-v1`.
 
-## Reading block
-10 book covers (70×92px), absolutely positioned in a 490×220px container, 2 rows of 5. Three color-coded theme groups — no labels, color communicates grouping:
+## Bookshelf block
+10 book covers (58×76px), absolutely positioned in a 390×178px container, 2 rows of 5. Three color-coded theme groups — no labels, color communicates grouping:
 - **Blue** (`#3a5c7a → #4e7a9e`): machines & minds — Dream Machine, Philosopher of Palo Alto, Mindstorms
 - **Green** (`#3d6645 → #547a5c`): embodiment — Spell of the Sensuous, Becoming Animal, Love and Will
 - **Rust** (`#7a3528 → #9e4a3a`): AI futures — Precipice, Otherness & Control AGI, Live Theory Seq., Alignment Problem
