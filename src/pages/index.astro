@@ -81,7 +81,7 @@
     #canvas    { position: fixed; inset: 28px; pointer-events: none; z-index: 2; }
     #dot-layer { position: fixed; inset: 28px; cursor: crosshair; z-index: 3; }
 
-    .splash-wrap { position: absolute; pointer-events: none; }
+    .splash-wrap { position: fixed; pointer-events: none; }
 
     .island { position: fixed; z-index: 4; pointer-events: none; }
     .island a { pointer-events: auto; }
@@ -400,8 +400,8 @@
   function renderSplash(x, y, isOld) {
     const wrap = document.createElement('div');
     wrap.className = 'splash-wrap';
-    wrap.style.left = x * 100 + '%';
-    wrap.style.top  = y * 100 + '%';
+    wrap.style.left = (x * window.innerWidth) + 'px';
+    wrap.style.top  = (y * window.innerHeight) + 'px';
 
     const sz   = isOld ? (22 + Math.random() * 12) : (32 + Math.random() * 18);
     const rot  = Math.random() * 360;
@@ -455,9 +455,8 @@
   stored.forEach(([x, y]) => renderSplash(x, y, true));
 
   dotLayer.addEventListener('click', e => {
-    const r = dotLayer.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width;
-    const y = (e.clientY - r.top) / r.height;
+    const x = e.clientX / window.innerWidth;
+    const y = e.clientY / window.innerHeight;
     renderSplash(x, y, false);
     stored.push([x, y]);
     if (stored.length > MAX) stored.splice(0, stored.length - MAX);
