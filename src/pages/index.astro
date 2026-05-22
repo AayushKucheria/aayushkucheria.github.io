@@ -11,6 +11,43 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet" />
   <style>
+    /*
+      BOARD LAYOUT (approx 1440 × 900 viewport)
+      ┌──────────────────────────────────────────────────────────┐
+      │ [name] [photo][photo][photo]  [proj][proj][proj]         │
+      │                                             [research]   │
+      │ [W O R K  ——  hero, 580px wide]  [intro]   [think-card] │
+      │                         [float]             [community]  │
+      │ [links]                                [reading]         │
+      └──────────────────────────────────────────────────────────┘
+      All island positions live here. Change a number here to move a section.
+    */
+    :root {
+      /* name cluster — top-left */
+      --name-top: 44px;        --name-left: 48px;
+      --photo1-top: 46px;      --photo1-left: 248px;
+      --photo2-top: 40px;      --photo2-left: 308px;
+      --photo3-top: 64px;      --photo3-left: 358px;
+      /* projects — right of name/photos */
+      --proj-top: 50px;        --proj-left: 436px;
+      /* research — upper-right (torn paper, decorative) */
+      --research-top: 52px;    --research-right: 175px;
+      /* work — left-center hero */
+      --work-top: 188px;       --work-left: 48px;   --work-w: 580px;
+      /* thinking — mid-right (index card, decorative) */
+      --thinking-top: 235px;   --thinking-right: 48px;
+      /* intro — center board */
+      --intro-top: 38%;        --intro-left: 54%;
+      /* float note — center-low */
+      --float-top: 59%;        --float-left: 50%;
+      /* community — mid-right sticky */
+      --community-top: 468px;  --community-right: 52px;
+      /* reading — bottom-right */
+      --reading-bottom: 52px;  --reading-right: 48px;
+      /* links/contact — bottom-left */
+      --links-bottom: 44px;    --links-left: 52px;
+    }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
       width: 100%; height: 100%; overflow: hidden;
@@ -44,24 +81,14 @@
     #tape-l  { top: 45%; left: 14px; width: 18px; height: 100px; transform: rotate(2deg); }
     #tape-r  { top: 40%; right: 14px; width: 18px; height: 90px; transform: rotate(-1.5deg); }
 
-    #canvas   { position: fixed; inset: 28px; pointer-events: none; z-index: 2; }
+    #canvas    { position: fixed; inset: 28px; pointer-events: none; z-index: 2; }
     #dot-layer { position: fixed; inset: 28px; cursor: crosshair; z-index: 3; }
 
-    .user-dot {
-      position: absolute; width: 8px; height: 8px; border-radius: 50%;
-      background: #c8341a; transform: translate(-50%, -50%);
-      opacity: 0.65; pointer-events: none;
-    }
-    .user-dot.old { background: #5a3a18; opacity: 0.2; }
+    .splash-wrap { position: absolute; pointer-events: none; }
 
     .island { position: fixed; z-index: 4; pointer-events: none; }
     .island a { pointer-events: auto; }
 
-    .paper {
-      background: #faf7f0;
-      box-shadow: 2px 3px 12px #00000018;
-      padding: 12px 16px 16px;
-    }
     .sticky {
       background: #f5e97a;
       box-shadow: 2px 4px 14px #00000022;
@@ -80,82 +107,123 @@
       clip-path: polygon(0 0, 100% 0, 100% 88%, 95% 92%, 90% 89%, 85% 93%, 78% 90%, 72% 95%, 65% 91%, 58% 96%, 50% 92%, 42% 96%, 35% 91%, 28% 95%, 20% 90%, 12% 94%, 5% 90%, 0 93%);
     }
 
+    /* PHOTOS — placeholder rectangles; replace with <img> tags when ready */
+    .photo-ph {
+      position: fixed; z-index: 4;
+      box-shadow: 2px 4px 14px #00000032;
+    }
+    #photo-1 { width: 72px; height: 90px; background: #b8bea8; top: var(--photo1-top); left: var(--photo1-left); transform: rotate(7deg); }
+    #photo-2 { width: 62px; height: 78px; background: #a8b2be; top: var(--photo2-top); left: var(--photo2-left); transform: rotate(-5deg); z-index: 5; }
+    #photo-3 { width: 68px; height: 84px; background: #c2b2a4; top: var(--photo3-top); left: var(--photo3-left); transform: rotate(2.5deg); }
+
     /* NAME */
-    #name-block { top: 44px; left: 50px; transform: rotate(-2deg); }
-    #hero-name { font-size: 7.5rem; font-weight: 800; line-height: 0.88; letter-spacing: -0.04em; color: #c8341a; }
-    #hero-name .ln2 { display: block; color: #1c1a14; font-size: 5.8rem; }
+    #name-block { top: var(--name-top); left: var(--name-left); transform: rotate(-2deg); }
+    #hero-name { font-size: 6rem; font-weight: 800; line-height: 0.88; letter-spacing: -0.04em; color: #c8341a; }
+    #hero-name .ln2 { display: block; color: #1c1a14; font-size: 4.6rem; }
 
-    /* INTRO sticky — top right */
-    #intro-block { top: 50px; right: 48px; width: 225px; transform: rotate(4deg); }
-    .intro-txt { font-size: 0.93rem; font-weight: 400; font-style: italic; line-height: 1.8; color: #2a2210; }
+    /* PROJECTS — row of pinned cards right of name/photos */
+    #projects-block { top: var(--proj-top); left: var(--proj-left); display: flex; gap: 10px; transform: rotate(1deg); }
+    .proj-card {
+      width: 116px; padding: 8px 10px 12px;
+      background: #faf7f0;
+      box-shadow: 2px 3px 10px #00000018;
+      pointer-events: none;
+    }
+    #projects-block .proj-card:nth-child(1) { transform: rotate(-3deg); }
+    #projects-block .proj-card:nth-child(2) { transform: rotate(2.5deg); margin-top: 10px; }
+    #projects-block .proj-card:nth-child(3) { transform: rotate(-1.5deg); margin-top: 3px; }
+    .proj-title { font-size: 0.82rem; font-weight: 700; color: #c8341a; margin-bottom: 0.2rem; }
+    .proj-sub   { font-size: 0.68rem; color: #7a6a50; font-style: italic; line-height: 1.4; }
 
-    /* WORK */
-    #work-block { top: 268px; left: 50px; width: 430px; transform: rotate(-2deg); }
-    .sec-label { font-size: 5rem; font-weight: 800; line-height: 1; display: block; margin-bottom: 0.75rem; letter-spacing: -0.03em; }
-    .w-item { margin-bottom: 0.65rem; }
-    .w-title { font-size: 1.05rem; font-weight: 600; line-height: 1.2; }
+    /* RESEARCH — torn paper, kept as decorative visual (skeleton content) */
+    #research-block { top: var(--research-top); right: var(--research-right); width: 185px; transform: rotate(-3deg); }
+    .res-label { font-size: 1.9rem; font-weight: 800; color: #2a5e8c; display: block; margin-bottom: 0.55rem; }
+    .sk { height: 9px; background: #2a5e8c14; border-radius: 2px; margin-bottom: 8px; }
+
+    /* WORK — hero, left→center */
+    #work-block { top: var(--work-top); left: var(--work-left); width: var(--work-w); transform: rotate(-1.5deg); }
+    .sec-label { font-size: 5rem; font-weight: 800; line-height: 1; display: block; margin-bottom: 0.8rem; letter-spacing: -0.03em; }
+    .w-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 28px; }
+    .w-item.span2 { grid-column: 1 / -1; }
+    .w-title { font-size: 1.15rem; font-weight: 600; line-height: 1.2; }
     .w-title a { color: inherit; text-decoration: none; border-bottom: 1.5px solid #c8341a55; }
     .w-title a:hover { color: #c8341a; }
-    .w-sub { font-size: 0.7rem; font-weight: 300; color: #7a6a50; font-style: italic; margin-top: 0.1rem; line-height: 1.5; }
+    .w-sub { font-size: 0.88rem; font-weight: 300; color: #7a6a50; font-style: italic; margin-top: 0.18rem; line-height: 1.55; }
 
-    /* RESEARCH — torn paper, upper center */
-    #research-block { top: 52px; left: 42%; transform: translateX(-50%) rotate(-3deg); width: 190px; }
-    .res-label { font-size: 1.8rem; font-weight: 800; color: #2a5e8c; display: block; margin-bottom: 0.4rem; }
-    .res-item { font-size: 0.82rem; font-weight: 400; margin-bottom: 0.28rem; }
-    .res-sub { font-size: 0.6rem; color: #6a7a8a; font-style: italic; }
+    /* THINKING — index card, kept as decorative visual (skeleton content) */
+    #thinking-block { top: var(--thinking-top); right: var(--thinking-right); width: 172px; transform: rotate(-4deg); }
+    .sk-card { height: 8px; background: #1c1a1412; border-radius: 2px; margin-bottom: 9px; }
 
-    /* THINKING — index card, right */
-    #thinking-block { top: 400px; right: 48px; width: 185px; transform: rotate(-4deg); }
-    .think-label { font-size: 2rem; font-weight: 800; display: block; margin-bottom: 0.45rem; color: #1c1a14; }
-    .think-item { font-size: 0.9rem; margin-bottom: 0.22rem; }
+    /* INTRO — centered sticky */
+    #intro-block { top: var(--intro-top); left: var(--intro-left); transform: translateX(-40%) rotate(1.5deg); width: 208px; }
+    .intro-txt { font-size: 0.95rem; font-style: italic; font-weight: 300; color: #5a4830; line-height: 1.65; }
 
     /* FLOAT NOTE */
-    #float-note { top: 368px; left: 45%; transform: rotate(5deg); }
-    .float-txt { font-size: 0.68rem; font-style: italic; color: #7a6050; font-weight: 300; line-height: 1.5; }
+    #float-note { top: var(--float-top); left: var(--float-left); transform: rotate(4deg); }
+    .float-txt { font-size: 0.82rem; font-style: italic; color: #7a6050; font-weight: 300; line-height: 1.5; }
 
-    /* READING */
-    #reading-block { bottom: 68px; left: 55px; transform: rotate(-1.5deg); }
-    .r-label { font-size: 1.6rem; font-weight: 700; color: #9a8a6c; display: block; margin-bottom: 0.6rem; }
-    #book-list { position: relative; width: 340px; height: 155px; }
+    /* COMMUNITY — sticky, mid-right */
+    #community-block { top: var(--community-top); right: var(--community-right); width: 188px; transform: rotate(2deg); position: fixed; z-index: 4; }
+    #community-block .sticky { position: relative; }
+    .pin {
+      position: absolute; top: 9px; left: 50%; transform: translateX(-50%);
+      width: 15px; height: 15px; border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%, #e85a3a, #8b2010);
+      box-shadow: 0 2px 5px #00000045, 0 1px 2px #00000030;
+      z-index: 5;
+    }
+    .pin::after {
+      content: ''; position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 5px; height: 5px; border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+    }
+    .comm-label { font-size: 1.5rem; font-weight: 800; display: block; margin-bottom: 0.4rem; color: #2a2210; }
+    .comm-txt { font-size: 0.9rem; font-weight: 400; line-height: 1.75; color: #3a2e10; }
+
+    /* READING — bottom-right */
+    #reading-block { bottom: var(--reading-bottom); right: var(--reading-right); transform: rotate(1deg); }
+    .r-label { font-size: 1.7rem; font-weight: 700; color: #9a8a6c; display: block; margin-bottom: 0.6rem; }
+    #book-list { position: relative; width: 490px; height: 220px; }
     .cover {
-      position: absolute; width: 44px; height: 58px;
+      position: absolute; width: 70px; height: 92px;
       border-radius: 1px 3px 3px 1px;
       box-shadow: 2px 3px 8px #00000030, inset -3px 0 6px #00000018;
       display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
-      padding: 4px 3px 5px;
+      padding: 6px 5px 7px;
       transition: transform 0.15s, box-shadow 0.15s;
       cursor: pointer; pointer-events: auto; text-decoration: none;
     }
     .cover:hover { transform: scale(1.18) translateY(-5px) !important; box-shadow: 3px 6px 18px #00000045; z-index: 20 !important; }
     .cover::before { content: ''; position: absolute; top: 5px; left: 5px; right: 5px; height: 1px; background: rgba(255,255,255,0.2); }
-    .cover::after  { content: ''; position: absolute; top: 0; right: 0; width: 3px; height: 100%; background: rgba(0,0,0,0.12); border-radius: 0 2px 2px 0; }
-    .cover-title { writing-mode: unset; font-size: 0.36rem; font-weight: 600; color: rgba(255,255,255,0.9); text-align: center; line-height: 1.25; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+    .cover::after  { content: ''; position: absolute; top: 0; right: 0; width: 4px; height: 100%; background: rgba(0,0,0,0.12); border-radius: 0 2px 2px 0; }
+    .cover-title { font-size: 0.54rem; font-weight: 600; color: rgba(255,255,255,0.9); text-align: center; line-height: 1.3; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
     .t1 { background: linear-gradient(160deg, #3a5c7a, #4e7a9e); }
     .t2 { background: linear-gradient(160deg, #3d6645, #547a5c); }
     .t3 { background: linear-gradient(160deg, #7a3528, #9e4a3a); }
-    #c-dream  { left: 2px;   top: 4px;  transform: rotate(-3deg);   z-index: 3; }
-    #c-phil   { left: 50px;  top: 0px;  transform: rotate(1.5deg);  z-index: 2; }
-    #c-mind   { left: 96px;  top: 6px;  transform: rotate(-1deg);   z-index: 3; }
-    #c-spell  { left: 155px; top: 2px;  transform: rotate(2.5deg);  z-index: 3; }
-    #c-become { left: 200px; top: 8px;  transform: rotate(-2deg);   z-index: 2; }
-    #c-love   { left: 246px; top: 3px;  transform: rotate(1deg);    z-index: 3; }
-    #c-precip { left: 10px;  top: 86px; transform: rotate(-2deg);   z-index: 3; }
-    #c-other  { left: 57px;  top: 80px; transform: rotate(2deg);    z-index: 2; }
-    #c-live   { left: 110px; top: 88px; transform: rotate(-1.5deg); z-index: 3; }
-    #c-align  { left: 160px; top: 82px; transform: rotate(3deg);    z-index: 2; }
+    #c-dream  { left: 2px;   top: 5px;   transform: rotate(-3deg);   z-index: 3; }
+    #c-phil   { left: 80px;  top: 0px;   transform: rotate(1.5deg);  z-index: 2; }
+    #c-mind   { left: 156px; top: 7px;   transform: rotate(-1deg);   z-index: 3; }
+    #c-spell  { left: 234px; top: 2px;   transform: rotate(2.5deg);  z-index: 3; }
+    #c-become { left: 310px; top: 9px;   transform: rotate(-2deg);   z-index: 2; }
+    #c-love   { left: 388px; top: 3px;   transform: rotate(1deg);    z-index: 3; }
+    #c-precip { left: 10px;  top: 112px; transform: rotate(-2deg);   z-index: 3; }
+    #c-other  { left: 90px;  top: 105px; transform: rotate(2deg);    z-index: 2; }
+    #c-live   { left: 168px; top: 114px; transform: rotate(-1.5deg); z-index: 3; }
+    #c-align  { left: 246px; top: 107px; transform: rotate(3deg);    z-index: 2; }
     #cover-tip {
       position: fixed; background: #faf7f0; border-radius: 3px;
-      padding: 5px 9px; font-size: 0.65rem; color: #4a3820;
+      padding: 5px 9px; font-size: 0.8rem; color: #4a3820;
       box-shadow: 1px 2px 6px #00000020; pointer-events: none; display: none; z-index: 30;
-      max-width: 200px; line-height: 1.4;
+      max-width: 220px; line-height: 1.4;
     }
 
-    /* LINKS */
-    #links-block { bottom: 44px; right: 48px; text-align: right; transform: rotate(2.5deg); }
-    .cal-lnk { font-size: 1.4rem; font-weight: 700; color: #2a5e8c; display: block; text-decoration: none; margin-bottom: 0.3rem; }
+    /* LINKS — bottom-left */
+    #links-block { bottom: var(--links-bottom); left: var(--links-left); transform: rotate(-2deg); }
+    .cal-lnk { font-size: 1.6rem; font-weight: 700; color: #2a5e8c; display: block; text-decoration: none; margin-bottom: 0.3rem; }
     .cal-lnk:hover { text-decoration: underline; }
-    .sm-links { display: flex; gap: 1rem; justify-content: flex-end; margin-top: 0.4rem; }
-    .sm-lnk { font-size: 0.78rem; font-weight: 300; color: #5a4830; font-style: italic; text-decoration: none; }
+    .sm-links { display: flex; gap: 1rem; margin-top: 0.4rem; }
+    .sm-lnk { font-size: 0.9rem; font-weight: 300; color: #5a4830; font-style: italic; text-decoration: none; }
     .sm-lnk:hover { color: #c8341a; }
 
     #hint {
@@ -179,59 +247,86 @@
 <div id="dot-layer"></div>
 <div id="cover-tip"></div>
 
+<!-- Photo placeholders — replace .photo-ph divs with <img> tags when photos are ready -->
+<div class="photo-ph" id="photo-1"></div>
+<div class="photo-ph" id="photo-2"></div>
+<div class="photo-ph" id="photo-3"></div>
+
 <div class="island" id="name-block">
   <div id="hero-name">Aayush<span class="ln2">Kucheria</span></div>
 </div>
 
-<div class="island sticky" id="intro-block">
-  <p class="intro-txt" id="intro-txt">
-    I care about whether tools<br>
-    expand what a mind can do —<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;or quietly narrow it.
-  </p>
+<div class="island" id="projects-block">
+  <div class="proj-card">
+    <div class="proj-title">Groundless AI</div>
+    <div class="proj-sub">Design × Alignment. Hackathon win.</div>
+  </div>
+  <div class="proj-card">
+    <div class="proj-title">ACL 2025</div>
+    <div class="proj-sub">LLMs × newsrooms &amp; law</div>
+  </div>
+  <div class="proj-card">
+    <div class="proj-title">IIT Research</div>
+    <div class="proj-sub">Consciousness × integrated info theory</div>
+  </div>
 </div>
 
+<!-- Research — torn paper visual, kept as texture -->
 <div class="island torn" id="research-block">
   <span class="res-label">Research</span>
-  <div class="res-item">LLMs × human agency
-    <div class="res-sub">ACL 2025 · newsrooms · law</div>
-  </div>
-  <div class="res-item" style="margin-top:0.25rem;">IIT — consciousness
-    <div class="res-sub">integrated information theory</div>
-  </div>
+  <div class="sk" style="width:82%"></div>
+  <div class="sk" style="width:58%"></div>
+  <div class="sk" style="width:70%; margin-top:10px"></div>
+  <div class="sk" style="width:48%"></div>
 </div>
 
 <div class="island" id="work-block">
   <span class="sec-label" style="color:#c8341a" id="work-lbl">Work</span>
-  <div class="w-item">
-    <div class="w-title"><a href="https://groundless.ai" target="_blank">Live Machinery / Groundless AI</a></div>
-    <div class="w-sub">AI-native tools for communities. Research Fellow, 2024–present.</div>
-  </div>
-  <div class="w-item">
-    <div class="w-title">AI Safety field-building</div>
-    <div class="w-sub">Team lead, AI Safety Camp 2026. Curriculum, community, ecosystem. Helsinki.</div>
-  </div>
-  <div class="w-item">
-    <div class="w-title">Research — LLMs × human agency</div>
-    <div class="w-sub">ACL 2025. Newsrooms, law school, civic contexts.</div>
-  </div>
-  <div class="w-item">
-    <div class="w-title">IIT — consciousness theory</div>
-    <div class="w-sub">Theoretical work. What does it mean for a system to experience?</div>
+  <div class="w-grid">
+    <div class="w-item span2">
+      <div class="w-title"><a href="https://groundless.ai" target="_blank">Groundless AI</a></div>
+      <div class="w-sub">Design × Alignment. Hackathon win, AISC 2026 team lead, guest lecture in Gabriel Weil's AI and Law. Building interfaces that keep humans in the loop.</div>
+    </div>
+    <div class="w-item">
+      <div class="w-title">ML research</div>
+      <div class="w-sub">BSc+MSc Aalto, ACL Workshop 2025, Gaussian internship U Helsinki. Concept processing / ethical landscaping.</div>
+    </div>
+    <div class="w-item">
+      <div class="w-title">IIT — consciousness</div>
+      <div class="w-sub">Integrated information theory. Exploring what it means for a system to experience.</div>
+    </div>
   </div>
 </div>
 
+<!-- Index card — kept as texture, no content -->
 <div class="island index-card" id="thinking-block">
-  <span class="think-label" id="think-lbl">thinking about</span>
-  <div class="think-item">cognition</div>
-  <div class="think-item">learning systems</div>
-  <div class="think-item"><span id="consciousness-word">consciousness</span></div>
-  <div class="think-item">AI safety</div>
-  <div class="think-item">education</div>
+  <div class="sk-card" style="width:68%"></div>
+  <div class="sk-card" style="width:52%"></div>
+  <div class="sk-card" style="width:78%"></div>
+  <div class="sk-card" style="width:60%"></div>
+  <div class="sk-card" style="width:44%"></div>
+  <div class="sk-card" style="width:65%"></div>
+</div>
+
+<div class="island sticky" id="intro-block">
+  <p class="intro-txt"><em>AI researcher &amp; interface thinker.<br>Building tools that extend<br>human agency.</em></p>
 </div>
 
 <div class="island" id="float-note">
   <p class="float-txt">← what does it mean<br>&nbsp;&nbsp;&nbsp;for a system to experience?</p>
+</div>
+
+<div id="community-block">
+  <div class="sticky" style="padding-top: 30px;">
+    <div class="pin"></div>
+    <span class="comm-label">community</span>
+    <p class="comm-txt">
+      Helsinki AI safety ecosystem<br>
+      AISC 2026 — team lead<br>
+      connecting researchers,<br>
+      organizers, builders
+    </p>
+  </div>
 </div>
 
 <div class="island" id="reading-block">
@@ -270,21 +365,89 @@
   const dotLayer = document.getElementById('dot-layer');
   const stored = JSON.parse(localStorage.getItem('wb-v1') || '[]');
   const MAX = 100;
+  const NS = 'http://www.w3.org/2000/svg';
 
-  function renderDot(x, y, isOld) {
-    const d = document.createElement('div');
-    d.className = 'user-dot' + (isOld ? ' old' : '');
-    d.style.left = x * 100 + '%';
-    d.style.top = y * 100 + '%';
-    dotLayer.appendChild(d);
+  function blob(cx, cy, r) {
+    const n = 9;
+    const pts = Array.from({length: n}, (_, i) => {
+      const a = (i / n) * Math.PI * 2 - Math.PI / 2;
+      const noise = 0.45 + Math.random() * 1.05;
+      return [cx + Math.cos(a) * r * noise, cy + Math.sin(a) * r * noise];
+    });
+    let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
+    for (let i = 0; i < n; i++) {
+      const p0 = pts[(i - 1 + n) % n], p1 = pts[i];
+      const p2 = pts[(i + 1) % n],     p3 = pts[(i + 2) % n];
+      const f = 1/6;
+      const cp1x = p1[0] + (p2[0] - p0[0]) * f, cp1y = p1[1] + (p2[1] - p0[1]) * f;
+      const cp2x = p2[0] - (p3[0] - p1[0]) * f, cp2y = p2[1] - (p3[1] - p1[1]) * f;
+      d += ` C ${cp1x.toFixed(1)} ${cp1y.toFixed(1)}, ${cp2x.toFixed(1)} ${cp2y.toFixed(1)}, ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+    }
+    return d + ' Z';
   }
-  stored.forEach(([x, y]) => renderDot(x, y, true));
+
+  function renderSplash(x, y, isOld) {
+    const wrap = document.createElement('div');
+    wrap.className = 'splash-wrap';
+    wrap.style.left = x * 100 + '%';
+    wrap.style.top  = y * 100 + '%';
+
+    const sz   = isOld ? (22 + Math.random() * 12) : (32 + Math.random() * 18);
+    const rot  = Math.random() * 360;
+    const col  = isOld ? '#5a3a18' : '#c8341a';
+    const base = isOld ? 0.12 : (0.68 + Math.random() * 0.18);
+
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 100 100');
+    svg.style.cssText = [
+      `display:block`,
+      `width:${sz}px`, `height:${sz}px`,
+      `overflow:visible`,
+      `transform:translate(-50%,-50%) rotate(${rot}deg) scale(${isOld ? 1 : 0})`,
+      isOld ? '' : `transition:transform 0.38s cubic-bezier(0.34,1.56,0.64,1)`,
+    ].join(';');
+
+    const bR = 17 + Math.random() * 9;
+    const blobPath = document.createElementNS(NS, 'path');
+    blobPath.setAttribute('d', blob(50, 50, bR));
+    blobPath.setAttribute('fill', col);
+    blobPath.setAttribute('opacity', base.toFixed(2));
+    svg.appendChild(blobPath);
+
+    const drops = 4 + Math.floor(Math.random() * 5);
+    for (let i = 0; i < drops; i++) {
+      const a    = Math.random() * Math.PI * 2;
+      const dist = bR * (1.3 + Math.random() * 2.0);
+      const dr   = bR * (0.05 + Math.random() * 0.18);
+      const ecx  = (50 + Math.cos(a) * dist).toFixed(1);
+      const ecy  = (50 + Math.sin(a) * dist).toFixed(1);
+      const el = document.createElementNS(NS, 'ellipse');
+      el.setAttribute('cx', ecx); el.setAttribute('cy', ecy);
+      el.setAttribute('rx', dr.toFixed(1));
+      el.setAttribute('ry', (dr * (0.45 + Math.random() * 0.9)).toFixed(1));
+      el.setAttribute('fill', col);
+      el.setAttribute('opacity', (base * (0.35 + Math.random() * 0.65)).toFixed(2));
+      el.setAttribute('transform', `rotate(${(Math.random()*120-60).toFixed(0)} ${ecx} ${ecy})`);
+      svg.appendChild(el);
+    }
+
+    wrap.appendChild(svg);
+    dotLayer.appendChild(wrap);
+
+    if (!isOld) {
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        svg.style.transform = `translate(-50%,-50%) rotate(${rot}deg) scale(1)`;
+      }));
+    }
+  }
+
+  stored.forEach(([x, y]) => renderSplash(x, y, true));
 
   dotLayer.addEventListener('click', e => {
     const r = dotLayer.getBoundingClientRect();
     const x = (e.clientX - r.left) / r.width;
     const y = (e.clientY - r.top) / r.height;
-    renderDot(x, y, false);
+    renderSplash(x, y, false);
     stored.push([x, y]);
     if (stored.length > MAX) stored.splice(0, stored.length - MAX);
     localStorage.setItem('wb-v1', JSON.stringify(stored));
@@ -301,8 +464,8 @@
     function pt(id, fx, fy) {
       const r = document.getElementById(id).getBoundingClientRect();
       return {
-        x: (r.left + r.width * (fx ?? 0.5)) - INSET,
-        y: (r.top + r.height * (fy ?? 0.5)) - INSET,
+        x: (r.left + r.width  * (fx ?? 0.5)) - INSET,
+        y: (r.top  + r.height * (fy ?? 0.5)) - INSET,
       };
     }
 
@@ -312,26 +475,29 @@
 
     let a, b;
 
-    a = pt('name-block', 0.2, 1);    b = pt('work-block', 0.15, 0);
+    // name → work
+    a = pt('name-block', 0.2, 1);     b = pt('work-block', 0.12, 0);
     rc.curve([[a.x,a.y],[a.x-20,(a.y+b.y)/2+20],[b.x+40,(a.y+b.y)/2-10],[b.x,b.y]], conn);
 
-    a = pt('name-block', 0.85, 0.35); b = pt('intro-block', 0.1, 0.5);
-    rc.curve([[a.x,a.y],[a.x+40,(a.y+b.y)/2-20],[b.x-20,(a.y+b.y)/2+10],[b.x,b.y]], conn);
+    // name → research
+    a = pt('name-block', 0.65, 0.4);  b = pt('research-block', 0.4, 1);
+    rc.curve([[a.x,a.y],[a.x+60,(a.y+b.y)/2-30],[b.x-20,(a.y+b.y)/2+10],[b.x,b.y]], conn);
 
-    a = pt('name-block', 0.55, 0.7);  b = pt('research-block', 0.5, 1);
-    rc.curve([[a.x,a.y],[a.x+30,(a.y+b.y)/2-20],[b.x-20,(a.y+b.y)/2+15],[b.x,b.y]], conn);
+    // name → projects
+    a = pt('name-block', 0.85, 0.5);  b = pt('projects-block', 0.1, 0.5);
+    rc.curve([[a.x,a.y],[a.x+30,(a.y+b.y)/2],[b.x-20,(a.y+b.y)/2],[b.x,b.y]], conn);
 
-    a = pt('intro-block', 0.3, 1);    b = pt('thinking-block', 0.6, 0);
-    rc.curve([[a.x,a.y],[a.x+20,(a.y+b.y)/2+10],[b.x-20,(a.y+b.y)/2-10],[b.x,b.y]], conn);
+    // work → reading
+    a = pt('work-block', 0.7, 1);     b = pt('reading-block', 0.2, 0);
+    rc.curve([[a.x,a.y],[a.x+80,(a.y+b.y)/2+40],[b.x-40,(a.y+b.y)/2-20],[b.x,b.y]], conn);
 
-    a = pt('work-block', 0.25, 1);    b = pt('reading-block', 0.25, 0);
-    rc.curve([[a.x,a.y],[a.x-15,(a.y+b.y)/2+20],[b.x+25,(a.y+b.y)/2],[b.x,b.y]], conn);
+    // thinking-block → links
+    a = pt('thinking-block', 0.3, 1); b = pt('links-block', 0.5, 0);
+    rc.curve([[a.x,a.y],[a.x-60,(a.y+b.y)/2+20],[b.x+40,(a.y+b.y)/2-10],[b.x,b.y]], conn);
 
-    a = pt('thinking-block', 0.5, 1); b = pt('links-block', 0.5, 0);
-    rc.curve([[a.x,a.y],[a.x+25,(a.y+b.y)/2],[b.x-15,(a.y+b.y)/2],[b.x,b.y]], conn);
-
-    a = pt('float-note', 0, 0.5);     b = pt('research-block', 0.5, 0.7);
-    rc.curve([[a.x,a.y],[a.x-50,(a.y+b.y)/2+10],[b.x+30,(a.y+b.y)/2-10],[b.x,b.y]], red);
+    // float-note → research (red)
+    a = pt('float-note', 0.1, 0.3);   b = pt('research-block', 0.5, 0.8);
+    rc.curve([[a.x,a.y],[a.x-40,(a.y+b.y)/2+10],[b.x+30,(a.y+b.y)/2-10],[b.x,b.y]], red);
 
     const rng = (a, b) => a + Math.random() * (b - a);
     for (let i = 0; i < 24; i++) {
@@ -350,30 +516,15 @@
   }
 
   function runAnnotations() {
-    setTimeout(() => annotate(document.getElementById('intro-txt'), {
-      type: 'highlight', color: '#c8b84066',
-      roughness: 4, strokeWidth: 1, padding: 5, multiline: true, animationDuration: 900,
-    }).show(), 200);
-
     setTimeout(() => annotate(document.getElementById('work-lbl'), {
       type: 'highlight', color: '#f5c94255',
       roughness: 4, strokeWidth: 1, padding: 6, animationDuration: 700,
-    }).show(), 500);
-
-    setTimeout(() => annotate(document.getElementById('think-lbl'), {
-      type: 'underline', color: '#2a5e8c',
-      roughness: 3.5, strokeWidth: 3.5, padding: 2, animationDuration: 600,
-    }).show(), 800);
+    }).show(), 200);
 
     setTimeout(() => annotate(document.getElementById('book-list'), {
       type: 'bracket', color: '#c8341a',
       roughness: 3.8, strokeWidth: 2.5, padding: [18, 6, 12, 6], brackets: ['left'], animationDuration: 700,
-    }).show(), 1050);
-
-    setTimeout(() => annotate(document.getElementById('consciousness-word'), {
-      type: 'circle', color: '#c8341a',
-      roughness: 3.5, strokeWidth: 2.2, padding: 5, animationDuration: 600,
-    }).show(), 1300);
+    }).show(), 800);
   }
 
   const tip = document.getElementById('cover-tip');
