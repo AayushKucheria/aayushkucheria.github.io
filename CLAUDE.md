@@ -13,7 +13,7 @@ The site is a **whiteboard pinned to a warm tan wall** — not a scrolling docum
 - Wall: `#d4c4a8`. Board: `#f3eadb`, inset 28px, with masking tape strips (`.tape`)
 - Font: Shantell Sans (Google Fonts), weights 300–800
 - Content lives in **islands**: `position: fixed` zones with 2–5° tilts
-- Island types: `.sticky` (yellow `#f5e97a`), `.torn` (clip-path torn edge), `.index-card` (blue top border `#a8c0e0`), bare (no wrapper)
+- Island types: `.sticky` (yellow `#f5e97a`), `.torn` (clip-path torn edge), bare (no wrapper)
 - Colors: red `#c8341a`, blue `#2a5e8c`, tan `#c8a87a`
 
 ## Island positions — edit in ONE place
@@ -22,29 +22,27 @@ All island positions are CSS custom properties at the top of the `<style>` block
 ```
 BOARD ZONES (approx 1440 × 900)
 ┌──────────────────────────────────────────────────────────┐
-│ [ph][ph] [  name  ]      [ph]  [proj][proj][proj] [rsrch]│
-│                                        [community]       │
-│ [W O R K  ——  hero, 580px wide]  [intro]                 │
-│                         [float]         [think-card]     │
-│ [links]                                 [bookshelf]      │
+│ [ph][ph] [  name  ] [ph][ph]  [proj][proj][proj]         │
+│                                                [links]   │
+│ [W O R K  ——  hero, 580px wide]  [intro]  [community]   │
+│                          [research/intro]                │
+│                                         [bookshelf]      │
 └──────────────────────────────────────────────────────────┘
 ```
 
 ## Content islands
 | ID | Type | Zone | Content |
 |---|---|---|---|
-| `#name-block` | bare | top, left:195px, -2° | "Aayush Kucheria" 6rem/4.6rem |
-| `#photo-1/2` | `.photo-ph` polaroid | top-left of name (left:36/98px) | eagx + wappu photos |
-| `#photo-3` | `.photo-ph` polaroid | top-right of name (left:620px) | amazon photo |
-| `#projects-block` | bare flex row | top, left:800px, +1° | 3 pinned project cards |
-| `#research-block` | `.torn` | upper-right, -3° | decorative skeleton (no text) |
-| `#work-block` | bare | left-center hero, -1.5° | 2-column grid, `#work-lbl` annotated |
-| `#thinking-block` | `.index-card` | lower-right, -4° | decorative skeleton (no text) |
+| `#name-block` | bare | top, left:195px, -2° | "Aayush Kucheria" 5rem/3.9rem |
+| `#photo-1/4` | `.photo-ph` polaroid | top-left of name (left:36/98px) | eagx + wappu photos |
+| `#photo-2/3` | `.photo-ph` polaroid | top-right of name (left:500/572px) | selfie + group photo |
+| `#projects-block` | bare flex row | top, left:800px, +1° | 3 pinned project cards (150px wide each) |
+| `#links-block` | bare | top-right, right:52px, top:44px, -1° | cal.com + email + socials |
+| `#research-block` | `.torn` | center, left:700px, top:270px, -3° | "hi, I'm Aayush" intro greeting + teaser |
+| `#work-block` | bare | left-center hero, left:48px, top:195px, -1.5° | vertical stack of 2 full-width cards, `#work-lbl` annotated |
 | `#intro-block` | `.sticky` | center board, +1.5° | tagline italic |
-| `#float-note` | bare | center-low, +4° | floating question |
-| `#community-block` | `.sticky` + pin | upper-right, +2° | Helsinki AI safety community |
+| `#community-block` | `.sticky` + pin | center-right, right:52px, top:220px, +2° | "community" heading + "adding soon" |
 | `#reading-block` | bare | bottom-right, +1° | 10 book covers (58×76px) + bracket annotation, labelled "bookshelf" |
-| `#links-block` | bare | bottom-left, -2° | cal.com + email + socials |
 
 ## Annotations (roughnotation)
 Fire sequentially on load:
@@ -53,7 +51,8 @@ Fire sequentially on load:
 
 ## Canvas (roughjs)
 `drawAll()` runs on load and resize. Draws:
-- Connecting arcs: name→work, name→research, name→projects, work→reading, thinking→links, float→research (red)
+- Connecting arcs: name→work, name→research, name→projects, work→reading
+- Curly brace on left edge of `#work-block` labelled "work" in tan
 - 24 atmospheric squiggles (roughness 3.8, very faint tan)
 - 10 small rough circles scattered
 

@@ -25,27 +25,24 @@
     :root {
       /* name cluster — top-left */
       --name-top: 44px;        --name-left: 195px;
-      --photo1-top: 50px;      --photo1-left: 36px;
-      --photo2-top: 44px;      --photo2-left: 98px;
-      --photo3-top: 46px;      --photo3-left: 620px;
+      --photo1-top: 44px;      --photo1-left: 98px;
+      --photo2-top: 72px;      --photo2-left: 500px;
+      --photo3-top: 46px;      --photo3-left: 572px;
+      --photo4-top: 50px;      --photo4-left: 36px;
       /* projects — right of name/photos */
-      --proj-top: 50px;        --proj-left: 800px;
-      /* research — upper-right (torn paper, decorative) */
-      --research-top: 52px;    --research-right: 175px;
+      --proj-top: 90px;        --proj-left: 800px;
+      /* research — center board (torn paper, decorative) */
+      --research-top: 270px;   --research-left: 700px;
       /* work — left-center hero */
-      --work-top: 250px;       --work-left: 48px;   --work-w: 580px;
-      /* thinking — mid-right (index card, decorative) */
-      --thinking-top: 420px;   --thinking-right: 48px;
+      --work-top: 195px;       --work-left: 48px;   --work-w: 580px;
       /* intro — center board */
       --intro-top: 38%;        --intro-left: 54%;
-      /* float note — center-low */
-      --float-top: 59%;        --float-left: 50%;
-      /* community — upper-right sticky */
-      --community-top: 200px;  --community-right: 52px;
+      /* community — center-right sticky */
+      --community-top: 220px;  --community-right: 52px;
       /* reading — bottom-right */
       --reading-bottom: 52px;  --reading-right: 48px;
-      /* links/contact — bottom-left */
-      --links-bottom: 44px;    --links-left: 52px;
+      /* links/contact — top-right */
+      --links-top: 44px;       --links-right: 52px;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -119,19 +116,22 @@
       width: 76px; height: 86px;
       object-fit: cover;
     }
-    #photo-1 { top: var(--photo1-top); left: var(--photo1-left); transform: rotate(7deg); }
+    .photo-ph { transition: transform 0.15s, box-shadow 0.15s; cursor: pointer; }
+    .photo-ph:hover { transform: scale(1.6) translateY(-5px) !important; box-shadow: 4px 8px 24px #00000050; z-index: 20; }
+    #photo-1 { top: var(--photo1-top); left: var(--photo1-left); transform: rotate(7deg); z-index: 6; }
     #photo-2 { top: var(--photo2-top); left: var(--photo2-left); transform: rotate(-5deg); z-index: 5; }
     #photo-3 { top: var(--photo3-top); left: var(--photo3-left); transform: rotate(2.5deg); }
+    #photo-4 { top: var(--photo4-top); left: var(--photo4-left); transform: rotate(-6deg); }
 
     /* NAME */
     #name-block { top: var(--name-top); left: var(--name-left); transform: rotate(-2deg); }
-    #hero-name { font-size: 6rem; font-weight: 800; line-height: 0.88; letter-spacing: -0.04em; color: #c8341a; }
-    #hero-name .ln2 { display: block; color: #1c1a14; font-size: 4.6rem; }
+    #hero-name { font-size: 5rem; font-weight: 800; line-height: 0.88; letter-spacing: -0.04em; color: #c8341a; }
+    #hero-name .ln2 { display: block; color: #1c1a14; font-size: 3.9rem; }
 
     /* PROJECTS — row of pinned cards right of name/photos */
     #projects-block { top: var(--proj-top); left: var(--proj-left); display: flex; gap: 10px; transform: rotate(1deg); }
     .proj-card {
-      width: 116px; padding: 8px 10px 12px;
+      width: 150px; padding: 11px 14px 16px;
       background: #faf7f0;
       box-shadow: 2px 3px 10px #00000018;
       pointer-events: none;
@@ -139,26 +139,33 @@
     #projects-block .proj-card:nth-child(1) { transform: rotate(-3deg); }
     #projects-block .proj-card:nth-child(2) { transform: rotate(2.5deg); margin-top: 10px; }
     #projects-block .proj-card:nth-child(3) { transform: rotate(-1.5deg); margin-top: 3px; }
-    .proj-title { font-size: 0.82rem; font-weight: 700; color: #c8341a; margin-bottom: 0.2rem; }
-    .proj-sub   { font-size: 0.68rem; color: #7a6a50; font-style: italic; line-height: 1.4; }
+    .proj-title { font-size: 0.96rem; font-weight: 700; color: #c8341a; margin-bottom: 0.25rem; }
+    .proj-sub   { font-size: 0.78rem; color: #7a6a50; font-style: italic; line-height: 1.4; }
 
     /* RESEARCH — torn paper, kept as decorative visual (skeleton content) */
-    #research-block { top: var(--research-top); right: var(--research-right); width: 185px; transform: rotate(-3deg); }
-    .res-label { font-size: 1.9rem; font-weight: 800; color: #2a5e8c; display: block; margin-bottom: 0.55rem; }
+    #research-block { top: var(--research-top); left: var(--research-left); width: 210px; transform: rotate(-3deg); }
+    .res-label { font-size: 1.1rem; font-weight: 800; color: #2a5e8c; display: block; margin-bottom: 0.55rem; }
+    .res-txt { font-size: 0.78rem; font-weight: 300; font-style: italic; color: #5a4830; line-height: 1.65; }
     .sk { height: 9px; background: #2a5e8c14; border-radius: 2px; margin-bottom: 8px; }
 
     /* WORK — hero, left→center */
     #work-block { top: var(--work-top); left: var(--work-left); width: var(--work-w); transform: rotate(-1.5deg); }
-    .sec-label { font-size: 5rem; font-weight: 800; line-height: 1; display: block; margin-bottom: 0.8rem; letter-spacing: -0.03em; }
-    .w-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 28px; }
-    .w-item.span2 { grid-column: 1 / -1; }
-    .w-title { font-size: 1.15rem; font-weight: 600; line-height: 1.2; }
-    .w-title a { color: inherit; text-decoration: none; border-bottom: 1.5px solid #c8341a55; }
-    .w-title a:hover { color: #c8341a; }
-    .w-sub { font-size: 0.88rem; font-weight: 300; color: #7a6a50; font-style: italic; margin-top: 0.18rem; line-height: 1.55; }
+    #work-lbl { font-size: 1.05rem; font-weight: 700; font-style: italic; color: #5a4030; letter-spacing: 0.05em; display: inline-block; margin-bottom: 14px; }
+    .w-area { position: relative; margin-bottom: 28px; }
+    .w-core { background: #fdfaf4; box-shadow: 2px 4px 14px #00000018; padding: 14px 20px 16px; width: 100%; position: relative; overflow: visible; box-sizing: border-box; }
+    .w-heading { font-size: 1.45rem; font-weight: 800; color: #1c1a14; line-height: 1.1; letter-spacing: -0.02em; }
+    .w-subtitle { margin-top: 0.2rem; font-size: 0.88rem; font-weight: 600; }
+    .w-subtitle a { color: #c8341a; text-decoration: none; border-bottom: 1.5px solid #c8341a44; }
+    .w-subtitle a:hover { color: #9a2010; }
+    .w-body { font-size: 0.84rem; font-weight: 300; font-style: italic; color: #7a6a50; margin-top: 0.5rem; line-height: 1.62; }
+    .stamp-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .stamp { display: inline-block; border: 1px solid currentColor; padding: 3px 10px 4px; font-size: 0.78rem; font-weight: 400; letter-spacing: 0.02em; line-height: 1.3; background: #fdfaf4; opacity: 0.75; }
+    .pills { display: flex; gap: 7px; margin-top: 11px; padding-top: 10px; border-top: 1px solid #e0d4c077; }
+    .pill-card { flex: 1; background: #f3eadb; border: 1px solid #d4c0a866; padding: 5px 9px 7px; }
+    .pill-name { font-size: 0.82rem; font-weight: 700; color: #6a5038; line-height: 1.2; }
+    .pill-desc { font-size: 0.75rem; font-weight: 300; font-style: italic; color: #9a8060; margin-top: 3px; line-height: 1.45; }
 
     /* THINKING — index card, kept as decorative visual (skeleton content) */
-    #thinking-block { top: var(--thinking-top); right: var(--thinking-right); width: 172px; transform: rotate(-4deg); }
     .sk-card { height: 8px; background: #1c1a1412; border-radius: 2px; margin-bottom: 9px; }
 
     /* INTRO — centered sticky */
@@ -166,8 +173,6 @@
     .intro-txt { font-size: 0.95rem; font-style: italic; font-weight: 300; color: #5a4830; line-height: 1.65; }
 
     /* FLOAT NOTE */
-    #float-note { top: var(--float-top); left: var(--float-left); transform: rotate(4deg); }
-    .float-txt { font-size: 0.82rem; font-style: italic; color: #7a6050; font-weight: 300; line-height: 1.5; }
 
     /* COMMUNITY — sticky, mid-right */
     #community-block { top: var(--community-top); right: var(--community-right); width: 188px; transform: rotate(2deg); position: fixed; z-index: 4; }
@@ -225,9 +230,9 @@
       max-width: 220px; line-height: 1.4;
     }
 
-    /* LINKS — bottom-left */
-    #links-block { bottom: var(--links-bottom); left: var(--links-left); transform: rotate(-2deg); }
-    .cal-lnk { font-size: 1.6rem; font-weight: 700; color: #2a5e8c; display: block; text-decoration: none; margin-bottom: 0.3rem; }
+    /* LINKS — top-right */
+    #links-block { top: var(--links-top); right: var(--links-right); transform: rotate(-1deg); }
+    .cal-lnk { font-size: 1.15rem; font-weight: 700; color: #2a5e8c; display: block; text-decoration: none; margin-bottom: 0.3rem; }
     .cal-lnk:hover { text-decoration: underline; }
     .sm-links { display: flex; gap: 1rem; margin-top: 0.4rem; }
     .sm-lnk { font-size: 0.9rem; font-weight: 300; color: #5a4830; font-style: italic; text-decoration: none; }
@@ -257,6 +262,7 @@
 <div class="photo-ph" id="photo-1"><img src="/pics/eagx_image.jpg" alt="" style="object-position: center 15%"></div>
 <div class="photo-ph" id="photo-2"><img src="/pics/wappu_image.JPG" alt="" style="object-position: center 20%"></div>
 <div class="photo-ph" id="photo-3"><img src="/pics/amazon.jpg" alt="" style="object-position: center 10%"></div>
+<div class="photo-ph" id="photo-4"><img src="/pics/stupid_image.jpg" alt="" style="object-position: center 15%"></div>
 
 <div class="island" id="name-block">
   <div id="hero-name">Aayush<span class="ln2">Kucheria</span></div>
@@ -264,74 +270,73 @@
 
 <div class="island" id="projects-block">
   <div class="proj-card">
-    <div class="proj-title">Groundless AI</div>
-    <div class="proj-sub">Design × Alignment. Hackathon win.</div>
+    <div class="proj-title">Project X</div>
+    <div class="proj-sub">adding soon</div>
   </div>
   <div class="proj-card">
-    <div class="proj-title">ACL 2025</div>
-    <div class="proj-sub">LLMs × newsrooms &amp; law</div>
+    <div class="proj-title">Project Y</div>
+    <div class="proj-sub">adding soon</div>
   </div>
   <div class="proj-card">
-    <div class="proj-title">IIT Research</div>
-    <div class="proj-sub">Consciousness × integrated info theory</div>
+    <div class="proj-title">Project Z</div>
+    <div class="proj-sub">adding soon</div>
   </div>
 </div>
 
 <!-- Research — torn paper visual, kept as texture -->
 <div class="island torn" id="research-block">
-  <span class="res-label">Research</span>
-  <div class="sk" style="width:82%"></div>
-  <div class="sk" style="width:58%"></div>
-  <div class="sk" style="width:70%; margin-top:10px"></div>
-  <div class="sk" style="width:48%"></div>
+  <span class="res-label">hi, I'm Aayush :)</span>
+  <p class="res-txt">I'll say more about myself here soon — check back in a bit.</p>
 </div>
 
 <div class="island" id="work-block">
-  <span class="sec-label" style="color:#c8341a" id="work-lbl">Work</span>
-  <div class="w-grid">
-    <div class="w-item span2">
-      <div class="w-title"><a href="https://groundless.ai" target="_blank">Groundless AI</a></div>
-      <div class="w-sub">Design × Alignment. Hackathon win, AISC 2026 team lead, guest lecture in Gabriel Weil's AI and Law. Building interfaces that keep humans in the loop.</div>
-    </div>
-    <div class="w-item">
-      <div class="w-title">ML research</div>
-      <div class="w-sub">BSc+MSc Aalto, ACL Workshop 2025, Gaussian internship U Helsinki. Concept processing / ethical landscaping.</div>
-    </div>
-    <div class="w-item">
-      <div class="w-title">IIT — consciousness</div>
-      <div class="w-sub">Integrated information theory. Exploring what it means for a system to experience.</div>
+  <div id="work-lbl">work</div>
+
+  <div class="w-area">
+    <div class="w-core">
+      <div class="w-heading">Design × Alignment</div>
+      <div class="w-subtitle"><a href="https://groundless.ai" target="_blank">Groundless Alignment →</a></div>
+      <div class="w-body">Designed interfaces, built prototypes, owned a project — fellowship to full-time over 1.5 years.</div>
+      <div class="stamp-row">
+        <span class="stamp" style="color:#c8341a; transform:rotate(-2.5deg);">AISC 2026 team lead</span>
+        <span class="stamp" style="color:#2a5e8c; transform:rotate(1.5deg);">guest lecturer, Gabriel Weil's AI &amp; Law '26</span>
+      </div>
+      <div class="pills">
+        <div class="pill-card">
+          <div class="pill-name">ACL Workshop 2025</div>
+          <div class="pill-desc">adding soon</div>
+        </div>
+        <div class="pill-card">
+          <div class="pill-name">PracticeSpace, co-founder</div>
+          <div class="pill-desc">LLM simulations of therapy patients for trainees — founded with NHS CBT practitioners.</div>
+        </div>
+      </div>
     </div>
   </div>
+
+  <div class="w-area">
+    <div class="w-core">
+      <div class="w-heading">Machine Learning</div>
+      <div class="w-subtitle" style="color:#2a5e8c; font-weight:600;">research</div>
+      <div class="w-body">BSc + MSc in machine learning at Aalto University, Finland.</div>
+      <div class="stamp-row">
+        <span class="stamp" style="color:#2a5e8c; transform:rotate(-2deg);">Latent ethical landscape of LLMs</span>
+        <span class="stamp" style="color:#5a4a30; transform:rotate(-2.5deg);">Gaussian Modelling, University of Helsinki</span>
+        <span class="stamp" style="color:#5a4a30; transform:rotate(1.5deg);">talk: transformers</span>
+        <span class="stamp" style="color:#5a4a30; transform:rotate(-1deg);">adding links + a couple more interesting things soon</span>
+      </div>
+    </div>
+  </div>
+
 </div>
 
-<!-- Index card — kept as texture, no content -->
-<div class="island index-card" id="thinking-block">
-  <div class="sk-card" style="width:68%"></div>
-  <div class="sk-card" style="width:52%"></div>
-  <div class="sk-card" style="width:78%"></div>
-  <div class="sk-card" style="width:60%"></div>
-  <div class="sk-card" style="width:44%"></div>
-  <div class="sk-card" style="width:65%"></div>
-</div>
 
-<div class="island sticky" id="intro-block">
-  <p class="intro-txt"><em>AI researcher &amp; interface thinker.<br>Building tools that extend<br>human agency.</em></p>
-</div>
-
-<div class="island" id="float-note">
-  <p class="float-txt">← what does it mean<br>&nbsp;&nbsp;&nbsp;for a system to experience?</p>
-</div>
 
 <div id="community-block">
   <div class="sticky" style="padding-top: 30px;">
     <div class="pin"></div>
     <span class="comm-label">community</span>
-    <p class="comm-txt">
-      Helsinki AI safety ecosystem<br>
-      AISC 2026 — team lead<br>
-      connecting researchers,<br>
-      organizers, builders
-    </p>
+    <em style="font-size:0.75rem; opacity:0.6;">adding soon</em>
   </div>
 </div>
 
@@ -352,7 +357,7 @@
 </div>
 
 <div class="island" id="links-block">
-  <a class="cal-lnk" href="https://cal.com/aayushkucheria" target="_blank">→ book a call</a>
+  <a class="cal-lnk" href="https://cal.com/aayushk/chat" target="_blank">→ book a call</a>
   <a class="sm-lnk" href="mailto:aayush.kucheria@gmail.com">aayush.kucheria@gmail.com</a>
   <div class="sm-links">
     <a class="sm-lnk" href="https://github.com/AayushKucheria" target="_blank">GitHub</a>
@@ -497,13 +502,32 @@
     a = pt('work-block', 0.7, 1);     b = pt('reading-block', 0.2, 0);
     rc.curve([[a.x,a.y],[a.x+80,(a.y+b.y)/2+40],[b.x-40,(a.y+b.y)/2-20],[b.x,b.y]], conn);
 
-    // thinking-block → links
-    a = pt('thinking-block', 0.3, 1); b = pt('links-block', 0.5, 0);
-    rc.curve([[a.x,a.y],[a.x-60,(a.y+b.y)/2+20],[b.x+40,(a.y+b.y)/2-10],[b.x,b.y]], conn);
 
-    // float-note → research (red)
-    a = pt('float-note', 0.1, 0.3);   b = pt('research-block', 0.5, 0.8);
-    rc.curve([[a.x,a.y],[a.x-40,(a.y+b.y)/2+10],[b.x+30,(a.y+b.y)/2-10],[b.x,b.y]], red);
+    // Curly brace labelling the work section
+    {
+      const wb = document.getElementById('work-block').getBoundingClientRect();
+      const bxR = wb.left - INSET - 8;
+      const bxL = wb.left - INSET - 22;
+      const bxM = wb.left - INSET - 30;
+      const yTop = wb.top - INSET;
+      const yBot = wb.bottom - INSET;
+      const yMid = (yTop + yBot) / 2;
+      const h = yBot - yTop;
+      const bOpts = { roughness: 2.2, stroke: '#c8a87a', strokeWidth: 1.4 };
+      rc.line(bxR, yTop, bxR - 6, yTop, bOpts);
+      rc.curve([[bxR - 6, yTop], [bxL, yTop + h * 0.15], [bxM, yTop + h * 0.38], [bxM, yMid]], bOpts);
+      rc.curve([[bxM, yMid], [bxM, yBot - h * 0.38], [bxL, yBot - h * 0.15], [bxR - 6, yBot]], bOpts);
+      rc.line(bxR, yBot, bxR - 6, yBot, bOpts);
+      const ctx = canvas.getContext('2d');
+      ctx.save();
+      ctx.font = 'italic 600 13px "Shantell Sans", cursive';
+      ctx.fillStyle = '#c8a87a';
+      ctx.textAlign = 'right';
+      ctx.translate(bxM - 5, yMid + 5);
+      ctx.rotate(-0.08);
+      ctx.fillText('work', 0, 0);
+      ctx.restore();
+    }
 
     const rng = (a, b) => a + Math.random() * (b - a);
     for (let i = 0; i < 24; i++) {
@@ -522,11 +546,10 @@
   }
 
   function runAnnotations() {
-    setTimeout(() => annotate(document.getElementById('work-lbl'), {
-      type: 'highlight', color: '#f5c94255',
-      roughness: 4, strokeWidth: 1, padding: 6, animationDuration: 700,
-    }).show(), 200);
-
+    const wlbl = annotate(document.getElementById('work-lbl'), {
+      type: 'highlight', color: '#f5e97a', roughness: 3.8, animationDuration: 200,
+    });
+    setTimeout(() => wlbl.show(), 200);
     setTimeout(() => annotate(document.getElementById('book-list'), {
       type: 'bracket', color: '#c8341a',
       roughness: 3.8, strokeWidth: 2.5, padding: [18, 6, 12, 6], brackets: ['left'], animationDuration: 700,
