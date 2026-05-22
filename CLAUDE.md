@@ -20,7 +20,7 @@ Loaded from npm (`rough-notation`). Annotations fire sequentially on load:
 1. Highlight on intro sticky note (yellow, 200ms)
 2. Highlight on "Work" label (yellow, 500ms)
 3. Underline on "thinking about" label (blue, 800ms)
-4. **Bracket** on reading list — left bracket, red, padding `[28, 5, 14, 5]` for tall+narrow (1050ms)
+4. **Bracket** on reading list — left bracket, red, padding `[18, 6, 12, 6]` (1050ms)
 5. Circle on "consciousness" word (red, 1300ms)
 
 ## Canvas (roughjs)
@@ -42,8 +42,16 @@ Click anywhere on `#dot-layer` to leave a dot. Fresh dots are red, returning-vis
 | `#work-block` | bare | mid-left, -2° | 4 work items |
 | `#thinking-block` | index-card | mid-right, -4° | topics list |
 | `#float-note` | bare | center, +5° | floating question |
-| `#reading-block` | bare | bottom, -1.5° | 4 books with bracket |
+| `#reading-block` | bare | bottom-left, -1.5° | 10 book covers in 3 themed clusters + bracket |
 | `#links-block` | bare | bottom-right, +2.5° | cal.com + email + socials |
+
+## Reading block covers
+Books displayed as face-on cover rectangles (44×58px), absolutely positioned within a 340×155px container, clustered in 3 color-coded theme groups:
+- **Blue** (`#3a5c7a → #4e7a9e`): machines & minds — Dream Machine, Philosopher of Palo Alto, Mindstorms
+- **Green** (`#3d6645 → #547a5c`): embodiment — Spell of the Sensuous, Becoming Animal, Love and Will
+- **Rust** (`#7a3528 → #9e4a3a`): AI futures — Precipice, Otherness & Control AGI, Live Theory Seq., Alignment Problem
+
+Each cover is an `<a>` linking to Goodreads (books) or LessWrong (sequences). Hover shows a `#cover-tip` tooltip with full title + author. Covers lift on hover (`scale(1.18) translateY(-5px)`). No theme labels — grouping is communicated by color alone.
 
 ## Preferences (do not change without asking)
 - No CSS borders for section dividers

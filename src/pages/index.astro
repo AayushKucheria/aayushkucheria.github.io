@@ -114,11 +114,41 @@
     .float-txt { font-size: 0.68rem; font-style: italic; color: #7a6050; font-weight: 300; line-height: 1.5; }
 
     /* READING */
-    #reading-block { bottom: 80px; left: 120px; transform: rotate(-1.5deg); }
-    .r-label { font-size: 1.6rem; font-weight: 700; color: #9a8a6c; display: block; margin-bottom: 0.4rem; }
-    .bk { font-size: 0.7rem; font-weight: 300; color: #4a3820; display: block; margin-bottom: 0.16rem; }
-    .bk a { color: inherit; text-decoration: none; border-bottom: 1px solid #9a8a6c55; }
-    .bk a:hover { color: #c8341a; }
+    #reading-block { bottom: 68px; left: 55px; transform: rotate(-1.5deg); }
+    .r-label { font-size: 1.6rem; font-weight: 700; color: #9a8a6c; display: block; margin-bottom: 0.6rem; }
+    #book-list { position: relative; width: 340px; height: 155px; }
+    .cover {
+      position: absolute; width: 44px; height: 58px;
+      border-radius: 1px 3px 3px 1px;
+      box-shadow: 2px 3px 8px #00000030, inset -3px 0 6px #00000018;
+      display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+      padding: 4px 3px 5px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      cursor: pointer; pointer-events: auto; text-decoration: none;
+    }
+    .cover:hover { transform: scale(1.18) translateY(-5px) !important; box-shadow: 3px 6px 18px #00000045; z-index: 20 !important; }
+    .cover::before { content: ''; position: absolute; top: 5px; left: 5px; right: 5px; height: 1px; background: rgba(255,255,255,0.2); }
+    .cover::after  { content: ''; position: absolute; top: 0; right: 0; width: 3px; height: 100%; background: rgba(0,0,0,0.12); border-radius: 0 2px 2px 0; }
+    .cover-title { writing-mode: unset; font-size: 0.36rem; font-weight: 600; color: rgba(255,255,255,0.9); text-align: center; line-height: 1.25; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+    .t1 { background: linear-gradient(160deg, #3a5c7a, #4e7a9e); }
+    .t2 { background: linear-gradient(160deg, #3d6645, #547a5c); }
+    .t3 { background: linear-gradient(160deg, #7a3528, #9e4a3a); }
+    #c-dream  { left: 2px;   top: 4px;  transform: rotate(-3deg);   z-index: 3; }
+    #c-phil   { left: 50px;  top: 0px;  transform: rotate(1.5deg);  z-index: 2; }
+    #c-mind   { left: 96px;  top: 6px;  transform: rotate(-1deg);   z-index: 3; }
+    #c-spell  { left: 155px; top: 2px;  transform: rotate(2.5deg);  z-index: 3; }
+    #c-become { left: 200px; top: 8px;  transform: rotate(-2deg);   z-index: 2; }
+    #c-love   { left: 246px; top: 3px;  transform: rotate(1deg);    z-index: 3; }
+    #c-precip { left: 10px;  top: 86px; transform: rotate(-2deg);   z-index: 3; }
+    #c-other  { left: 57px;  top: 80px; transform: rotate(2deg);    z-index: 2; }
+    #c-live   { left: 110px; top: 88px; transform: rotate(-1.5deg); z-index: 3; }
+    #c-align  { left: 160px; top: 82px; transform: rotate(3deg);    z-index: 2; }
+    #cover-tip {
+      position: fixed; background: #faf7f0; border-radius: 3px;
+      padding: 5px 9px; font-size: 0.65rem; color: #4a3820;
+      box-shadow: 1px 2px 6px #00000020; pointer-events: none; display: none; z-index: 30;
+      max-width: 200px; line-height: 1.4;
+    }
 
     /* LINKS */
     #links-block { bottom: 44px; right: 48px; text-align: right; transform: rotate(2.5deg); }
@@ -147,6 +177,7 @@
 
 <canvas id="canvas"></canvas>
 <div id="dot-layer"></div>
+<div id="cover-tip"></div>
 
 <div class="island" id="name-block">
   <div id="hero-name">Aayush<span class="ln2">Kucheria</span></div>
@@ -206,10 +237,16 @@
 <div class="island" id="reading-block">
   <span class="r-label">reading</span>
   <div id="book-list">
-    <span class="bk">The Timeless Way of Building</span>
-    <span class="bk">Seeing Like a State</span>
-    <span class="bk">The Nature of Technology</span>
-    <span class="bk">Finite and Infinite Games</span>
+    <a class="cover t1" id="c-dream"  href="https://www.goodreads.com/book/show/722412.The_Dream_Machine" target="_blank" rel="noopener" data-tip="The Dream Machine — M. Mitchell Waldrop"><span class="cover-title">Dream Machine</span></a>
+    <a class="cover t1" id="c-phil"   href="https://www.goodreads.com/book/show/62707933-the-philosopher-of-palo-alto" target="_blank" rel="noopener" data-tip="The Philosopher of Palo Alto — John Tinnell"><span class="cover-title">Philosopher of Palo Alto</span></a>
+    <a class="cover t1" id="c-mind"   href="https://www.goodreads.com/book/show/703532.Mindstorms" target="_blank" rel="noopener" data-tip="Mindstorms — Seymour Papert"><span class="cover-title">Mindstorms</span></a>
+    <a class="cover t2" id="c-spell"  href="https://www.goodreads.com/book/show/48582.The_Spell_of_the_Sensuous" target="_blank" rel="noopener" data-tip="The Spell of the Sensuous — David Abram"><span class="cover-title">Spell of the Sensuous</span></a>
+    <a class="cover t2" id="c-become" href="https://www.goodreads.com/book/show/7822953-becoming-animal" target="_blank" rel="noopener" data-tip="Becoming Animal — David Abram"><span class="cover-title">Becoming Animal</span></a>
+    <a class="cover t2" id="c-love"   href="https://www.goodreads.com/book/show/1373530.Love_and_Will" target="_blank" rel="noopener" data-tip="Love and Will — Rollo May"><span class="cover-title">Love &amp; Will</span></a>
+    <a class="cover t3" id="c-precip" href="https://www.goodreads.com/book/show/50485582-the-precipice" target="_blank" rel="noopener" data-tip="The Precipice — Toby Ord"><span class="cover-title">Precipice</span></a>
+    <a class="cover t3" id="c-other"  href="https://www.lesswrong.com/s/BbAvHtorCZqp97X9W" target="_blank" rel="noopener" data-tip="Otherness and Control in the Age of AGI — Joe Carlsmith"><span class="cover-title">Otherness &amp; Control AGI</span></a>
+    <a class="cover t3" id="c-live"   href="https://www.lesswrong.com/s/aMz2JMvgXrLBkq4h3" target="_blank" rel="noopener" data-tip="Live Theory Sequence — Sahil"><span class="cover-title">Live Theory Seq.</span></a>
+    <a class="cover t3" id="c-align"  href="https://www.goodreads.com/book/show/50489349-the-alignment-problem" target="_blank" rel="noopener" data-tip="The Alignment Problem — Brian Christian"><span class="cover-title">Alignment Problem</span></a>
   </div>
 </div>
 
@@ -330,7 +367,7 @@
 
     setTimeout(() => annotate(document.getElementById('book-list'), {
       type: 'bracket', color: '#c8341a',
-      roughness: 3.5, strokeWidth: 2.5, padding: [28, 5, 14, 5], brackets: ['left'], animationDuration: 700,
+      roughness: 3.8, strokeWidth: 2.5, padding: [18, 6, 12, 6], brackets: ['left'], animationDuration: 700,
     }).show(), 1050);
 
     setTimeout(() => annotate(document.getElementById('consciousness-word'), {
@@ -338,6 +375,13 @@
       roughness: 3.5, strokeWidth: 2.2, padding: 5, animationDuration: 600,
     }).show(), 1300);
   }
+
+  const tip = document.getElementById('cover-tip');
+  document.querySelectorAll('.cover').forEach(c => {
+    c.addEventListener('mouseenter', () => { tip.style.display = 'block'; tip.textContent = c.dataset.tip; });
+    c.addEventListener('mousemove', e => { tip.style.left = (e.clientX + 12) + 'px'; tip.style.top = (e.clientY - 30) + 'px'; });
+    c.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
+  });
 
   window.addEventListener('load', () => { drawAll(); runAnnotations(); });
   window.addEventListener('resize', drawAll);
