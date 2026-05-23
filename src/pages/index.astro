@@ -40,16 +40,16 @@
       --sz-cover:   clamp(0.42rem, 0.54vw, 0.65rem); /* book spine text */
 
       /* color palette */
-      --clr-wall:   #d4c4a8;   /* outer wall / page bg */
-      --clr-board:  #f3eadb;   /* corkboard surface */
-      --clr-paper:  #fdfaf4;   /* cards & torn paper */
-      --clr-sticky: #f5e97a;   /* sticky note yellow */
-      --clr-ink:    #1c1a14;   /* primary text */
-      --clr-red:    #c8341a;   /* accent — red */
-      --clr-blue:   #2a5e8c;   /* accent — blue */
-      --clr-tan:    #c8a87a;   /* annotation / roughjs tan */
-      --clr-brown:  #5a4830;   /* body text brown */
-      --clr-muted:  #7a6a50;   /* secondary / muted text */
+      --clr-wall:   #b0a890;   /* outer wall — undyed linen */
+      --clr-board:  #ddd5be;   /* board surface — unbleached canvas */
+      --clr-paper:  #ede8dc;   /* cards & torn paper */
+      --clr-sticky: #f0e060;   /* sticky note yellow */
+      --clr-ink:    #2a2218;   /* primary ink — warm near-black */
+      --clr-ink2:   #5a4830;   /* secondary ink — warm brown (labels, subtitles) */
+      --clr-ink3:   #7a6a50;   /* tertiary ink — muted (body text, captions) */
+      --clr-tan:    #b09060;   /* connective tissue — roughjs lines, atmosphere only */
+      --clr-brown:  #5a4830;   /* alias for ink2, kept for compatibility */
+      --clr-muted:  #7a6a50;   /* alias for ink3, kept for compatibility */
 
       /* ── ISLAND POSITIONS — move sections here ─────────── */
       /* name cluster — top-left */
@@ -77,68 +77,65 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
       width: 100%; height: 100%; overflow: hidden;
-      background: var(--clr-wall);
+      background: var(--clr-board);
       font-family: var(--font);
       color: var(--clr-ink);
     }
 
-    #board {
-      position: fixed;
-      inset: 28px;
-      background: var(--clr-board);
-      box-shadow: 0 4px 30px #00000025, 0 1px 6px #00000015;
-    }
-
-    .tape {
-      position: fixed;
-      background: #e8d9a8cc;
-      box-shadow: 0 1px 3px #00000015;
-    }
-    .tape::before {
+    /* Single cloth surface — canvas weave texture */
+    body::before {
       content: '';
-      position: absolute; inset: 0;
-      border-top: 1px solid #c8b87855;
-      border-bottom: 1px solid #c8b87855;
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        repeating-linear-gradient(0deg,   transparent 0px, transparent 1px, rgba(40,28,10,0.055) 1px, rgba(40,28,10,0.055) 2px),
+        repeating-linear-gradient(90deg,  transparent 0px, transparent 1px, rgba(40,28,10,0.045) 1px, rgba(40,28,10,0.045) 2px),
+        repeating-linear-gradient(92deg,  transparent 0px, transparent 3px, rgba(255,240,200,0.05) 3px, rgba(255,240,200,0.05) 4px),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85 0.02' numOctaves='2' seed='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.22'/%3E%3C/svg%3E");
+      mix-blend-mode: multiply;
     }
-    #tape-tl { top: 1.6vh; left: 5.6vw;  width: 8.3vw;  height: 2vh; transform: rotate(-2deg); }
-    #tape-tr { top: 1.8vh; right: 6.3vw; width: 6.9vw;  height: 2vh; transform: rotate(3deg); }
-    #tape-bl { bottom: 1.6vh; left: 6.9vw;  width: 7.6vw;  height: 2vh; transform: rotate(1.5deg); }
-    #tape-br { bottom: 1.8vh; right: 5.6vw; width: 8vw;    height: 2vh; transform: rotate(-2.5deg); }
-    #tape-l  { top: 45%; left: 1vw;    width: 1.25vw; height: 11.1vh; transform: rotate(2deg); }
-    #tape-r  { top: 40%; right: 1vw;   width: 1.25vw; height: 10vh;   transform: rotate(-1.5deg); }
 
-    #canvas    { position: fixed; inset: 28px; pointer-events: none; z-index: 2; }
-    #dot-layer { position: fixed; inset: 28px; cursor: crosshair; z-index: 3; }
+    #board { position: fixed; inset: 0; }
+
+    #canvas    { position: fixed; inset: 0; pointer-events: none; z-index: 2; }
+    #threads   { position: fixed; inset: 0; pointer-events: none; z-index: 2; }
+    #dot-layer { position: fixed; inset: 0; cursor: crosshair; z-index: 3; }
 
     .splash-wrap { position: fixed; pointer-events: none; }
 
     .island { position: fixed; z-index: 4; pointer-events: none; }
     .island a { pointer-events: auto; }
 
-    .sticky {
-      background: var(--clr-sticky);
-      box-shadow: 2px 4px 14px #00000022;
-      padding: 10px 14px 14px;
+    /* Patch — cloth piece on cloth. Diagonal weave at a different angle from the surface. */
+    .patch {
+      background-color: #d4cab4;
+      box-shadow: 1px 2px 10px #00000014, 0 1px 4px #00000010;
+      background-image:
+        repeating-linear-gradient(42deg,  transparent 0px, transparent 3px, rgba(40,28,10,0.04) 3px, rgba(40,28,10,0.04) 4px),
+        repeating-linear-gradient(135deg, transparent 0px, transparent 3px, rgba(40,28,10,0.03) 3px, rgba(40,28,10,0.03) 4px);
     }
-    .index-card {
-      background: #f0f6ff;
-      box-shadow: 2px 3px 10px #00000015;
+
+    /* Tag — ochre cloth label. Community only. */
+    .tag {
+      position: relative;
+      background: #c0993a;
       padding: 10px 14px 14px;
-      border-top: 3px solid #a8c0e0;
+      box-shadow: 1px 2px 8px #00000018;
     }
-    .torn {
-      background: var(--clr-paper);
-      box-shadow: 2px 3px 10px #00000018;
-      padding: 10px 14px 24px;
-      clip-path: polygon(0 0, 100% 0, 100% 88%, 95% 92%, 90% 89%, 85% 93%, 78% 90%, 72% 95%, 65% 91%, 58% 96%, 50% 92%, 42% 96%, 35% 91%, 28% 95%, 20% 90%, 12% 94%, 5% 90%, 0 93%);
+    .tag::before {
+      content: '';
+      position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        repeating-linear-gradient(0deg,   transparent 0, transparent 2px, rgba(80,50,10,0.08) 2px, rgba(80,50,10,0.08) 3px),
+        repeating-linear-gradient(90deg,  transparent 0, transparent 2px, rgba(80,50,10,0.06) 2px, rgba(80,50,10,0.06) 3px);
+      mix-blend-mode: multiply;
     }
 
     /* PHOTOS — polaroid-style prints */
     .photo-ph {
       position: fixed; z-index: 4;
-      background: #fff;
+      background: #f2ede4;
       padding: 5px 5px 20px;
-      box-shadow: 3px 5px 18px #00000038;
+      box-shadow: 2px 4px 14px #00000030;
     }
     .photo-ph img {
       display: block;
@@ -154,41 +151,38 @@
 
     /* NAME */
     #name-block { top: var(--name-top); left: var(--name-left); transform: rotate(-2deg); }
-    #hero-name { font-size: var(--sz-name); font-weight: 800; line-height: 0.88; letter-spacing: -0.04em; color: var(--clr-red); }
+    #hero-name { font-size: var(--sz-name); font-weight: 800; line-height: 0.88; letter-spacing: -0.04em; color: var(--clr-ink); }
     #hero-name .ln2 { display: block; color: var(--clr-ink); font-size: var(--sz-name2); }
 
     /* PROJECTS — row of pinned cards right of name/photos */
     #projects-block { top: var(--proj-top); left: var(--proj-left); display: flex; gap: 10px; transform: rotate(1deg); }
     .proj-card {
       width: 9vw; min-width: 120px; padding: 11px 14px 16px;
-      background: #faf7f0;
-      box-shadow: 2px 3px 10px #00000018;
       pointer-events: none;
     }
     #projects-block .proj-card:nth-child(1) { transform: rotate(-3deg); }
     #projects-block .proj-card:nth-child(2) { transform: rotate(2.5deg); margin-top: 10px; }
     #projects-block .proj-card:nth-child(3) { transform: rotate(-1.5deg); margin-top: 3px; }
-    .proj-title { font-size: var(--sz-md); font-weight: 700; color: var(--clr-red); margin-bottom: 0.25rem; }
+    .proj-title { font-size: var(--sz-md); font-weight: 700; color: var(--clr-ink); margin-bottom: 0.25rem; }
     .proj-sub   { font-size: var(--sz-sm); color: var(--clr-muted); font-style: italic; line-height: 1.4; }
 
-    /* RESEARCH — torn paper, kept as decorative visual (skeleton content) */
+    /* RESEARCH — cloth patch */
     #research-block { top: var(--research-top); left: var(--research-left); width: 14.6vw; transform: rotate(-3deg); }
-    .res-label { font-size: var(--sz-lg); font-weight: 800; color: var(--clr-blue); display: block; margin-bottom: 0.55rem; }
+    .res-label { font-size: var(--sz-lg); font-weight: 800; color: var(--clr-ink); display: block; margin-bottom: 0.55rem; }
     .res-txt { font-size: var(--sz-sm); font-weight: 300; font-style: italic; color: var(--clr-brown); line-height: 1.65; }
-    .sk { height: 9px; background: #2a5e8c14; border-radius: 2px; margin-bottom: 8px; }
 
     /* WORK — hero, left→center */
     #work-block { top: var(--work-top); left: var(--work-left); width: var(--work-w); transform: rotate(-1.5deg); }
-    #work-lbl { font-size: var(--sz-lg); font-weight: 700; font-style: italic; color: #5a4030; letter-spacing: 0.05em; display: inline-block; margin-bottom: 14px; }
+    #work-lbl { font-size: var(--sz-lg); font-weight: 700; font-style: italic; color: #5a4030; letter-spacing: 0.12em; display: inline-block; margin-bottom: 14px; text-decoration: underline dotted #b09060; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
     .w-area { position: relative; margin-bottom: 28px; }
-    .w-core { background: var(--clr-paper); box-shadow: 2px 4px 14px #00000018; padding: 14px 20px 16px; width: 100%; position: relative; overflow: visible; box-sizing: border-box; }
+    .w-core { padding: 14px 20px 16px; width: 100%; position: relative; overflow: visible; box-sizing: border-box; }
     .w-heading { font-size: var(--sz-2xl); font-weight: 800; color: var(--clr-ink); line-height: 1.1; letter-spacing: -0.02em; }
     .w-subtitle { margin-top: 0.2rem; font-size: var(--sz-body); font-weight: 600; }
-    .w-subtitle a { color: var(--clr-red); text-decoration: none; border-bottom: 1.5px solid #c8341a44; }
-    .w-subtitle a:hover { color: #9a2010; }
+    .w-subtitle a { color: var(--clr-brown); text-decoration: none; border-bottom: 1.5px solid #b0906066; }
+    .w-subtitle a:hover { color: var(--clr-ink); }
     .w-body { font-size: var(--sz-card); font-weight: 300; font-style: italic; color: var(--clr-muted); margin-top: 0.5rem; line-height: 1.62; }
     .stamp-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-    .stamp { display: inline-block; border: 1px solid currentColor; padding: 3px 10px 4px; font-size: var(--sz-sm); font-weight: 400; letter-spacing: 0.02em; line-height: 1.3; background: var(--clr-paper); opacity: 0.75; }
+    .stamp { display: inline-block; border: 1px solid currentColor; padding: 3px 10px 4px; font-size: var(--sz-sm); font-weight: 400; letter-spacing: 0.02em; line-height: 1.3; background: transparent; opacity: 0.75; }
     .pills { display: flex; gap: 7px; margin-top: 11px; padding-top: 10px; border-top: 1px solid #e0d4c077; }
     .pill-card { flex: 1; background: var(--clr-board); border: 1px solid #d4c0a866; padding: 5px 9px 7px; }
     .pill-name { font-size: var(--sz-card); font-weight: 700; color: #6a5038; line-height: 1.2; }
@@ -197,34 +191,15 @@
     /* THINKING — index card, kept as decorative visual (skeleton content) */
     .sk-card { height: 8px; background: #1c1a1412; border-radius: 2px; margin-bottom: 9px; }
 
-    /* INTRO — centered sticky */
-    #intro-block { top: var(--intro-top); left: var(--intro-left); transform: translateX(-40%) rotate(1.5deg); width: 14.4vw; }
-    .intro-txt { font-size: var(--sz-md); font-style: italic; font-weight: 300; color: var(--clr-brown); line-height: 1.65; }
-
-    /* FLOAT NOTE */
-
-    /* COMMUNITY — sticky, mid-right */
+    /* COMMUNITY — ochre cloth tag, the one accent on the board */
     #community-block { top: var(--community-top); right: var(--community-right); width: max(13.1vw, 11rem); transform: rotate(2deg); position: fixed; z-index: 4; }
-    #community-block .sticky { position: relative; }
-    .pin {
-      position: absolute; top: 9px; left: 50%; transform: translateX(-50%);
-      width: 15px; height: 15px; border-radius: 50%;
-      background: radial-gradient(circle at 40% 35%, #e85a3a, #8b2010);
-      box-shadow: 0 2px 5px #00000045, 0 1px 2px #00000030;
-      z-index: 5;
-    }
-    .pin::after {
-      content: ''; position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 5px; height: 5px; border-radius: 50%;
-      background: rgba(255,255,255,0.35);
-    }
+    .knot-emoji { display: block; text-align: center; font-size: 1.1rem; margin-bottom: 4px; line-height: 1; }
     .comm-label { font-size: var(--sz-2xl); font-weight: 800; display: block; margin-bottom: 0.4rem; color: #2a2210; }
     .comm-txt { font-size: var(--sz-body); font-weight: 400; line-height: 1.75; color: #3a2e10; }
 
     /* READING — bottom-right */
     #reading-block { bottom: var(--reading-bottom); right: var(--reading-right); transform: rotate(1deg); }
-    .r-label { font-size: var(--sz-xl); font-weight: 700; color: #9a8a6c; display: block; margin-bottom: 0.5rem; }
+    .r-label { font-size: var(--sz-lg); font-weight: 700; color: #7a6a50; letter-spacing: 0.12em; display: block; margin-bottom: 0.5rem; text-decoration: underline dotted #b09060; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
     #book-list { position: relative; width: 27.1vw; height: 19.8vh; }
     .cover {
       position: absolute; width: 4vw; height: 5.3vw;
@@ -239,9 +214,9 @@
     .cover::before { content: ''; position: absolute; top: 5px; left: 5px; right: 5px; height: 1px; background: rgba(255,255,255,0.2); }
     .cover::after  { content: ''; position: absolute; top: 0; right: 0; width: 4px; height: 100%; background: rgba(0,0,0,0.12); border-radius: 0 2px 2px 0; }
     .cover-title { font-size: var(--sz-cover); font-weight: 600; color: rgba(255,255,255,0.9); text-align: center; line-height: 1.3; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
-    .t1 { background: linear-gradient(160deg, #3a5c7a, #4e7a9e); }
-    .t2 { background: linear-gradient(160deg, #3d6645, #547a5c); }
-    .t3 { background: linear-gradient(160deg, #7a3528, #9e4a3a); }
+    .t1 { background: #4a6272; }
+    .t2 { background: #476055; }
+    .t3 { background: #724038; }
     #c-dream  { left: 0.5%;  top: 2.2%;  transform: rotate(-3deg);   z-index: 3; }
     #c-phil   { left: 16.9%; top: 0%;    transform: rotate(1.5deg);  z-index: 2; }
     #c-mind   { left: 33.3%; top: 2.8%;  transform: rotate(-1deg);   z-index: 3; }
@@ -261,11 +236,11 @@
 
     /* LINKS — top-right */
     #links-block { top: var(--links-top); right: var(--links-right); transform: rotate(-1deg); }
-    .cal-lnk { font-size: var(--sz-lg); font-weight: 700; color: var(--clr-blue); display: block; text-decoration: none; margin-bottom: 0.3rem; }
+    .cal-lnk { font-size: var(--sz-lg); font-weight: 700; color: var(--clr-ink); display: block; text-decoration: none; margin-bottom: 0.3rem; }
     .cal-lnk:hover { text-decoration: underline; }
     .sm-links { display: flex; gap: 1rem; margin-top: 0.4rem; }
     .sm-lnk { font-size: var(--sz-body); font-weight: 300; color: var(--clr-brown); font-style: italic; text-decoration: none; }
-    .sm-lnk:hover { color: var(--clr-red); }
+    .sm-lnk:hover { color: var(--clr-ink); }
 
     #hint {
       position: fixed; bottom: 8px; left: 50%; transform: translateX(-50%);
@@ -277,14 +252,8 @@
 <body>
 
 <div id="board"></div>
-<div class="tape" id="tape-tl"></div>
-<div class="tape" id="tape-tr"></div>
-<div class="tape" id="tape-bl"></div>
-<div class="tape" id="tape-br"></div>
-<div class="tape" id="tape-l"></div>
-<div class="tape" id="tape-r"></div>
-
 <canvas id="canvas"></canvas>
+<svg id="threads" xmlns="http://www.w3.org/2000/svg"></svg>
 <div id="dot-layer"></div>
 <div id="cover-tip"></div>
 
@@ -298,22 +267,21 @@
 </div>
 
 <div class="island" id="projects-block">
-  <div class="proj-card">
+  <div class="proj-card patch">
     <div class="proj-title">Project X</div>
     <div class="proj-sub">adding soon</div>
   </div>
-  <div class="proj-card">
+  <div class="proj-card patch">
     <div class="proj-title">Project Y</div>
     <div class="proj-sub">adding soon</div>
   </div>
-  <div class="proj-card">
+  <div class="proj-card patch">
     <div class="proj-title">Project Z</div>
     <div class="proj-sub">adding soon</div>
   </div>
 </div>
 
-<!-- Research — torn paper visual, kept as texture -->
-<div class="island torn" id="research-block">
+<div class="island patch" id="research-block" style="padding: 10px 14px 16px;">
   <span class="res-label">hi, I'm Aayush :)</span>
   <p class="res-txt">I'll say more about myself here soon — check back in a bit.</p>
 </div>
@@ -322,13 +290,13 @@
   <div id="work-lbl">work</div>
 
   <div class="w-area">
-    <div class="w-core">
+    <div class="w-core patch">
       <div class="w-heading">Design × Alignment</div>
       <div class="w-subtitle"><a href="https://groundless.ai" target="_blank">Groundless Alignment →</a></div>
       <div class="w-body">Designed interfaces, built prototypes, owned a project — fellowship to full-time over 1.5 years.</div>
       <div class="stamp-row">
-        <span class="stamp" style="color:#c8341a; transform:rotate(-2.5deg);">AISC 2026 team lead</span>
-        <span class="stamp" style="color:#2a5e8c; transform:rotate(1.5deg);">guest lecturer, Gabriel Weil's AI &amp; Law '26</span>
+        <span class="stamp" style="color:#5a4830; transform:rotate(-2.5deg);">AISC 2026 team lead</span>
+        <span class="stamp" style="color:#5a4830; transform:rotate(1.5deg);">guest lecturer, Gabriel Weil's AI &amp; Law '26</span>
       </div>
       <div class="pills">
         <div class="pill-card">
@@ -344,11 +312,11 @@
   </div>
 
   <div class="w-area">
-    <div class="w-core">
+    <div class="w-core patch">
       <div class="w-heading">Machine Learning</div>
       <div class="w-body">BSc + MSc in machine learning at Aalto University, Finland.</div>
       <div class="stamp-row">
-        <span class="stamp" style="color:#2a5e8c; transform:rotate(-2deg);">Latent ethical landscape of LLMs</span>
+        <span class="stamp" style="color:#5a4830; transform:rotate(-2deg);">Latent ethical landscape of LLMs</span>
         <span class="stamp" style="color:#5a4a30; transform:rotate(-2.5deg);">Gaussian Modelling, University of Helsinki</span>
         <span class="stamp" style="color:#5a4a30; transform:rotate(1.5deg);">talk: transformers</span>
         <span class="stamp" style="color:#5a4a30; transform:rotate(-1deg);">adding links + a couple more interesting things soon</span>
@@ -361,10 +329,10 @@
 
 
 <div id="community-block">
-  <div class="sticky" style="padding-top: 30px;">
-    <div class="pin"></div>
+  <div class="tag">
+    <span class="knot-emoji">🪢</span>
     <span class="comm-label">community</span>
-    <em style="font-size:0.75rem; opacity:0.6;">adding soon</em>
+    <em style="font-size:0.75rem; opacity:0.6; color:#3a2e10;">adding soon</em>
   </div>
 </div>
 
@@ -400,7 +368,7 @@
   import rough from 'roughjs';
   import { annotate } from 'rough-notation';
 
-  const INSET = 28;
+  const INSET = 0;
   const dotLayer = document.getElementById('dot-layer');
   const stored = JSON.parse(localStorage.getItem('wb-v1') || '[]');
   const MAX = 100;
@@ -433,7 +401,7 @@
 
     const sz   = isOld ? (22 + Math.random() * 12) : (32 + Math.random() * 18);
     const rot  = Math.random() * 360;
-    const col  = isOld ? '#5a3a18' : '#c8341a';
+    const col  = isOld ? '#4a3018' : '#8a4820';
     const base = isOld ? 0.12 : (0.68 + Math.random() * 0.18);
 
     const svg = document.createElementNS(NS, 'svg');
@@ -493,54 +461,23 @@
 
   function drawAll() {
     const canvas = document.getElementById('canvas');
-    const W = window.innerWidth - INSET * 2;
-    const H = window.innerHeight - INSET * 2;
+    const W = window.innerWidth;
+    const H = window.innerHeight;
     canvas.width = W;
     canvas.height = H;
     const rc = rough.canvas(canvas);
 
-    function pt(id, fx, fy) {
-      const r = document.getElementById(id).getBoundingClientRect();
-      return {
-        x: (r.left + r.width  * (fx ?? 0.5)) - INSET,
-        y: (r.top  + r.height * (fy ?? 0.5)) - INSET,
-      };
-    }
-
-    const conn = { roughness: 2.8, stroke: '#c8a87a77', strokeWidth: 1.7 };
-    const atm  = { roughness: 3.8, stroke: '#c8a87a28', strokeWidth: 1.0 };
-    const red  = { roughness: 3.2, stroke: '#c8341a33', strokeWidth: 1.2 };
-
-    let a, b;
-
-    // name → work
-    a = pt('name-block', 0.2, 1);     b = pt('work-block', 0.12, 0);
-    rc.curve([[a.x,a.y],[a.x-20,(a.y+b.y)/2+20],[b.x+40,(a.y+b.y)/2-10],[b.x,b.y]], conn);
-
-    // name → research
-    a = pt('name-block', 0.65, 0.4);  b = pt('research-block', 0.4, 1);
-    rc.curve([[a.x,a.y],[a.x+60,(a.y+b.y)/2-30],[b.x-20,(a.y+b.y)/2+10],[b.x,b.y]], conn);
-
-    // name → projects
-    a = pt('name-block', 0.85, 0.5);  b = pt('projects-block', 0.1, 0.5);
-    rc.curve([[a.x,a.y],[a.x+30,(a.y+b.y)/2],[b.x-20,(a.y+b.y)/2],[b.x,b.y]], conn);
-
-    // work → reading
-    a = pt('work-block', 0.7, 1);     b = pt('reading-block', 0.2, 0);
-    rc.curve([[a.x,a.y],[a.x+80,(a.y+b.y)/2+40],[b.x-40,(a.y+b.y)/2-20],[b.x,b.y]], conn);
-
-
-    // Curly brace labelling the work section
+    // Curly brace on the left edge of the work block
     {
       const wb = document.getElementById('work-block').getBoundingClientRect();
-      const bxR = wb.left - INSET - 8;
-      const bxL = wb.left - INSET - 22;
-      const bxM = wb.left - INSET - 30;
-      const yTop = wb.top - INSET;
-      const yBot = wb.bottom - INSET;
+      const bxR = wb.left - 8;
+      const bxL = wb.left - 22;
+      const bxM = wb.left - 30;
+      const yTop = wb.top;
+      const yBot = wb.bottom;
       const yMid = (yTop + yBot) / 2;
       const h = yBot - yTop;
-      const bOpts = { roughness: 2.2, stroke: '#c8a87a', strokeWidth: 1.4 };
+      const bOpts = { roughness: 2.2, stroke: '#b09060', strokeWidth: 1.4 };
       rc.line(bxR, yTop, bxR - 6, yTop, bOpts);
       rc.curve([[bxR - 6, yTop], [bxL, yTop + h * 0.15], [bxM, yTop + h * 0.38], [bxM, yMid]], bOpts);
       rc.curve([[bxM, yMid], [bxM, yBot - h * 0.38], [bxL, yBot - h * 0.15], [bxR - 6, yBot]], bOpts);
@@ -548,39 +485,82 @@
       const ctx = canvas.getContext('2d');
       ctx.save();
       ctx.font = 'italic 600 13px "Shantell Sans", cursive';
-      ctx.fillStyle = '#c8a87a';
+      ctx.fillStyle = '#b09060';
       ctx.textAlign = 'right';
       ctx.translate(bxM - 5, yMid + 5);
       ctx.rotate(-0.08);
       ctx.fillText('work', 0, 0);
       ctx.restore();
     }
+  }
 
-    const rng = (a, b) => a + Math.random() * (b - a);
-    for (let i = 0; i < 24; i++) {
-      const x1 = rng(0, W), y1 = rng(0, H), len = rng(20, 160), ang = rng(0, Math.PI * 2);
-      const x2 = x1 + Math.cos(ang) * len, y2 = y1 + Math.sin(ang) * len;
-      rc.curve([
-        [x1, y1],
-        [x1 + (Math.random() - .5) * 70, y1 + (Math.random() - .5) * 70],
-        [x2 + (Math.random() - .5) * 50, y2 + (Math.random() - .5) * 50],
-        [x2, y2],
-      ], atm);
+  function drawThreads() {
+    const svg = document.getElementById('threads');
+    svg.innerHTML = '';
+    const THREAD = '#9a7a45';
+
+    function edge(id, side, fx, fy) {
+      const r = document.getElementById(id).getBoundingClientRect();
+      if (side === 'r') return { x: r.right,              y: r.top + r.height * (fy ?? 0.5) };
+      if (side === 'b') return { x: r.left + r.width * (fx ?? 0.5), y: r.bottom };
+      if (side === 'l') return { x: r.left,               y: r.top + r.height * (fy ?? 0.5) };
+      if (side === 't') return { x: r.left + r.width * (fx ?? 0.5), y: r.top };
     }
-    for (let i = 0; i < 10; i++) {
-      rc.circle(rng(0, W), rng(0, H), rng(2, 7), { roughness: 3.5, stroke: '#c8a87a33', strokeWidth: 1, fill: 'none' });
+
+    function thread(x1, y1, x2, y2, cx, cy, op) {
+      const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      p.setAttribute('d', `M ${x1},${y1} Q ${cx},${cy} ${x2},${y2}`);
+      p.setAttribute('stroke', THREAD);
+      p.setAttribute('stroke-width', '0.9');
+      p.setAttribute('fill', 'none');
+      p.setAttribute('opacity', op ?? '0.5');
+      p.setAttribute('stroke-linecap', 'round');
+      svg.appendChild(p);
     }
+
+    // Connection threads
+    let a, b;
+
+    // name → work
+    a = edge('name-block', 'b', 0.2);  b = edge('work-block', 't', 0.12);
+    thread(a.x, a.y, b.x, b.y, a.x - 20, (a.y + b.y) / 2 + 15);
+
+    // name → research
+    a = edge('name-block', 'r', null, 0.4);  b = edge('research-block', 'l', null, 0.5);
+    thread(a.x, a.y, b.x, b.y, a.x + 60, (a.y + b.y) / 2 - 20);
+
+    // name → projects
+    a = edge('name-block', 'r', null, 0.5);  b = edge('projects-block', 'l', null, 0.5);
+    thread(a.x, a.y, b.x, b.y, (a.x + b.x) / 2, a.y - 18);
+
+    // work → reading
+    a = edge('work-block', 'b', 0.7);  b = edge('reading-block', 't', 0.2);
+    thread(a.x, a.y, b.x, b.y, a.x + 80, (a.y + b.y) / 2 + 30);
+
+    // Loose thread filaments — stray ends scattered on the cloth
+    const filaments = [
+      [120,180,38,18],[300,420,112,20],[580,80,160,16],[820,300,55,19],
+      [1050,180,200,14],[1280,420,80,18],[200,640,140,17],[450,740,20,20],
+      [700,670,165,15],[950,810,95,22],[1100,590,130,17],[1350,720,45,19],
+      [80,470,75,16],[380,270,190,21],[640,490,30,18],[880,670,155,16],
+      [1200,310,85,20],[1400,170,175,14],[260,550,60,22],[740,200,130,17],
+    ];
+    filaments.forEach(([x, y, ang, len]) => {
+      const rad = ang * Math.PI / 180;
+      const perp = (ang + 90) * Math.PI / 180;
+      const bow = (Math.sin(x * 0.1 + y * 0.07) - 0.5) * 5;
+      const mx = x + Math.cos(rad) * len * 0.5 + Math.cos(perp) * bow;
+      const my = y + Math.sin(rad) * len * 0.5 + Math.sin(perp) * bow;
+      thread(x, y, x + Math.cos(rad) * len, y + Math.sin(rad) * len, mx, my,
+        String(0.15 + (Math.sin(x * 0.3 + y * 0.2) * 0.5 + 0.5) * 0.18));
+    });
   }
 
   function runAnnotations() {
-    const wlbl = annotate(document.getElementById('work-lbl'), {
-      type: 'highlight', color: '#f5e97a', roughness: 3.8, animationDuration: 200,
-    });
-    setTimeout(() => wlbl.show(), 200);
     setTimeout(() => annotate(document.getElementById('book-list'), {
-      type: 'bracket', color: '#c8341a',
+      type: 'bracket', color: '#b09060',
       roughness: 3.8, strokeWidth: 2.5, padding: [18, 6, 12, 6], brackets: ['left'], animationDuration: 700,
-    }).show(), 800);
+    }).show(), 400);
   }
 
   const tip = document.getElementById('cover-tip');
@@ -590,8 +570,8 @@
     c.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
   });
 
-  window.addEventListener('load', () => { drawAll(); runAnnotations(); });
-  window.addEventListener('resize', drawAll);
+  window.addEventListener('load', () => { drawAll(); drawThreads(); runAnnotations(); });
+  window.addEventListener('resize', () => { drawAll(); drawThreads(); });
 </script>
 
 </body>

@@ -1,0 +1,388 @@
+<!--
+  cloth-printed.html
+  Same changes as cloth-refined, but pushing two things further:
+  - Labels: screen-printed feel (uppercase, wider tracking, no underline — pressed into fiber)
+  - Book covers: solid cloth colors, no gradient — like fabric over board covers
+  Compare with cloth-refined to decide: dotted-stitch vs. printed, gradient vs. solid books.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloth — Printed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Shantell Sans', cursive; color: #2a2218; }
+
+body { background: #ddd5be; }
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    repeating-linear-gradient(0deg,   transparent 0px, transparent 1px, rgba(40,28,10,0.055) 1px, rgba(40,28,10,0.055) 2px),
+    repeating-linear-gradient(90deg,  transparent 0px, transparent 1px, rgba(40,28,10,0.045) 1px, rgba(40,28,10,0.045) 2px),
+    repeating-linear-gradient(92deg,  transparent 0px, transparent 3px, rgba(255,240,200,0.05) 3px, rgba(255,240,200,0.05) 4px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85 0.02' numOctaves='2' seed='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.22'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+#threads { position: fixed; inset: 0; pointer-events: none; z-index: 2; }
+
+/* ── PATCH ── */
+.patch {
+  position: relative;
+  background-color: #d4cab4;
+  box-shadow: 1px 2px 10px #00000014, 0 1px 4px #00000010;
+  background-image:
+    repeating-linear-gradient(42deg,  transparent 0px, transparent 3px, rgba(40,28,10,0.04) 3px, rgba(40,28,10,0.04) 4px),
+    repeating-linear-gradient(135deg, transparent 0px, transparent 3px, rgba(40,28,10,0.03) 3px, rgba(40,28,10,0.03) 4px);
+  background-color: #d4cab4;
+}
+
+/* ── TAG ── */
+.tag {
+  position: relative;
+  background: #c0993a;
+  padding: 10px 14px 13px;
+  box-shadow: 1px 2px 8px #00000018;
+}
+.tag::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    repeating-linear-gradient(0deg,   transparent 0, transparent 2px, rgba(80,50,10,0.08) 2px, rgba(80,50,10,0.08) 3px),
+    repeating-linear-gradient(90deg,  transparent 0, transparent 2px, rgba(80,50,10,0.06) 2px, rgba(80,50,10,0.06) 3px);
+  mix-blend-mode: multiply;
+}
+
+/* ── PRINTED LABEL ──
+   Screen-printed feel: uppercase, generous tracking, no underline.
+   Color is pressed into the fabric — not sitting on top.
+   Heavier and more deliberate than stitched.
+*/
+.print-lbl {
+  font-size: 0.72rem;
+  font-weight: 800;
+  font-style: normal;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #6a5838;
+  opacity: 0.85;
+  display: inline-block;
+  margin-bottom: 14px;
+}
+
+/* ── THREAD KNOT ── */
+.knot {
+  position: absolute;
+  top: -10px; left: 50%;
+  transform: translateX(-50%);
+  display: block;
+  z-index: 5;
+}
+
+.island { position: fixed; z-index: 4; }
+
+/* NAME */
+#name-block { top: 5vh; left: 13.5vw; transform: rotate(-2deg); }
+#hero-name  { font-size: clamp(3.5rem,5.5vw,7rem); font-weight: 800; line-height: 0.88; letter-spacing: -0.04em; color: #2a2218; }
+#hero-name .ln2 { display: block; font-size: clamp(2.8rem,4.3vw,5.5rem); }
+
+/* PHOTOS */
+.photo-ph {
+  position: fixed; z-index: 4;
+  background: #f2ede4;
+  padding: 5px 5px 20px;
+  box-shadow: 2px 4px 14px #00000030;
+  transition: transform 0.15s, box-shadow 0.15s; cursor: pointer;
+}
+.photo-ph img { display: block; width: 5.3vw; height: 6vw; object-fit: cover; }
+.photo-ph:hover { transform: scale(1.6) translateY(-5px) !important; box-shadow: 4px 8px 24px #00000050; z-index: 20; }
+#photo-1 { top: 5vh;   left: 6.8vw;  transform: rotate(7deg);  z-index: 6; }
+#photo-2 { top: 8vh;   left: 34.7vw; transform: rotate(-5deg); z-index: 5; }
+#photo-3 { top: 5.1vh; left: 39.7vw; transform: rotate(2.5deg); }
+#photo-4 { top: 5.6vh; left: 2.5vw;  transform: rotate(-6deg); }
+
+/* PROJECTS */
+#projects-block { top: 10vh; left: 50vw; display: flex; gap: 10px; transform: rotate(1deg); }
+.proj-card { width: 9vw; min-width: 120px; padding: 11px 14px 16px; }
+#projects-block .proj-card:nth-child(1) { transform: rotate(-3deg); }
+#projects-block .proj-card:nth-child(2) { transform: rotate(2.5deg); margin-top: 10px; }
+#projects-block .proj-card:nth-child(3) { transform: rotate(-1.5deg); margin-top: 3px; }
+.proj-title { font-size: 0.95rem; font-weight: 700; color: #2a2218; margin-bottom: 0.25rem; }
+.proj-sub   { font-size: 0.78rem; color: #7a6a50; font-style: italic; line-height: 1.4; }
+
+/* WORK */
+#work-block { top: 21.7vh; left: 3.3vw; width: max(40.3vw, 500px); transform: rotate(-1.5deg); }
+.w-area { margin-bottom: 20px; }
+.w-core { padding: 14px 20px 16px; width: 100%; }
+.w-heading  { font-size: 1.5rem; font-weight: 800; color: #2a2218; line-height: 1.1; letter-spacing: -0.02em; }
+.w-subtitle { margin-top: 0.2rem; font-size: 0.9rem; font-weight: 600; }
+.w-subtitle a { color: #5a4830; text-decoration: none; border-bottom: 1.5px solid #b0906066; }
+.w-subtitle a:hover { color: #2a2218; }
+.w-body { font-size: 0.84rem; font-weight: 300; font-style: italic; color: #7a6a50; margin-top: 0.5rem; line-height: 1.62; }
+.stamp-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.stamp { display: inline-block; border: 1px solid currentColor; padding: 3px 10px 4px; font-size: 0.78rem; font-weight: 400; letter-spacing: 0.02em; line-height: 1.3; opacity: 0.75; }
+.pills { display: flex; gap: 7px; margin-top: 11px; padding-top: 10px; border-top: 1px solid #e0d4c077; }
+.pill-card { flex: 1; background: #cfc5b0; border: 1px solid #c0b09066; padding: 5px 9px 7px; }
+.pill-name { font-size: 0.84rem; font-weight: 700; color: #6a5038; line-height: 1.2; }
+.pill-desc { font-size: 0.78rem; font-weight: 300; font-style: italic; color: #9a8060; margin-top: 3px; line-height: 1.45; }
+
+/* RESEARCH */
+#research-block { top: 30vh; left: 48.6vw; width: 14.6vw; transform: rotate(-3deg); z-index: 4; }
+.res-label { font-size: 1.1rem; font-weight: 800; color: #2a2210; display: block; margin-bottom: 0.5rem; }
+.res-txt   { font-size: 0.78rem; font-weight: 300; font-style: italic; color: #5a4010; line-height: 1.65; }
+
+/* INTRO */
+#intro-block { top: 38%; left: 54%; transform: translateX(-40%) rotate(1.5deg); width: 14.4vw; z-index: 4; }
+.intro-txt { font-size: 0.95rem; font-style: italic; font-weight: 300; color: #3a2c10; line-height: 1.65; }
+
+/* COMMUNITY */
+#community-block { top: 24.4vh; right: 3.6vw; width: max(13.1vw, 11rem); transform: rotate(2deg); position: fixed; z-index: 4; }
+.comm-label { font-size: 1.5rem; font-weight: 800; display: block; margin-bottom: 0.4rem; color: #2a2210; }
+.comm-txt   { font-size: 0.9rem; line-height: 1.75; color: #3a2e10; }
+
+/* LINKS */
+#links-block { top: 4.9vh; right: 3.6vw; transform: rotate(-1deg); z-index: 4; }
+.cal-lnk  { font-size: 1.1rem; font-weight: 700; color: #2a2218; display: block; text-decoration: none; margin-bottom: 0.3rem; }
+.cal-lnk:hover { text-decoration: underline; }
+.sm-links { display: flex; gap: 1rem; margin-top: 0.4rem; }
+.sm-lnk   { font-size: 0.9rem; font-weight: 300; color: #5a4830; font-style: italic; text-decoration: none; }
+.sm-lnk:hover { color: #2a2218; }
+
+/* READING */
+#reading-block { bottom: 5.8vh; right: 3.3vw; transform: rotate(1deg); z-index: 4; }
+.r-label {
+  font-size: 0.7rem; font-weight: 800; letter-spacing: 0.22em;
+  text-transform: uppercase; color: #6a5838; opacity: 0.85;
+  display: block; margin-bottom: 0.65rem;
+}
+
+#book-list { position: relative; width: 27.1vw; height: 19.8vh; }
+.cover {
+  position: absolute; width: 4vw; height: 5.3vw;
+  border-radius: 1px 3px 3px 1px;
+  box-shadow: 2px 3px 8px #00000028, inset -3px 0 5px #00000018;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+  padding: 6px 5px 7px; text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+/* Cloth texture on covers */
+.cover::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient(160deg, transparent 0, transparent 3px, rgba(255,255,255,0.05) 3px, rgba(255,255,255,0.05) 4px),
+    repeating-linear-gradient(250deg, transparent 0, transparent 3px, rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px);
+  border-radius: inherit;
+}
+.cover::after { content: ''; position: absolute; top: 0; right: 0; width: 3px; height: 100%; background: rgba(0,0,0,0.12); border-radius: 0 2px 2px 0; }
+.cover:hover { transform: scale(1.18) translateY(-5px) !important; box-shadow: 3px 6px 18px #00000045; z-index: 20 !important; }
+.cover-title { font-size: clamp(0.42rem,0.54vw,0.65rem); font-weight: 600; color: rgba(255,255,255,0.85); text-align: center; line-height: 1.3; position: relative; }
+
+/* Solid cloth colors — like fabric stretched over board covers.
+   No gradient, just flat dyed cloth with a slight texture from ::before. */
+.t1 { background: #4a6272; }   /* slate-blue — denim/indigo family */
+.t2 { background: #476055; }   /* sage-green — muted botanical */
+.t3 { background: #724038; }   /* rust-brown — terracotta clay */
+
+#c-dream  { left: 0.5%;  top: 2.2%;  transform: rotate(-3deg);   z-index: 3; }
+#c-phil   { left: 16.9%; top: 0%;    transform: rotate(1.5deg);  z-index: 2; }
+#c-mind   { left: 33.3%; top: 2.8%;  transform: rotate(-1deg);   z-index: 3; }
+#c-spell  { left: 49.7%; top: 1.1%;  transform: rotate(2.5deg);  z-index: 3; }
+#c-become { left: 66.2%; top: 3.9%;  transform: rotate(-2deg);   z-index: 2; }
+#c-love   { left: 82.6%; top: 1.7%;  transform: rotate(1deg);    z-index: 3; }
+#c-precip { left: 2.1%;  top: 51.7%; transform: rotate(-2deg);   z-index: 3; }
+#c-other  { left: 19%;   top: 48.9%; transform: rotate(2deg);    z-index: 2; }
+#c-live   { left: 35.4%; top: 52.8%; transform: rotate(-1.5deg); z-index: 3; }
+#c-align  { left: 51.8%; top: 49.4%; transform: rotate(3deg);    z-index: 2; }
+
+#hint { position: fixed; bottom: 8px; left: 50%; transform: translateX(-50%); font-size: 0.6rem; font-style: italic; color: #8a7248; opacity: 0.6; pointer-events: none; z-index: 10; }
+</style>
+</head>
+<body>
+
+<svg id="threads" xmlns="http://www.w3.org/2000/svg"></svg>
+
+<div class="photo-ph" id="photo-1"><img src="/pics/eagx_image.jpg" alt="" style="object-position:center 15%"></div>
+<div class="photo-ph" id="photo-2"><img src="/pics/wappu_image.JPG" alt="" style="object-position:center 20%"></div>
+<div class="photo-ph" id="photo-3"><img src="/pics/amazon.jpg" alt="" style="object-position:center 10%"></div>
+<div class="photo-ph" id="photo-4"><img src="/pics/stupid_image.jpg" alt="" style="object-position:center 15%"></div>
+
+<div class="island" id="name-block">
+  <div id="hero-name">Aayush<span class="ln2">Kucheria</span></div>
+</div>
+
+<div class="island" id="projects-block">
+  <div class="proj-card patch">
+    <div class="proj-title">Project X</div>
+    <div class="proj-sub">adding soon</div>
+  </div>
+  <div class="proj-card patch">
+    <div class="proj-title">Project Y</div>
+    <div class="proj-sub">adding soon</div>
+  </div>
+  <div class="proj-card patch">
+    <div class="proj-title">Project Z</div>
+    <div class="proj-sub">adding soon</div>
+  </div>
+</div>
+
+<div class="island" id="work-block">
+  <div class="print-lbl">work</div>
+  <div class="w-area">
+    <div class="w-core patch">
+      <div class="w-heading">Design × Alignment</div>
+      <div class="w-subtitle"><a href="#">Groundless Alignment →</a></div>
+      <div class="w-body">Designed interfaces, built prototypes, owned a project — fellowship to full-time over 1.5 years.</div>
+      <div class="stamp-row">
+        <span class="stamp" style="color:#5a4830; transform:rotate(-2.5deg);">AISC 2026 team lead</span>
+        <span class="stamp" style="color:#5a4830; transform:rotate(1.5deg);">guest lecturer, Gabriel Weil's AI &amp; Law '26</span>
+      </div>
+      <div class="pills">
+        <div class="pill-card">
+          <div class="pill-name">ACL Workshop 2025</div>
+          <div class="pill-desc">adding soon</div>
+        </div>
+        <div class="pill-card">
+          <div class="pill-name">PracticeSpace, co-founder</div>
+          <div class="pill-desc">LLM simulations of therapy patients for trainees.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="w-area">
+    <div class="w-core patch">
+      <div class="w-heading">Machine Learning</div>
+      <div class="w-body">BSc + MSc in machine learning at Aalto University, Finland.</div>
+      <div class="stamp-row">
+        <span class="stamp" style="color:#5a4830; transform:rotate(-2deg);">Latent ethical landscape of LLMs</span>
+        <span class="stamp" style="color:#5a4a30; transform:rotate(1.5deg);">Gaussian Modelling, University of Helsinki</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="island" id="research-block">
+  <div class="tag">
+    <span class="res-label">hi, I'm Aayush :)</span>
+    <p class="res-txt">I'll say more about myself here soon — check back in a bit.</p>
+  </div>
+</div>
+
+<div class="island" id="intro-block">
+  <div class="tag">
+    <p class="intro-txt">thinking about minds, machines, and the friction between them.</p>
+  </div>
+</div>
+
+<div id="community-block">
+  <div class="tag" style="padding-top: 22px; position: relative;">
+    <svg class="knot" viewBox="0 0 22 22" width="22" height="22" xmlns="http://www.w3.org/2000/svg" style="overflow:visible;">
+      <path d="M 11,0 L 11,6 C 11,6 6,7 6,11 C 6,15 9,16 11,15 C 13,16 16,15 16,11 C 16,7 11,6 11,6" stroke="#8a6a30" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="11" cy="11" r="1.5" fill="#8a6a30" opacity="0.7"/>
+      <line x1="11" y1="15" x2="11" y2="22" stroke="#8a6a30" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+    </svg>
+    <span class="comm-label">community</span>
+    <em style="font-size:0.75rem; opacity:0.65; color:#3a2e10;">adding soon</em>
+  </div>
+</div>
+
+<div class="island" id="reading-block">
+  <span class="r-label">bookshelf</span>
+  <div id="book-list">
+    <a class="cover t1" id="c-dream"  href="#"><span class="cover-title">Dream Machine</span></a>
+    <a class="cover t1" id="c-phil"   href="#"><span class="cover-title">Philosopher of Palo Alto</span></a>
+    <a class="cover t1" id="c-mind"   href="#"><span class="cover-title">Mindstorms</span></a>
+    <a class="cover t2" id="c-spell"  href="#"><span class="cover-title">Spell of the Sensuous</span></a>
+    <a class="cover t2" id="c-become" href="#"><span class="cover-title">Becoming Animal</span></a>
+    <a class="cover t2" id="c-love"   href="#"><span class="cover-title">Love &amp; Will</span></a>
+    <a class="cover t3" id="c-precip" href="#"><span class="cover-title">Precipice</span></a>
+    <a class="cover t3" id="c-other"  href="#"><span class="cover-title">Otherness &amp; AGI</span></a>
+    <a class="cover t3" id="c-live"   href="#"><span class="cover-title">Live Theory Seq.</span></a>
+    <a class="cover t3" id="c-align"  href="#"><span class="cover-title">Alignment Problem</span></a>
+  </div>
+</div>
+
+<div class="island" id="links-block">
+  <a class="cal-lnk" href="#">→ book a call</a>
+  <a class="sm-lnk" href="#">aayush.kucheria@gmail.com</a>
+  <div class="sm-links">
+    <a class="sm-lnk" href="#">GitHub</a>
+    <a class="sm-lnk" href="#">LinkedIn</a>
+    <a class="sm-lnk" href="#">X</a>
+  </div>
+</div>
+
+<div id="hint">cloth-printed</div>
+
+<script>
+window.addEventListener('load', () => {
+  const svg = document.getElementById('threads');
+  const THREAD = '#9a7a45';
+
+  function edge(el, side) {
+    const r = el.getBoundingClientRect();
+    if (side === 'r') return { x: r.right,              y: r.top + r.height / 2 };
+    if (side === 'b') return { x: r.left + r.width / 2, y: r.bottom };
+    if (side === 'l') return { x: r.left,               y: r.top + r.height / 2 };
+    if (side === 't') return { x: r.left + r.width / 2, y: r.top };
+  }
+  function mid(el) {
+    const r = el.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  }
+
+  function thread(x1, y1, x2, y2, cx, cy, opts = {}) {
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p.setAttribute('d', `M ${x1},${y1} Q ${cx},${cy} ${x2},${y2}`);
+    p.setAttribute('stroke', opts.color || THREAD);
+    p.setAttribute('stroke-width', opts.w || '0.9');
+    p.setAttribute('fill', 'none');
+    p.setAttribute('opacity', opts.op || '0.5');
+    p.setAttribute('stroke-linecap', 'round');
+    svg.appendChild(p);
+  }
+
+  function stray(x, y, angle, len) {
+    const rad = angle * Math.PI / 180;
+    const perp = (angle + 90) * Math.PI / 180;
+    const bow = (Math.random() - 0.5) * 6;
+    const mx = x + Math.cos(rad) * len * 0.4 + Math.cos(perp) * bow;
+    const my = y + Math.sin(rad) * len * 0.4 + Math.sin(perp) * bow;
+    thread(x, y, x + Math.cos(rad) * len, y + Math.sin(rad) * len, mx, my,
+      { w: '0.7', op: String(0.18 + Math.random() * 0.18) });
+  }
+
+  const filaments = [
+    [120,180,38,18],[300,420,112,22],[580,80,160,16],[820,300,55,20],
+    [1050,180,200,14],[1280,420,80,19],[200,650,140,17],[450,750,20,21],
+    [700,680,165,15],[950,820,95,23],[1100,600,130,18],[1350,730,45,20],
+    [80,480,75,16],[380,280,190,22],[640,500,30,19],[880,680,155,17],
+    [1200,320,85,21],[1400,180,175,15],
+  ];
+  filaments.forEach(([x,y,a,l]) => stray(x,y,a,l));
+
+  const name = document.getElementById('name-block');
+  const work = document.getElementById('work-block');
+  const proj = document.getElementById('projects-block');
+  const read = document.getElementById('reading-block');
+  const res  = document.getElementById('research-block');
+
+  const nB = edge(name,'b'), wT = edge(work,'t');
+  thread(nB.x, nB.y, wT.x+40, wT.y, nB.x-18, (nB.y+wT.y)/2+10);
+
+  const nR = edge(name,'r'), pL = edge(proj,'l');
+  thread(nR.x, nR.y, pL.x, pL.y, (nR.x+pL.x)/2, nR.y-18);
+
+  const nM = mid(name), rM = mid(res);
+  thread(nM.x+50, nM.y+15, rM.x-15, rM.y, (nM.x+rM.x)/2+10, nM.y+5);
+
+  const wB = edge(work,'b'), rdT = edge(read,'t');
+  thread(wB.x+50, wB.y, rdT.x-30, rdT.y, wB.x+60, (wB.y+rdT.y)/2+30);
+});
+</script>
+</body>
+</html>

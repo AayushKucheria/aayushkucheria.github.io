@@ -1,0 +1,367 @@
+<!--
+  Cloth primitives — EXPRESSED variant.
+
+  Same primitives as cloth-subtle.html, but the cloth metaphor is more committed:
+  - Patch: subtle frayed edge via clip-path polygon (scissors-cut cloth feel, not torn paper)
+  - Tag: richer ochre, tiny punched hole at top suggesting thread attachment
+  - Thread: 1.4px, slightly warmer, small dot anchors at endpoints
+
+  Still restrained — this is "you can tell it's cloth" not "look, it's a craft project."
+  Compare with cloth-subtle.html to decide how much cloth to put in.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cloth — Expressed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'Shantell Sans', cursive; color: #2a2218; }
+
+/* ── Single cloth surface ── */
+body { background: #ddd5be; }
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    repeating-linear-gradient(0deg,   transparent 0px, transparent 1px, rgba(40,28,10,0.055) 1px, rgba(40,28,10,0.055) 2px),
+    repeating-linear-gradient(90deg,  transparent 0px, transparent 1px, rgba(40,28,10,0.045) 1px, rgba(40,28,10,0.045) 2px),
+    repeating-linear-gradient(92deg,  transparent 0px, transparent 3px, rgba(255,240,200,0.05) 3px, rgba(255,240,200,0.05) 4px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85 0.02' numOctaves='2' seed='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.22'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+#threads { position: fixed; inset: 0; pointer-events: none; z-index: 2; }
+
+/* ── PATCH — cloth cut with scissors ──
+   Clip-path polygon traces each edge with small offsets (~4px equivalent at full size).
+   This is a scissors-cut cloth edge — irregular but not ragged, not torn paper.
+   The texture uses diagonal weave at a different angle from the board.
+*/
+.patch {
+  position: relative;
+  background-color: #cec4ae;    /* distinctly different from board #ddd5be */
+  box-shadow: 1px 3px 12px #00000018, 0 1px 4px #0000000e;
+  clip-path: polygon(
+    0.4% 0.8%,   19% 0.2%,   38% 0.9%,   57% 0.3%,   76% 0.7%,  99.2% 0.4%,
+    99.6% 24%,   100% 49%,   99.4% 74%,   99.8% 99.2%,
+    80% 99.5%,   61% 98.8%,  42% 99.6%,   23% 99.1%,   0.6% 99.7%,
+    0% 75%,      0.5% 50%,   0% 25%
+  );
+  /* diagonal weave — different thread angle from board */
+  background-image:
+    repeating-linear-gradient(38deg, transparent 0px, transparent 3px, rgba(40,28,10,0.05) 3px, rgba(40,28,10,0.05) 4px),
+    repeating-linear-gradient(128deg, transparent 0px, transparent 3px, rgba(40,28,10,0.04) 3px, rgba(40,28,10,0.04) 4px);
+  background-color: #cec4ae;
+}
+
+/* ── TAG — cloth label with punched hole ──
+   Richer ochre. The tiny circle cutout at top-center reads as a string hole.
+   Not over-designed — just enough to say "this is a cloth tag, not a sticky."
+*/
+.tag {
+  position: relative;
+  background: #b08828;
+  padding: 12px 14px 13px;
+  box-shadow: 1px 2px 8px #00000020;
+  /* small hole at top via radial-gradient knockout */
+  --hole: radial-gradient(circle at 50% 0px, transparent 5px, #b08828 5px);
+  /* weave texture */
+  background-image:
+    radial-gradient(circle at 50% 6px, transparent 4px, transparent 4px),
+    repeating-linear-gradient(0deg,   transparent 0, transparent 2px, rgba(80,50,8,0.09) 2px, rgba(80,50,8,0.09) 3px),
+    repeating-linear-gradient(90deg,  transparent 0, transparent 2px, rgba(80,50,8,0.07) 2px, rgba(80,50,8,0.07) 3px);
+  background-color: #b08828;
+}
+/* the hole — small dark circle punched at top center */
+.tag::before {
+  content: '';
+  position: absolute;
+  top: 7px; left: 50%; transform: translateX(-50%);
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #8a6820;
+  box-shadow: inset 0 1px 2px #00000040;
+}
+
+.island { position: fixed; z-index: 4; }
+
+#name-block { top: 5vh; left: 13.5vw; transform: rotate(-2deg); }
+#hero-name  { font-size: clamp(3.5rem,5.5vw,7rem); font-weight: 800; line-height: 0.88; letter-spacing: -0.04em; color: #2a2218; }
+#hero-name .ln2 { display: block; font-size: clamp(2.8rem,4.3vw,5.5rem); }
+
+.photo-ph {
+  position: fixed; z-index: 4;
+  background: #f0e8d8;    /* warm cream — aged polaroid */
+  padding: 5px 5px 20px;
+  box-shadow: 2px 4px 14px #00000030;
+  transition: transform 0.15s, box-shadow 0.15s; cursor: pointer;
+}
+.photo-ph img { display: block; width: 5.3vw; height: 6vw; object-fit: cover; }
+.photo-ph:hover { transform: scale(1.6) translateY(-5px) !important; box-shadow: 4px 8px 24px #00000050; z-index: 20; }
+#photo-1 { top: 5vh;   left: 6.8vw;  transform: rotate(7deg);  z-index: 6; }
+#photo-2 { top: 8vh;   left: 34.7vw; transform: rotate(-5deg); z-index: 5; }
+#photo-3 { top: 5.1vh; left: 39.7vw; transform: rotate(2.5deg); }
+#photo-4 { top: 5.6vh; left: 2.5vw;  transform: rotate(-6deg); }
+
+#projects-block { top: 10vh; left: 50vw; display: flex; gap: 10px; transform: rotate(1deg); }
+.proj-card { width: 9vw; min-width: 120px; padding: 13px 14px 18px; }
+#projects-block .proj-card:nth-child(1) { transform: rotate(-3deg); }
+#projects-block .proj-card:nth-child(2) { transform: rotate(2.5deg); margin-top: 10px; }
+#projects-block .proj-card:nth-child(3) { transform: rotate(-1.5deg); margin-top: 3px; }
+.proj-title { font-size: 0.95rem; font-weight: 700; color: #2a2218; margin-bottom: 0.25rem; }
+.proj-sub   { font-size: 0.78rem; color: #7a6a50; font-style: italic; line-height: 1.4; }
+
+#work-block { top: 21.7vh; left: 3.3vw; width: max(40.3vw, 500px); transform: rotate(-1.5deg); }
+#work-lbl { font-size: 1.1rem; font-weight: 700; font-style: italic; color: #5a4030; letter-spacing: 0.05em; display: inline-block; margin-bottom: 14px; }
+.w-area { margin-bottom: 20px; }
+.w-core { padding: 14px 20px 16px; width: 100%; }
+.w-heading { font-size: 1.5rem; font-weight: 800; color: #2a2218; line-height: 1.1; letter-spacing: -0.02em; }
+.w-subtitle { margin-top: 0.2rem; font-size: 0.9rem; font-weight: 600; }
+.w-subtitle a { color: #5a4830; text-decoration: none; border-bottom: 1.5px solid #b0906066; }
+.w-subtitle a:hover { color: #2a2218; }
+.w-body { font-size: 0.84rem; font-weight: 300; font-style: italic; color: #7a6a50; margin-top: 0.5rem; line-height: 1.62; }
+.stamp-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.stamp { display: inline-block; border: 1px solid currentColor; padding: 3px 10px 4px; font-size: 0.78rem; font-weight: 400; letter-spacing: 0.02em; line-height: 1.3; opacity: 0.75; background: transparent; }
+.pills { display: flex; gap: 7px; margin-top: 11px; padding-top: 10px; border-top: 1px solid #d0c0a066; }
+.pill-card { flex: 1; background: #c8be9866; border: 1px solid #b8a88066; padding: 5px 9px 7px; }
+.pill-name { font-size: 0.84rem; font-weight: 700; color: #6a5038; line-height: 1.2; }
+.pill-desc { font-size: 0.78rem; font-weight: 300; font-style: italic; color: #9a8060; margin-top: 3px; line-height: 1.45; }
+
+#research-block { top: 30vh; left: 48.6vw; width: 14.6vw; transform: rotate(-3deg); z-index: 4; }
+.res-label { font-size: 1.1rem; font-weight: 800; color: #2a1e08; display: block; margin-bottom: 0.5rem; margin-top: 8px; }
+.res-txt   { font-size: 0.78rem; font-weight: 300; font-style: italic; color: #4a3008; line-height: 1.65; }
+
+#intro-block { top: 38%; left: 54%; transform: translateX(-40%) rotate(1.5deg); width: 14.4vw; z-index: 4; }
+.intro-txt { font-size: 0.95rem; font-style: italic; font-weight: 300; color: #3a2808; line-height: 1.65; margin-top: 8px; }
+
+#community-block { top: 24.4vh; right: 3.6vw; width: max(13.1vw, 11rem); transform: rotate(2deg); position: fixed; z-index: 4; }
+.comm-label { font-size: 1.5rem; font-weight: 800; display: block; margin-bottom: 0.4rem; color: #2a1e08; margin-top: 8px; }
+.comm-txt   { font-size: 0.9rem; font-weight: 400; line-height: 1.75; color: #3a2808; }
+
+/* Pin sits above the tag hole */
+.pin {
+  position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+  width: 12px; height: 12px; border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #e85a3a, #8b2010);
+  box-shadow: 0 2px 5px #00000045;
+  z-index: 5;
+}
+
+#links-block { top: 4.9vh; right: 3.6vw; transform: rotate(-1deg); z-index: 4; }
+.cal-lnk  { font-size: 1.1rem; font-weight: 700; color: #2a2218; display: block; text-decoration: none; margin-bottom: 0.3rem; }
+.cal-lnk:hover { text-decoration: underline; }
+.sm-links { display: flex; gap: 1rem; margin-top: 0.4rem; }
+.sm-lnk   { font-size: 0.9rem; font-weight: 300; color: #5a4830; font-style: italic; text-decoration: none; }
+.sm-lnk:hover { color: #2a2218; }
+
+#reading-block { bottom: 5.8vh; right: 3.3vw; transform: rotate(1deg); z-index: 4; }
+.r-label { font-size: 1.3rem; font-weight: 700; color: #9a8a6c; display: block; margin-bottom: 0.5rem; }
+#book-list { position: relative; width: 27.1vw; height: 19.8vh; }
+.cover {
+  position: absolute; width: 4vw; height: 5.3vw;
+  border-radius: 1px 3px 3px 1px;
+  box-shadow: 2px 3px 8px #00000030, inset -3px 0 6px #00000018;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+  padding: 6px 5px 7px; text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.cover:hover { transform: scale(1.18) translateY(-5px) !important; box-shadow: 3px 6px 18px #00000045; z-index: 20 !important; }
+.cover-title { font-size: clamp(0.42rem,0.54vw,0.65rem); font-weight: 600; color: rgba(255,255,255,0.9); text-align: center; line-height: 1.3; }
+.t1 { background: linear-gradient(160deg, #3a5c7a, #4e7a9e); }
+.t2 { background: linear-gradient(160deg, #3d6645, #547a5c); }
+.t3 { background: linear-gradient(160deg, #7a3528, #9e4a3a); }
+#c-dream  { left: 0.5%;  top: 2.2%;  transform: rotate(-3deg);   z-index: 3; }
+#c-phil   { left: 16.9%; top: 0%;    transform: rotate(1.5deg);  z-index: 2; }
+#c-mind   { left: 33.3%; top: 2.8%;  transform: rotate(-1deg);   z-index: 3; }
+#c-spell  { left: 49.7%; top: 1.1%;  transform: rotate(2.5deg);  z-index: 3; }
+#c-become { left: 66.2%; top: 3.9%;  transform: rotate(-2deg);   z-index: 2; }
+#c-love   { left: 82.6%; top: 1.7%;  transform: rotate(1deg);    z-index: 3; }
+#c-precip { left: 2.1%;  top: 51.7%; transform: rotate(-2deg);   z-index: 3; }
+#c-other  { left: 19%;   top: 48.9%; transform: rotate(2deg);    z-index: 2; }
+#c-live   { left: 35.4%; top: 52.8%; transform: rotate(-1.5deg); z-index: 3; }
+#c-align  { left: 51.8%; top: 49.4%; transform: rotate(3deg);    z-index: 2; }
+
+#hint { position: fixed; bottom: 8px; left: 50%; transform: translateX(-50%); font-size: 0.6rem; font-style: italic; color: #8a7248; opacity: 0.6; pointer-events: none; z-index: 10; }
+</style>
+</head>
+<body>
+
+<svg id="threads" xmlns="http://www.w3.org/2000/svg"></svg>
+
+<div class="photo-ph" id="photo-1"><img src="/pics/eagx_image.jpg" alt="" style="object-position:center 15%"></div>
+<div class="photo-ph" id="photo-2"><img src="/pics/wappu_image.JPG" alt="" style="object-position:center 20%"></div>
+<div class="photo-ph" id="photo-3"><img src="/pics/amazon.jpg" alt="" style="object-position:center 10%"></div>
+<div class="photo-ph" id="photo-4"><img src="/pics/stupid_image.jpg" alt="" style="object-position:center 15%"></div>
+
+<div class="island" id="name-block">
+  <div id="hero-name">Aayush<span class="ln2">Kucheria</span></div>
+</div>
+
+<div class="island" id="projects-block">
+  <div class="proj-card patch">
+    <div class="proj-title">Project X</div>
+    <div class="proj-sub">adding soon</div>
+  </div>
+  <div class="proj-card patch">
+    <div class="proj-title">Project Y</div>
+    <div class="proj-sub">adding soon</div>
+  </div>
+  <div class="proj-card patch">
+    <div class="proj-title">Project Z</div>
+    <div class="proj-sub">adding soon</div>
+  </div>
+</div>
+
+<div class="island" id="work-block">
+  <div id="work-lbl">work</div>
+  <div class="w-area">
+    <div class="w-core patch">
+      <div class="w-heading">Design × Alignment</div>
+      <div class="w-subtitle"><a href="#">Groundless Alignment →</a></div>
+      <div class="w-body">Designed interfaces, built prototypes, owned a project — fellowship to full-time over 1.5 years.</div>
+      <div class="stamp-row">
+        <span class="stamp" style="color:#5a4830; transform:rotate(-2.5deg);">AISC 2026 team lead</span>
+        <span class="stamp" style="color:#5a4830; transform:rotate(1.5deg);">guest lecturer, Gabriel Weil's AI &amp; Law '26</span>
+      </div>
+      <div class="pills">
+        <div class="pill-card">
+          <div class="pill-name">ACL Workshop 2025</div>
+          <div class="pill-desc">adding soon</div>
+        </div>
+        <div class="pill-card">
+          <div class="pill-name">PracticeSpace, co-founder</div>
+          <div class="pill-desc">LLM simulations of therapy patients for trainees.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="w-area">
+    <div class="w-core patch">
+      <div class="w-heading">Machine Learning</div>
+      <div class="w-body">BSc + MSc in machine learning at Aalto University, Finland.</div>
+      <div class="stamp-row">
+        <span class="stamp" style="color:#5a4830; transform:rotate(-2deg);">Latent ethical landscape of LLMs</span>
+        <span class="stamp" style="color:#5a4a30; transform:rotate(1.5deg);">Gaussian Modelling, University of Helsinki</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Research — tag with hole -->
+<div class="island" id="research-block">
+  <div class="tag">
+    <span class="res-label">hi, I'm Aayush :)</span>
+    <p class="res-txt">I'll say more about myself here soon — check back in a bit.</p>
+  </div>
+</div>
+
+<!-- Intro — tag with hole -->
+<div class="island" id="intro-block">
+  <div class="tag">
+    <p class="intro-txt">thinking about minds, machines, and the friction between them.</p>
+  </div>
+</div>
+
+<!-- Community — tag with pin over hole -->
+<div id="community-block">
+  <div class="tag" style="padding-top: 26px; position: relative;">
+    <div class="pin"></div>
+    <span class="comm-label">community</span>
+    <em style="font-size:0.75rem; opacity:0.65; color:#3a2808;">adding soon</em>
+  </div>
+</div>
+
+<div class="island" id="reading-block">
+  <span class="r-label">bookshelf</span>
+  <div id="book-list">
+    <a class="cover t1" id="c-dream"  href="#"><span class="cover-title">Dream Machine</span></a>
+    <a class="cover t1" id="c-phil"   href="#"><span class="cover-title">Philosopher of Palo Alto</span></a>
+    <a class="cover t1" id="c-mind"   href="#"><span class="cover-title">Mindstorms</span></a>
+    <a class="cover t2" id="c-spell"  href="#"><span class="cover-title">Spell of the Sensuous</span></a>
+    <a class="cover t2" id="c-become" href="#"><span class="cover-title">Becoming Animal</span></a>
+    <a class="cover t2" id="c-love"   href="#"><span class="cover-title">Love &amp; Will</span></a>
+    <a class="cover t3" id="c-precip" href="#"><span class="cover-title">Precipice</span></a>
+    <a class="cover t3" id="c-other"  href="#"><span class="cover-title">Otherness &amp; AGI</span></a>
+    <a class="cover t3" id="c-live"   href="#"><span class="cover-title">Live Theory Seq.</span></a>
+    <a class="cover t3" id="c-align"  href="#"><span class="cover-title">Alignment Problem</span></a>
+  </div>
+</div>
+
+<div class="island" id="links-block">
+  <a class="cal-lnk" href="#">→ book a call</a>
+  <a class="sm-lnk" href="#">aayush.kucheria@gmail.com</a>
+  <div class="sm-links">
+    <a class="sm-lnk" href="#">GitHub</a>
+    <a class="sm-lnk" href="#">LinkedIn</a>
+    <a class="sm-lnk" href="#">X</a>
+  </div>
+</div>
+
+<div id="hint">cloth — expressed variant</div>
+
+<script>
+window.addEventListener('load', () => {
+  const svg = document.getElementById('threads');
+
+  const THREAD = '#8a6a30';
+  const TW = '1.4';
+
+  function edgeOf(el, side) {
+    const r = el.getBoundingClientRect();
+    const b = document.getElementById('board').getBoundingClientRect();
+    const x0 = r.left - b.left, y0 = r.top - b.top;
+    if (side === 'r') return { x: x0 + r.width,     y: y0 + r.height / 2 };
+    if (side === 'b') return { x: x0 + r.width / 2, y: y0 + r.height };
+    if (side === 'l') return { x: x0,               y: y0 + r.height / 2 };
+    if (side === 't') return { x: x0 + r.width / 2, y: y0 };
+  }
+  function midOf(el) {
+    const r = el.getBoundingClientRect();
+    const b = document.getElementById('board').getBoundingClientRect();
+    return { x: r.left + r.width/2 - b.left, y: r.top + r.height/2 - b.top };
+  }
+
+  function thread(x1, y1, x2, y2, cx, cy) {
+    const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    p.setAttribute('d', `M ${x1},${y1} Q ${cx},${cy} ${x2},${y2}`);
+    p.setAttribute('stroke', THREAD);
+    p.setAttribute('stroke-width', TW);
+    p.setAttribute('fill', 'none');
+    p.setAttribute('opacity', '0.5');
+    p.setAttribute('stroke-linecap', 'round');
+    svg.appendChild(p);
+
+    // small dot anchors at each end
+    for (const [ax, ay] of [[x1,y1],[x2,y2]]) {
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('cx', ax); c.setAttribute('cy', ay); c.setAttribute('r', '2');
+      c.setAttribute('fill', THREAD); c.setAttribute('opacity', '0.4');
+      svg.appendChild(c);
+    }
+  }
+
+  const name = document.getElementById('name-block');
+  const work = document.getElementById('work-block');
+  const proj = document.getElementById('projects-block');
+  const read = document.getElementById('reading-block');
+  const res  = document.getElementById('research-block');
+
+  const nB = edgeOf(name, 'b'), wT = edgeOf(work, 't');
+  thread(nB.x, nB.y, wT.x, wT.y, nB.x - 25, (nB.y + wT.y) / 2);
+
+  const nR = edgeOf(name, 'r'), pL = edgeOf(proj, 'l');
+  thread(nR.x, nR.y, pL.x, pL.y, (nR.x + pL.x) / 2, nR.y - 18);
+
+  const nM = midOf(name), rM = midOf(res);
+  thread(nM.x + 40, nM.y + 20, rM.x - 20, rM.y, (nM.x + rM.x) / 2, nM.y + 10);
+
+  const wB = edgeOf(work, 'b'), rdT = edgeOf(read, 't');
+  thread(wB.x + 60, wB.y, rdT.x - 40, rdT.y, wB.x + 40, (wB.y + rdT.y) / 2 + 20);
+});
+</script>
+</body>
+</html>
