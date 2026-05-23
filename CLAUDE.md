@@ -16,8 +16,30 @@ The site is a **whiteboard pinned to a warm tan wall** — not a scrolling docum
 - Island types: `.sticky` (yellow `#f5e97a`), `.torn` (clip-path torn edge), bare (no wrapper)
 - Colors: red `#c8341a`, blue `#2a5e8c`, tan `#c8a87a`
 
+## Design tokens — edit in ONE place
+All typography and colors are CSS custom properties at the top of the `:root` block in `index.astro`, above the island positions. To change fonts, sizes, or colors globally, edit the token there.
+
+**Tokens covered (change here, updates everywhere):**
+- `--font` — font family
+- `--sz-name` / `--sz-name2` — hero name sizes (clamp)
+- `--sz-2xl` through `--sz-xs` — type scale (1.5rem → 0.6rem), `--sz-cover` for book spines
+- `--clr-wall`, `--clr-board`, `--clr-paper`, `--clr-sticky` — surface backgrounds
+- `--clr-ink`, `--clr-red`, `--clr-blue`, `--clr-tan`, `--clr-brown`, `--clr-muted` — text & accent colors
+
+**Still one-off literals (must edit in-place if changed):**
+- Alpha variants like `#c8341a44`, `#2a5e8c14` — hex alpha suffixes can't reference a CSS var
+- `#9a2010` — red hover darken on `.w-subtitle a:hover`
+- `#5a4030` — `#work-lbl` color (slightly different brown from `--clr-brown`)
+- `#2a2210`, `#3a2e10` — community label/text darks
+- `#6a5038`, `#9a8060` — pill name/desc browns
+- `#9a8a6c` — bookshelf label color
+- `#4a3820`, `#8a7248` — tooltip and hint text
+- `#faf7f0` — proj-card and tooltip bg (close to `--clr-paper` but distinct)
+- Book cover gradients: `.t1` blue, `.t2` green, `.t3` rust
+- **JS canvas / splash colors** in `drawAll()` and `renderSplash()` — `#c8341a`, `#5a3a18`, `#c8a87a` variants — these are literals in the script block and don't read CSS vars
+
 ## Island positions — edit in ONE place
-All island positions are CSS custom properties at the top of the `<style>` block in `index.astro`, with an ASCII map. To move any section, change its variable there — not scattered in individual rules.
+All island positions are CSS custom properties at the top of the `<style>` block in `index.astro` (just below the design tokens), with an ASCII map. To move any section, change its variable there — not scattered in individual rules.
 
 ```
 BOARD ZONES (approx 1440 × 900)
