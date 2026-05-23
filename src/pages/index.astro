@@ -60,12 +60,10 @@
       --photo4-top: 5.6vh;      --photo4-left: 2.5vw;
       /* projects — right of name/photos */
       --proj-top: 10vh;         --proj-left: 50vw;
-      /* research — center board (torn paper, decorative) */
-      --research-top: 30vh;     --research-left: 48.6vw;
-      /* work — left-center hero */
-      --work-top: 21.7vh;       --work-left: 3.3vw;   --work-w: max(40.3vw, 500px);
-      /* intro — center board */
-      --intro-top: 38%;         --intro-left: 54%;
+      /* intro — left, bare on cloth */
+      --research-top: 28vh;     --research-left: 4vw;
+      /* work — horizontal strip, low */
+      --work-top: 52vh;         --work-left: 3.3vw;   --work-w: max(60vw, 700px);
       /* community — center-right sticky */
       --community-top: 24.4vh;  --community-right: 3.6vw;
       /* reading — bottom-right */
@@ -166,17 +164,18 @@
     .proj-title { font-size: var(--sz-md); font-weight: 700; color: var(--clr-ink); margin-bottom: 0.25rem; }
     .proj-sub   { font-size: var(--sz-sm); color: var(--clr-muted); font-style: italic; line-height: 1.4; }
 
-    /* RESEARCH — cloth patch */
-    #research-block { top: var(--research-top); left: var(--research-left); width: 14.6vw; transform: rotate(-3deg); }
-    .res-label { font-size: var(--sz-lg); font-weight: 800; color: var(--clr-ink); display: block; margin-bottom: 0.55rem; }
-    .res-txt { font-size: var(--sz-sm); font-weight: 300; font-style: italic; color: var(--clr-brown); line-height: 1.65; }
+    /* INTRO — bare text on cloth, left side */
+    #research-block { top: var(--research-top); left: var(--research-left); width: 22vw; transform: rotate(-1.5deg); }
+    .res-label { font-size: var(--sz-xl); font-weight: 800; color: var(--clr-ink); display: block; margin-bottom: 0.55rem; }
+    .res-txt { font-size: var(--sz-body); font-weight: 400; color: var(--clr-ink2); line-height: 1.65; }
 
     /* WORK — hero, left→center */
     #work-block { top: var(--work-top); left: var(--work-left); width: var(--work-w); transform: rotate(-1.5deg); }
     #work-lbl { font-size: var(--sz-lg); font-weight: 700; font-style: italic; color: #5a4030; letter-spacing: 0.12em; display: inline-block; margin-bottom: 14px; text-decoration: underline dotted #b09060; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
-    .w-area { position: relative; margin-bottom: 28px; }
+    .w-row { display: flex; gap: 12px; align-items: flex-start; }
+    .w-area { flex: 1; position: relative; }
     .w-core { padding: 14px 20px 16px; width: 100%; position: relative; overflow: visible; box-sizing: border-box; }
-    .w-heading { font-size: var(--sz-2xl); font-weight: 800; color: var(--clr-ink); line-height: 1.1; letter-spacing: -0.02em; }
+    .w-heading { font-size: var(--sz-xl); font-weight: 700; color: var(--clr-ink2); line-height: 1.1; letter-spacing: -0.01em; }
     .w-subtitle { margin-top: 0.2rem; font-size: var(--sz-body); font-weight: 600; }
     .w-subtitle a { color: var(--clr-brown); text-decoration: none; border-bottom: 1.5px solid #b0906066; }
     .w-subtitle a:hover { color: var(--clr-ink); }
@@ -191,11 +190,10 @@
     /* THINKING — index card, kept as decorative visual (skeleton content) */
     .sk-card { height: 8px; background: #1c1a1412; border-radius: 2px; margin-bottom: 9px; }
 
-    /* COMMUNITY — ochre cloth tag, the one accent on the board */
+    /* COMMUNITY — bare, color to be decided */
     #community-block { top: var(--community-top); right: var(--community-right); width: max(13.1vw, 11rem); transform: rotate(2deg); position: fixed; z-index: 4; }
-    .knot-emoji { display: block; text-align: center; font-size: 1.1rem; margin-bottom: 4px; line-height: 1; }
-    .comm-label { font-size: var(--sz-2xl); font-weight: 800; display: block; margin-bottom: 0.4rem; color: #2a2210; }
-    .comm-txt { font-size: var(--sz-body); font-weight: 400; line-height: 1.75; color: #3a2e10; }
+    .comm-label { font-size: var(--sz-xl); font-weight: 800; display: block; margin-bottom: 0.4rem; color: var(--clr-ink); }
+    .comm-txt { font-size: var(--sz-body); font-weight: 400; line-height: 1.75; color: var(--clr-ink2); }
 
     /* READING — bottom-right */
     #reading-block { bottom: var(--reading-bottom); right: var(--reading-right); transform: rotate(1deg); }
@@ -281,14 +279,14 @@
   </div>
 </div>
 
-<div class="island patch" id="research-block" style="padding: 10px 14px 16px;">
+<div class="island" id="research-block">
   <span class="res-label">hi, I'm Aayush :)</span>
   <p class="res-txt">I'll say more about myself here soon — check back in a bit.</p>
 </div>
 
 <div class="island" id="work-block">
   <div id="work-lbl">work</div>
-
+  <div class="w-row">
   <div class="w-area">
     <div class="w-core patch">
       <div class="w-heading">Design × Alignment</div>
@@ -323,17 +321,15 @@
       </div>
     </div>
   </div>
+  </div>
 
 </div>
 
 
 
 <div id="community-block">
-  <div class="tag">
-    <span class="knot-emoji">🪢</span>
-    <span class="comm-label">community</span>
-    <em style="font-size:0.75rem; opacity:0.6; color:#3a2e10;">adding soon</em>
-  </div>
+  <span class="comm-label">community</span>
+  <em style="font-size:0.75rem; opacity:0.5; color:var(--clr-muted);">adding soon</em>
 </div>
 
 <div class="island" id="reading-block">
@@ -461,37 +457,8 @@
 
   function drawAll() {
     const canvas = document.getElementById('canvas');
-    const W = window.innerWidth;
-    const H = window.innerHeight;
-    canvas.width = W;
-    canvas.height = H;
-    const rc = rough.canvas(canvas);
-
-    // Curly brace on the left edge of the work block
-    {
-      const wb = document.getElementById('work-block').getBoundingClientRect();
-      const bxR = wb.left - 8;
-      const bxL = wb.left - 22;
-      const bxM = wb.left - 30;
-      const yTop = wb.top;
-      const yBot = wb.bottom;
-      const yMid = (yTop + yBot) / 2;
-      const h = yBot - yTop;
-      const bOpts = { roughness: 2.2, stroke: '#b09060', strokeWidth: 1.4 };
-      rc.line(bxR, yTop, bxR - 6, yTop, bOpts);
-      rc.curve([[bxR - 6, yTop], [bxL, yTop + h * 0.15], [bxM, yTop + h * 0.38], [bxM, yMid]], bOpts);
-      rc.curve([[bxM, yMid], [bxM, yBot - h * 0.38], [bxL, yBot - h * 0.15], [bxR - 6, yBot]], bOpts);
-      rc.line(bxR, yBot, bxR - 6, yBot, bOpts);
-      const ctx = canvas.getContext('2d');
-      ctx.save();
-      ctx.font = 'italic 600 13px "Shantell Sans", cursive';
-      ctx.fillStyle = '#b09060';
-      ctx.textAlign = 'right';
-      ctx.translate(bxM - 5, yMid + 5);
-      ctx.rotate(-0.08);
-      ctx.fillText('work', 0, 0);
-      ctx.restore();
-    }
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
   }
 
   function drawThreads() {
@@ -556,6 +523,30 @@
     });
   }
 
+  function streamIntro() {
+    const el = document.querySelector('.res-txt');
+    if (!el) return;
+    const words = el.textContent.trim().split(/\s+/);
+    const CHUNK = 6;
+    const chunks = [];
+    for (let i = 0; i < words.length; i += CHUNK) {
+      chunks.push(words.slice(i, i + CHUNK).join(' '));
+    }
+    el.innerHTML = '';
+    chunks.forEach((chunk, i) => {
+      const span = document.createElement('span');
+      span.textContent = (i > 0 ? ' ' : '') + chunk;
+      span.style.cssText = 'opacity:0; transition: opacity 0.28s ease';
+      el.appendChild(span);
+      setTimeout(() => { span.style.opacity = '1'; }, 700 + i * 520);
+    });
+    setTimeout(() => {
+      annotate(document.querySelector('.res-label'), {
+        type: 'underline', color: '#b09060', roughness: 3.5, strokeWidth: 2, animationDuration: 500,
+      }).show();
+    }, 700 + chunks.length * 520 + 400);
+  }
+
   function runAnnotations() {
     setTimeout(() => annotate(document.getElementById('book-list'), {
       type: 'bracket', color: '#b09060',
@@ -570,7 +561,7 @@
     c.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
   });
 
-  window.addEventListener('load', () => { drawAll(); drawThreads(); runAnnotations(); });
+  window.addEventListener('load', () => { drawAll(); drawThreads(); runAnnotations(); streamIntro(); });
   window.addEventListener('resize', () => { drawAll(); drawThreads(); });
 </script>
 
