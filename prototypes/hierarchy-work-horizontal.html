@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Proto 2: Work Horizontal + Low</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/roughjs@4.6.6/bundled/rough.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/rough-notation@0.5.1/lib/rough-notation.iife.js"></script>
+  <style>
+    :root {
+      --font: 'Shantell Sans', cursive;
+      --sz-name:  clamp(3.5rem, 5.5vw, 7rem);
+      --sz-name2: clamp(2.8rem, 4.3vw, 5.5rem);
+      --sz-2xl: 1.5rem; --sz-xl: 1.3rem; --sz-lg: 1.1rem; --sz-md: 0.95rem;
+      --sz-body: 0.9rem; --sz-card: 0.84rem; --sz-sm: 0.78rem; --sz-xs: 0.6rem;
+      --sz-cover: clamp(0.42rem, 0.54vw, 0.65rem);
+      --clr-board: #ddd5be; --clr-ink: #2a2218; --clr-ink2: #5a4830;
+      --clr-tan: #b09060; --clr-brown: #5a4830; --clr-muted: #7a6a50;
+
+      /* PROTO 2: work side-by-side strip pushed low, intro gets upper center */
+      --name-top: 4.9vh;       --name-left: 13.5vw;
+      --photo1-top: 4.9vh;     --photo1-left: 6.8vw;
+      --photo2-top: 8vh;       --photo2-left: 34.7vw;
+      --photo3-top: 5.1vh;     --photo3-left: 39.7vw;
+      --photo4-top: 5.6vh;     --photo4-left: 2.5vw;
+      --proj-top: 10vh;        --proj-left: 50vw;
+      --research-top: 26vh;    --research-left: 50vw;
+      --work-top: 52vh;        --work-left: 3.3vw;    --work-w: max(60vw, 700px);
+      --community-top: 26vh;   --community-right: 3.6vw;
+      --reading-bottom: 3vh;   --reading-right: 3.3vw;
+      --links-top: 4.9vh;      --links-right: 3.6vw;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: var(--clr-board); font-family: var(--font); color: var(--clr-ink); }
+    body::before {
+      content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        repeating-linear-gradient(0deg,   transparent 0px, transparent 1px, rgba(40,28,10,0.055) 1px, rgba(40,28,10,0.055) 2px),
+        repeating-linear-gradient(90deg,  transparent 0px, transparent 1px, rgba(40,28,10,0.045) 1px, rgba(40,28,10,0.045) 2px),
+        repeating-linear-gradient(92deg,  transparent 0px, transparent 3px, rgba(255,240,200,0.05) 3px, rgba(255,240,200,0.05) 4px),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85 0.02' numOctaves='2' seed='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.22'/%3E%3C/svg%3E");
+      mix-blend-mode: multiply;
+    }
+    #canvas  { position: fixed; inset: 0; pointer-events: none; z-index: 2; }
+    #threads { position: fixed; inset: 0; pointer-events: none; z-index: 2; }
+    .island { position: fixed; z-index: 4; pointer-events: none; }
+    .island a { pointer-events: auto; }
+    .patch {
+      background-color: #d4cab4;
+      box-shadow: 1px 2px 10px #00000014, 0 1px 4px #00000010;
+      background-image:
+        repeating-linear-gradient(42deg,  transparent 0px, transparent 3px, rgba(40,28,10,0.04) 3px, rgba(40,28,10,0.04) 4px),
+        repeating-linear-gradient(135deg, transparent 0px, transparent 3px, rgba(40,28,10,0.03) 3px, rgba(40,28,10,0.03) 4px);
+    }
+    .photo-ph { position: fixed; z-index: 4; background: #f2ede4; padding: 5px 5px 20px; box-shadow: 2px 4px 14px #00000030; transition: transform 0.15s, box-shadow 0.15s; cursor: pointer; }
+    .photo-ph img { display: block; width: 5.3vw; height: 6vw; object-fit: cover; }
+    .photo-ph:hover { transform: scale(1.6) translateY(-5px) !important; box-shadow: 4px 8px 24px #00000050; z-index: 20; }
+    #photo-1 { top: var(--photo1-top); left: var(--photo1-left); transform: rotate(7deg); z-index: 6; }
+    #photo-2 { top: var(--photo2-top); left: var(--photo2-left); transform: rotate(-5deg); z-index: 5; }
+    #photo-3 { top: var(--photo3-top); left: var(--photo3-left); transform: rotate(2.5deg); }
+    #photo-4 { top: var(--photo4-top); left: var(--photo4-left); transform: rotate(-6deg); }
+    #name-block { top: var(--name-top); left: var(--name-left); transform: rotate(-2deg); }
+    #hero-name { font-size: var(--sz-name); font-weight: 800; line-height: 0.88; letter-spacing: -0.04em; }
+    #hero-name .ln2 { display: block; font-size: var(--sz-name2); }
+    #projects-block { top: var(--proj-top); left: var(--proj-left); display: flex; gap: 10px; transform: rotate(1deg); }
+    .proj-card { width: 9vw; min-width: 120px; padding: 11px 14px 16px; pointer-events: none; }
+    #projects-block .proj-card:nth-child(1) { transform: rotate(-3deg); }
+    #projects-block .proj-card:nth-child(2) { transform: rotate(2.5deg); margin-top: 10px; }
+    #projects-block .proj-card:nth-child(3) { transform: rotate(-1.5deg); margin-top: 3px; }
+    .proj-title { font-size: var(--sz-md); font-weight: 700; margin-bottom: 0.25rem; }
+    .proj-sub   { font-size: var(--sz-sm); color: var(--clr-muted); font-style: italic; line-height: 1.4; }
+    /* INTRO: bare, upper center-left */
+    #research-block { top: var(--research-top); left: var(--research-left); width: 20vw; transform: rotate(-2deg); }
+    .res-label { font-size: var(--sz-xl); font-weight: 800; display: block; margin-bottom: 0.55rem; }
+    .res-txt { font-size: var(--sz-body); font-weight: 400; color: var(--clr-ink2); line-height: 1.65; }
+    /* WORK: horizontal strip, low on the board */
+    #work-block { top: var(--work-top); left: var(--work-left); width: var(--work-w); transform: rotate(-0.8deg); }
+    #work-lbl { font-size: var(--sz-lg); font-weight: 700; font-style: italic; color: #5a4030; letter-spacing: 0.12em; display: inline-block; margin-bottom: 12px; text-decoration: underline dotted #b09060; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+    /* KEY CHANGE: cards side by side */
+    .w-row { display: flex; gap: 12px; align-items: flex-start; }
+    .w-area { flex: 1; position: relative; }
+    .w-core { padding: 14px 20px 16px; width: 100%; box-sizing: border-box; }
+    .w-heading { font-size: var(--sz-xl); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
+    .w-subtitle { margin-top: 0.2rem; font-size: var(--sz-body); font-weight: 600; }
+    .w-subtitle a { color: var(--clr-brown); text-decoration: none; border-bottom: 1.5px solid #b0906066; }
+    .w-body { font-size: var(--sz-card); font-weight: 300; font-style: italic; color: var(--clr-muted); margin-top: 0.5rem; line-height: 1.62; }
+    .stamp-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+    .stamp { display: inline-block; border: 1px solid currentColor; padding: 3px 8px 4px; font-size: var(--sz-sm); font-weight: 400; letter-spacing: 0.02em; line-height: 1.3; background: transparent; opacity: 0.75; }
+    .pills { display: flex; gap: 7px; margin-top: 11px; padding-top: 10px; border-top: 1px solid #e0d4c077; }
+    .pill-card { flex: 1; background: var(--clr-board); border: 1px solid #d4c0a866; padding: 5px 9px 7px; }
+    .pill-name { font-size: var(--sz-card); font-weight: 700; color: #6a5038; line-height: 1.2; }
+    .pill-desc { font-size: var(--sz-sm); font-weight: 300; font-style: italic; color: #9a8060; margin-top: 3px; line-height: 1.45; }
+    /* COMMUNITY: bare, no ochre */
+    #community-block { top: var(--community-top); right: var(--community-right); width: max(13.1vw, 11rem); transform: rotate(2deg); position: fixed; z-index: 4; }
+    .comm-label { font-size: var(--sz-xl); font-weight: 800; display: block; margin-bottom: 0.4rem; color: var(--clr-ink); }
+    /* READING */
+    #reading-block { bottom: var(--reading-bottom); right: var(--reading-right); transform: rotate(1deg); }
+    .r-label { font-size: var(--sz-lg); font-weight: 700; color: #7a6a50; letter-spacing: 0.12em; display: block; margin-bottom: 0.5rem; text-decoration: underline dotted #b09060; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+    #book-list { position: relative; width: 27.1vw; height: 19.8vh; }
+    .cover { position: absolute; width: 4vw; height: 5.3vw; border-radius: 1px 3px 3px 1px; box-shadow: 2px 3px 8px #00000030, inset -3px 0 6px #00000018; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 6px 5px 7px; transition: transform 0.15s, box-shadow 0.15s; cursor: pointer; pointer-events: auto; text-decoration: none; }
+    .cover:hover { transform: scale(1.18) translateY(-5px) !important; box-shadow: 3px 6px 18px #00000045; z-index: 20 !important; }
+    .cover::before { content: ''; position: absolute; top: 5px; left: 5px; right: 5px; height: 1px; background: rgba(255,255,255,0.2); }
+    .cover::after  { content: ''; position: absolute; top: 0; right: 0; width: 4px; height: 100%; background: rgba(0,0,0,0.12); border-radius: 0 2px 2px 0; }
+    .cover-title { font-size: var(--sz-cover); font-weight: 600; color: rgba(255,255,255,0.9); text-align: center; line-height: 1.3; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
+    .t1 { background: #4a6272; } .t2 { background: #476055; } .t3 { background: #724038; }
+    #c-dream  { left: 0.5%;  top: 2.2%;  transform: rotate(-3deg);   z-index: 3; }
+    #c-phil   { left: 16.9%; top: 0%;    transform: rotate(1.5deg);  z-index: 2; }
+    #c-mind   { left: 33.3%; top: 2.8%;  transform: rotate(-1deg);   z-index: 3; }
+    #c-spell  { left: 49.7%; top: 1.1%;  transform: rotate(2.5deg);  z-index: 3; }
+    #c-become { left: 66.2%; top: 3.9%;  transform: rotate(-2deg);   z-index: 2; }
+    #c-love   { left: 82.6%; top: 1.7%;  transform: rotate(1deg);    z-index: 3; }
+    #c-precip { left: 2.1%;  top: 51.7%; transform: rotate(-2deg);   z-index: 3; }
+    #c-other  { left: 19%;   top: 48.9%; transform: rotate(2deg);    z-index: 2; }
+    #c-live   { left: 35.4%; top: 52.8%; transform: rotate(-1.5deg); z-index: 3; }
+    #c-align  { left: 51.8%; top: 49.4%; transform: rotate(3deg);    z-index: 2; }
+    #cover-tip { position: fixed; background: #faf7f0; border-radius: 3px; padding: 5px 9px; font-size: var(--sz-card); color: #4a3820; box-shadow: 1px 2px 6px #00000020; pointer-events: none; display: none; z-index: 30; max-width: 220px; line-height: 1.4; }
+    /* LINKS */
+    #links-block { top: var(--links-top); right: var(--links-right); transform: rotate(-1deg); }
+    .cal-lnk { font-size: var(--sz-lg); font-weight: 700; color: var(--clr-ink); display: block; text-decoration: none; margin-bottom: 0.3rem; }
+    .cal-lnk:hover { text-decoration: underline; }
+    .sm-links { display: flex; gap: 1rem; margin-top: 0.4rem; }
+    .sm-lnk { font-size: var(--sz-body); font-weight: 300; color: var(--clr-brown); font-style: italic; text-decoration: none; }
+    .sm-lnk:hover { color: var(--clr-ink); }
+    #hint { position: fixed; bottom: 8px; left: 50%; transform: translateX(-50%); font-size: var(--sz-xs); font-style: italic; color: #8a7248; opacity: 0.6; pointer-events: none; z-index: 10; }
+  </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<svg id="threads" xmlns="http://www.w3.org/2000/svg"></svg>
+<div id="cover-tip"></div>
+
+<div class="photo-ph" id="photo-1"><img src="/pics/eagx_image.jpg" alt="" style="object-position: center 15%"></div>
+<div class="photo-ph" id="photo-2"><img src="/pics/wappu_image.JPG" alt="" style="object-position: center 20%"></div>
+<div class="photo-ph" id="photo-3"><img src="/pics/amazon.jpg" alt="" style="object-position: center 10%"></div>
+<div class="photo-ph" id="photo-4"><img src="/pics/stupid_image.jpg" alt="" style="object-position: center 15%"></div>
+
+<div class="island" id="name-block">
+  <div id="hero-name">Aayush<span class="ln2">Kucheria</span></div>
+</div>
+
+<div class="island" id="projects-block">
+  <div class="proj-card patch"><div class="proj-title">Project X</div><div class="proj-sub">adding soon</div></div>
+  <div class="proj-card patch"><div class="proj-title">Project Y</div><div class="proj-sub">adding soon</div></div>
+  <div class="proj-card patch"><div class="proj-title">Project Z</div><div class="proj-sub">adding soon</div></div>
+</div>
+
+<!-- INTRO: bare, upper area -->
+<div class="island" id="research-block">
+  <span class="res-label">hi, I'm Aayush :)</span>
+  <p class="res-txt">I'll say more about myself here soon — check back in a bit.</p>
+</div>
+
+<!-- WORK: horizontal strip, low -->
+<div class="island" id="work-block">
+  <div id="work-lbl">work</div>
+  <div class="w-row">
+    <div class="w-area">
+      <div class="w-core patch">
+        <div class="w-heading">Design × Alignment</div>
+        <div class="w-subtitle"><a href="https://groundless.ai" target="_blank">Groundless Alignment →</a></div>
+        <div class="w-body">Designed interfaces, built prototypes, owned a project — fellowship to full-time over 1.5 years.</div>
+        <div class="stamp-row">
+          <span class="stamp" style="color:#5a4830; transform:rotate(-2.5deg);">AISC 2026 team lead</span>
+          <span class="stamp" style="color:#5a4830; transform:rotate(1.5deg);">guest lecturer, AI &amp; Law '26</span>
+        </div>
+        <div class="pills">
+          <div class="pill-card"><div class="pill-name">ACL Workshop 2025</div><div class="pill-desc">adding soon</div></div>
+          <div class="pill-card"><div class="pill-name">PracticeSpace, co-founder</div><div class="pill-desc">LLM simulations of therapy patients for trainees.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="w-area">
+      <div class="w-core patch">
+        <div class="w-heading">Machine Learning</div>
+        <div class="w-body">BSc + MSc in machine learning at Aalto University, Finland.</div>
+        <div class="stamp-row">
+          <span class="stamp" style="color:#5a4830; transform:rotate(-2deg);">Latent ethical landscape of LLMs</span>
+          <span class="stamp" style="color:#5a4a30; transform:rotate(-2.5deg);">Gaussian Modelling, University of Helsinki</span>
+          <span class="stamp" style="color:#5a4a30; transform:rotate(1.5deg);">talk: transformers</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMMUNITY: bare, no ochre -->
+<div class="island" id="community-block">
+  <span class="comm-label">community</span>
+  <em style="font-size:0.75rem; opacity:0.5; color:var(--clr-muted);">adding soon</em>
+</div>
+
+<div class="island" id="reading-block">
+  <span class="r-label">bookshelf</span>
+  <div id="book-list">
+    <a class="cover t1" id="c-dream"  href="#" data-tip="The Dream Machine — M. Mitchell Waldrop"><span class="cover-title">Dream Machine</span></a>
+    <a class="cover t1" id="c-phil"   href="#" data-tip="The Philosopher of Palo Alto — John Tinnell"><span class="cover-title">Philosopher of Palo Alto</span></a>
+    <a class="cover t1" id="c-mind"   href="#" data-tip="Mindstorms — Seymour Papert"><span class="cover-title">Mindstorms</span></a>
+    <a class="cover t2" id="c-spell"  href="#" data-tip="The Spell of the Sensuous — David Abram"><span class="cover-title">Spell of the Sensuous</span></a>
+    <a class="cover t2" id="c-become" href="#" data-tip="Becoming Animal — David Abram"><span class="cover-title">Becoming Animal</span></a>
+    <a class="cover t2" id="c-love"   href="#" data-tip="Love and Will — Rollo May"><span class="cover-title">Love &amp; Will</span></a>
+    <a class="cover t3" id="c-precip" href="#" data-tip="The Precipice — Toby Ord"><span class="cover-title">Precipice</span></a>
+    <a class="cover t3" id="c-other"  href="#" data-tip="Otherness and Control in the Age of AGI — Joe Carlsmith"><span class="cover-title">Otherness &amp; Control AGI</span></a>
+    <a class="cover t3" id="c-live"   href="#" data-tip="Live Theory Sequence — Sahil"><span class="cover-title">Live Theory Seq.</span></a>
+    <a class="cover t3" id="c-align"  href="#" data-tip="The Alignment Problem — Brian Christian"><span class="cover-title">Alignment Problem</span></a>
+  </div>
+</div>
+
+<div class="island" id="links-block">
+  <a class="cal-lnk" href="https://cal.com/aayushk/chat" target="_blank">→ book a call</a>
+  <a class="sm-lnk" href="mailto:aayush.kucheria@gmail.com">aayush.kucheria@gmail.com</a>
+  <div class="sm-links">
+    <a class="sm-lnk" href="https://github.com/AayushKucheria" target="_blank">GitHub</a>
+    <a class="sm-lnk" href="https://linkedin.com/in/aayushkucheria" target="_blank">LinkedIn</a>
+    <a class="sm-lnk" href="https://twitter.com/aay17ush" target="_blank">X</a>
+  </div>
+</div>
+
+<div id="hint">proto 2 — work horizontal strip, low</div>
+
+<script>
+  function streamIntro() {
+    const el = document.querySelector('.res-txt');
+    if (!el) return;
+    const words = el.textContent.trim().split(/\s+/);
+    const chunks = [];
+    for (let i = 0; i < words.length; i += 6) chunks.push(words.slice(i, i + 6).join(' '));
+    el.innerHTML = '';
+    chunks.forEach((chunk, i) => {
+      const span = document.createElement('span');
+      span.textContent = (i > 0 ? ' ' : '') + chunk;
+      span.style.cssText = 'opacity:0; transition: opacity 0.28s ease';
+      el.appendChild(span);
+      setTimeout(() => { span.style.opacity = '1'; }, 700 + i * 520);
+    });
+  }
+
+  function runAnnotations() {
+    setTimeout(() => {
+      RoughNotation.annotate(document.getElementById('book-list'), {
+        type: 'bracket', color: '#b09060', roughness: 3.8,
+        strokeWidth: 2.5, padding: [18, 6, 12, 6], brackets: ['left'], animationDuration: 700,
+      }).show();
+    }, 400);
+  }
+
+  function drawAll() {
+    const canvas = document.getElementById('canvas');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    // No curly brace in this prototype — work is horizontal, brace doesn't fit well
+  }
+
+  function drawThreads() {
+    const svg = document.getElementById('threads');
+    svg.innerHTML = '';
+    const THREAD = '#9a7a45';
+    function edge(id, side, fx, fy) {
+      const r = document.getElementById(id).getBoundingClientRect();
+      if (side === 'r') return { x: r.right, y: r.top + r.height * (fy ?? 0.5) };
+      if (side === 'b') return { x: r.left + r.width * (fx ?? 0.5), y: r.bottom };
+      if (side === 'l') return { x: r.left, y: r.top + r.height * (fy ?? 0.5) };
+      if (side === 't') return { x: r.left + r.width * (fx ?? 0.5), y: r.top };
+    }
+    function thread(x1, y1, x2, y2, cx, cy, op) {
+      const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      p.setAttribute('d', `M ${x1},${y1} Q ${cx},${cy} ${x2},${y2}`);
+      p.setAttribute('stroke', THREAD); p.setAttribute('stroke-width', '0.9');
+      p.setAttribute('fill', 'none'); p.setAttribute('opacity', op ?? '0.5');
+      p.setAttribute('stroke-linecap', 'round'); svg.appendChild(p);
+    }
+    let a, b;
+    a = edge('name-block', 'r', null, 0.4); b = edge('research-block', 'l', null, 0.4);
+    thread(a.x, a.y, b.x, b.y, (a.x + b.x) / 2, a.y - 20);
+    a = edge('name-block', 'b', 0.3); b = edge('work-block', 't', 0.1);
+    thread(a.x, a.y, b.x, b.y, a.x - 30, (a.y + b.y) / 2 + 20);
+    a = edge('name-block', 'r', null, 0.5); b = edge('projects-block', 'l', null, 0.5);
+    thread(a.x, a.y, b.x, b.y, (a.x + b.x) / 2, a.y - 18);
+    a = edge('work-block', 'b', 0.8); b = edge('reading-block', 't', 0.2);
+    thread(a.x, a.y, b.x, b.y, a.x + 60, (a.y + b.y) / 2 + 20);
+    const filaments = [
+      [120,180,38,18],[300,420,112,20],[580,80,160,16],[820,300,55,19],
+      [1050,180,200,14],[1280,420,80,18],[200,640,140,17],[450,740,20,20],
+      [700,670,165,15],[950,810,95,22],[1100,590,130,17],[1350,720,45,19],
+      [80,470,75,16],[380,270,190,21],[640,490,30,18],[880,670,155,16],
+      [1200,310,85,20],[1400,170,175,14],[260,550,60,22],[740,200,130,17],
+    ];
+    filaments.forEach(([x, y, ang, len]) => {
+      const rad = ang * Math.PI / 180, perp = (ang + 90) * Math.PI / 180;
+      const bow = (Math.sin(x * 0.1 + y * 0.07) - 0.5) * 5;
+      const mx = x + Math.cos(rad) * len * 0.5 + Math.cos(perp) * bow;
+      const my = y + Math.sin(rad) * len * 0.5 + Math.sin(perp) * bow;
+      thread(x, y, x + Math.cos(rad) * len, y + Math.sin(rad) * len, mx, my,
+        String(0.15 + (Math.sin(x * 0.3 + y * 0.2) * 0.5 + 0.5) * 0.18));
+    });
+  }
+
+  const tip = document.getElementById('cover-tip');
+  document.querySelectorAll('.cover').forEach(c => {
+    c.addEventListener('mouseenter', () => { tip.style.display = 'block'; tip.textContent = c.dataset.tip; });
+    c.addEventListener('mousemove', e => { tip.style.left = (e.clientX + 12) + 'px'; tip.style.top = (e.clientY - 30) + 'px'; });
+    c.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
+  });
+
+  window.addEventListener('load', () => { drawAll(); drawThreads(); runAnnotations(); streamIntro(); });
+  window.addEventListener('resize', () => { drawAll(); drawThreads(); });
+</script>
+</body>
+</html>
