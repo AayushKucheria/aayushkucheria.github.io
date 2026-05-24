@@ -37,7 +37,7 @@
       --sz-card:    0.84rem;   /* card body, pill name */
       --sz-sm:      0.78rem;   /* small: stamps, proj-sub, pill-desc */
       --sz-xs:      0.6rem;    /* hint */
-      --sz-cover:   clamp(0.42rem, 0.54vw, 0.65rem); /* book spine text */
+      --sz-cover:   clamp(0.38rem, 0.5vw, 0.58rem); /* book spine text */
 
       /* color palette */
       --clr-wall:   #b0a890;   /* outer wall — undyed linen */
@@ -58,14 +58,14 @@
       --photo2-top: 8vh;        --photo2-left: 34.7vw;
       --photo3-top: 5.1vh;      --photo3-left: 39.7vw;
       --photo4-top: 5.6vh;      --photo4-left: 2.5vw;
-      /* projects — right of name/photos */
-      --proj-top: 10vh;         --proj-left: 50vw;
+      /* projects — right column, between community and bookshelf */
+      --proj-bottom: 36vh;      --proj-right: 1.2vw;
       /* intro — left, bare on cloth */
       --research-top: 28vh;     --research-left: 4vw;
       /* work — horizontal strip, low */
       --work-top: 52vh;         --work-left: 3.3vw;   --work-w: max(60vw, 700px);
-      /* community — center-right sticky */
-      --community-top: 24.4vh;  --community-right: 3.6vw;
+      /* community — bottom-right, near bookshelf */
+      --community-bottom: 68vh; --community-right: 3.6vw;
       /* reading — bottom-right */
       --reading-bottom: 5.8vh;  --reading-right: 3.3vw;
       /* links/contact — top-right */
@@ -103,13 +103,25 @@
     .island { position: fixed; z-index: 4; pointer-events: none; }
     .island a { pointer-events: auto; }
 
-    /* Patch — cloth piece on cloth. Diagonal weave at a different angle from the surface. */
+    /* Default text link hover — ink deepen + nudge right */
+    .island a:not(.cover):not(.cal-lnk) {
+      display: inline-block;
+      transition: color 0.12s, transform 0.12s;
+    }
+    .island a:not(.cover):not(.cal-lnk):hover {
+      color: var(--clr-ink);
+      transform: translateX(2px);
+    }
+
+    /* Patch — cloth piece on cloth, same linen weave as surface but distinct color */
     .patch {
-      background-color: #d4cab4;
-      box-shadow: 1px 2px 10px #00000014, 0 1px 4px #00000010;
+      background-color: #cec3ac;
+      box-shadow: 2px 4px 18px #0000001e, 0 1px 5px #00000012;
       background-image:
-        repeating-linear-gradient(42deg,  transparent 0px, transparent 3px, rgba(40,28,10,0.04) 3px, rgba(40,28,10,0.04) 4px),
-        repeating-linear-gradient(135deg, transparent 0px, transparent 3px, rgba(40,28,10,0.03) 3px, rgba(40,28,10,0.03) 4px);
+        repeating-linear-gradient(0deg,   transparent 0px, transparent 1px, rgba(40,28,10,0.065) 1px, rgba(40,28,10,0.065) 2px),
+        repeating-linear-gradient(90deg,  transparent 0px, transparent 1px, rgba(40,28,10,0.055) 1px, rgba(40,28,10,0.055) 2px),
+        repeating-linear-gradient(94deg,  transparent 0px, transparent 3px, rgba(255,240,200,0.05) 3px, rgba(255,240,200,0.05) 4px),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85 0.02' numOctaves='2' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.2'/%3E%3C/svg%3E");
     }
 
     /* Tag — ochre cloth label. Community only. */
@@ -141,7 +153,7 @@
       object-fit: cover;
     }
     .photo-ph { transition: transform 0.15s, box-shadow 0.15s; cursor: pointer; }
-    .photo-ph:hover { transform: scale(1.6) translateY(-5px) !important; box-shadow: 4px 8px 24px #00000050; z-index: 20; }
+    .photo-ph:hover { transform: scale(1.35) translateY(8px) !important; box-shadow: 4px 8px 24px #00000050; z-index: 20; }
     #photo-1 { top: var(--photo1-top); left: var(--photo1-left); transform: rotate(7deg); z-index: 6; }
     #photo-2 { top: var(--photo2-top); left: var(--photo2-left); transform: rotate(-5deg); z-index: 5; }
     #photo-3 { top: var(--photo3-top); left: var(--photo3-left); transform: rotate(2.5deg); }
@@ -151,38 +163,48 @@
     #name-block { top: var(--name-top); left: var(--name-left); transform: rotate(-2deg); }
     #hero-name { font-size: var(--sz-name); font-weight: 800; line-height: 0.88; letter-spacing: -0.04em; color: var(--clr-ink); }
     #hero-name .ln2 { display: block; color: var(--clr-ink); font-size: var(--sz-name2); }
+    #hi-label { position: fixed; top: 2.2vh; left: 9.5vw; font-size: var(--sz-sm); font-weight: 400; color: var(--clr-ink2); transform: rotate(-5deg); z-index: 5; pointer-events: none; }
 
-    /* PROJECTS — row of pinned cards right of name/photos */
-    #projects-block { top: var(--proj-top); left: var(--proj-left); display: flex; gap: 10px; transform: rotate(1deg); }
+    /* PROJECTS — three fabric patches, staggered */
+    #projects-block { bottom: var(--proj-bottom); right: var(--proj-right); width: 22vw; transform: rotate(1deg); position: fixed; z-index: 4; }
+    .proj-row { display: flex; gap: 18px; }
+    .proj-row-center { display: flex; justify-content: flex-start; padding-left: 4vw; margin-top: 14px; }
     .proj-card {
-      width: 9vw; min-width: 120px; padding: 11px 14px 16px;
+      width: 5.5vw; min-width: 52px; height: 5.2vw; min-height: 50px;
+      background-color: #c4a882;
+      background-image:
+        repeating-linear-gradient(0deg,   transparent 0px, transparent 1px, rgba(40,20,5,0.075) 1px, rgba(40,20,5,0.075) 2px),
+        repeating-linear-gradient(90deg,  transparent 0px, transparent 1px, rgba(40,20,5,0.06)  1px, rgba(40,20,5,0.06)  2px),
+        repeating-linear-gradient(91deg,  transparent 0px, transparent 3px, rgba(255,230,180,0.07) 3px, rgba(255,230,180,0.07) 4px),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85 0.02' numOctaves='2' seed='15' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.2'/%3E%3C/svg%3E");
+      box-shadow: 1px 2px 8px #00000022, 0 1px 3px #00000012;
       pointer-events: none;
+      filter: url(#cloth-edge-subtle);
     }
-    #projects-block .proj-card:nth-child(1) { transform: rotate(-3deg); }
-    #projects-block .proj-card:nth-child(2) { transform: rotate(2.5deg); margin-top: 10px; }
-    #projects-block .proj-card:nth-child(3) { transform: rotate(-1.5deg); margin-top: 3px; }
-    .proj-title { font-size: var(--sz-md); font-weight: 700; color: var(--clr-ink); margin-bottom: 0.25rem; }
-    .proj-sub   { font-size: var(--sz-sm); color: var(--clr-muted); font-style: italic; line-height: 1.4; }
+    .proj-row .proj-card:nth-child(1) { transform: rotate(-3deg); }
+    .proj-row .proj-card:nth-child(2) { transform: rotate(2deg); margin-top: 8px; }
+    .proj-row-center .proj-card       { transform: rotate(-1.5deg); }
 
     /* INTRO — bare text on cloth, left side */
-    #research-block { top: var(--research-top); left: var(--research-left); width: 22vw; transform: rotate(-1.5deg); }
+    #research-block { top: var(--research-top); left: var(--research-left); width: 65vw; transform: rotate(-1.5deg); }
     .res-label { font-size: var(--sz-xl); font-weight: 800; color: var(--clr-ink); display: block; margin-bottom: 0.55rem; }
     .res-txt { font-size: var(--sz-body); font-weight: 400; color: var(--clr-ink2); line-height: 1.65; }
+    .res-txt2 { font-size: var(--sz-body); font-weight: 400; color: var(--clr-ink2); line-height: 1.65; margin-top: 0.9rem; opacity: 0; transition: opacity 0.5s ease; }
 
     /* WORK — hero, left→center */
     #work-block { top: var(--work-top); left: var(--work-left); width: var(--work-w); transform: rotate(-1.5deg); }
     #work-lbl { font-size: var(--sz-lg); font-weight: 700; font-style: italic; color: #5a4030; letter-spacing: 0.12em; display: inline-block; margin-bottom: 14px; text-decoration: underline dotted #b09060; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
     .w-row { display: flex; gap: 12px; align-items: flex-start; }
     .w-area { flex: 1; position: relative; }
-    .w-core { padding: 14px 20px 16px; width: 100%; position: relative; overflow: visible; box-sizing: border-box; }
+    .w-core { padding: 10px 16px 12px; width: 100%; position: relative; overflow: visible; box-sizing: border-box; }
     .w-heading { font-size: var(--sz-xl); font-weight: 700; color: var(--clr-ink2); line-height: 1.1; letter-spacing: -0.01em; }
-    .w-subtitle { margin-top: 0.2rem; font-size: var(--sz-body); font-weight: 600; }
+    .w-subtitle { margin-top: 0.15rem; font-size: var(--sz-body); font-weight: 600; }
     .w-subtitle a { color: var(--clr-brown); text-decoration: none; border-bottom: 1.5px solid #b0906066; }
     .w-subtitle a:hover { color: var(--clr-ink); }
-    .w-body { font-size: var(--sz-card); font-weight: 300; font-style: italic; color: var(--clr-muted); margin-top: 0.5rem; line-height: 1.62; }
-    .stamp-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-    .stamp { display: inline-block; border: 1px solid currentColor; padding: 3px 10px 4px; font-size: var(--sz-sm); font-weight: 400; letter-spacing: 0.02em; line-height: 1.3; background: transparent; opacity: 0.75; }
-    .pills { display: flex; gap: 7px; margin-top: 11px; padding-top: 10px; border-top: 1px solid #e0d4c077; }
+    .w-body { font-size: var(--sz-card); font-weight: 300; font-style: italic; color: var(--clr-muted); margin-top: 0.3rem; line-height: 1.55; }
+    .stamp-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 7px; }
+    .stamp { display: inline-block; border: 1px solid currentColor; padding: 2px 9px 3px; font-size: var(--sz-sm); font-weight: 400; letter-spacing: 0.02em; line-height: 1.3; background: transparent; opacity: 0.75; }
+    .pills { display: flex; gap: 7px; margin-top: 8px; padding-top: 8px; border-top: 1px solid #e0d4c077; }
     .pill-card { flex: 1; background: var(--clr-board); border: 1px solid #d4c0a866; padding: 5px 9px 7px; }
     .pill-name { font-size: var(--sz-card); font-weight: 700; color: #6a5038; line-height: 1.2; }
     .pill-desc { font-size: var(--sz-sm); font-weight: 300; font-style: italic; color: #9a8060; margin-top: 3px; line-height: 1.45; }
@@ -190,25 +212,42 @@
     /* THINKING — index card, kept as decorative visual (skeleton content) */
     .sk-card { height: 8px; background: #1c1a1412; border-radius: 2px; margin-bottom: 9px; }
 
-    /* COMMUNITY — bare, color to be decided */
-    #community-block { top: var(--community-top); right: var(--community-right); width: max(13.1vw, 11rem); transform: rotate(2deg); position: fixed; z-index: 4; }
-    .comm-label { font-size: var(--sz-xl); font-weight: 800; display: block; margin-bottom: 0.4rem; color: var(--clr-ink); }
-    .comm-txt { font-size: var(--sz-body); font-weight: 400; line-height: 1.75; color: var(--clr-ink2); }
+    /* COMMUNITY — aqua fabric patch, side by side entries */
+    #community-block { bottom: var(--community-bottom); right: var(--community-right); transform: rotate(2deg); position: fixed; z-index: 4; }
+    .comm-patch {
+      position: relative;
+      padding: 11px 15px 13px;
+    }
+    .comm-patch-bg {
+      position: absolute; inset: -3px;
+      background-color: #88b8b4;
+      background-image:
+        repeating-linear-gradient(0deg,   transparent 0px, transparent 1px, rgba(10,40,38,0.08) 1px, rgba(10,40,38,0.08) 2px),
+        repeating-linear-gradient(90deg,  transparent 0px, transparent 1px, rgba(10,40,38,0.06) 1px, rgba(10,40,38,0.06) 2px),
+        repeating-linear-gradient(88deg,  transparent 0px, transparent 3px, rgba(200,255,248,0.07) 3px, rgba(200,255,248,0.07) 4px),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85 0.02' numOctaves='2' seed='12' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E");
+      box-shadow: 1px 2px 10px #00000018, 0 1px 4px #00000010;
+      filter: url(#cloth-edge-subtle);
+      z-index: 0;
+    }
+    .comm-label { font-size: var(--sz-sm); font-weight: 700; font-style: italic; letter-spacing: 0.11em; color: #1a4a48; display: block; margin-bottom: 0.5rem; text-decoration: underline dotted #2a7a78; text-underline-offset: 3px; position: relative; z-index: 1; }
+    .comm-entries { display: flex; gap: 1.4rem; align-items: flex-start; position: relative; z-index: 1; }
+    .comm-org { font-size: var(--sz-sm); font-weight: 400; color: #1a3a38; line-height: 1.45; max-width: 110px; }
 
     /* READING — bottom-right */
     #reading-block { bottom: var(--reading-bottom); right: var(--reading-right); transform: rotate(1deg); }
     .r-label { font-size: var(--sz-lg); font-weight: 700; color: #7a6a50; letter-spacing: 0.12em; display: block; margin-bottom: 0.5rem; text-decoration: underline dotted #b09060; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
-    #book-list { position: relative; width: 27.1vw; height: 19.8vh; }
+    #book-list { position: relative; width: 25vw; height: 18vh; }
     .cover {
-      position: absolute; width: 4vw; height: 5.3vw;
+      position: absolute; width: 3.7vw; height: 4.9vw;
       border-radius: 1px 3px 3px 1px;
       box-shadow: 2px 3px 8px #00000030, inset -3px 0 6px #00000018;
-      display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
-      padding: 6px 5px 7px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 5px;
       transition: transform 0.15s, box-shadow 0.15s;
       cursor: pointer; pointer-events: auto; text-decoration: none;
     }
-    .cover:hover { transform: scale(1.18) translateY(-5px) !important; box-shadow: 3px 6px 18px #00000045; z-index: 20 !important; }
+    .cover:hover { transform: scale(1.18) translateY(-5px) !important; box-shadow: 3px 6px 18px #00000045; }
     .cover::before { content: ''; position: absolute; top: 5px; left: 5px; right: 5px; height: 1px; background: rgba(255,255,255,0.2); }
     .cover::after  { content: ''; position: absolute; top: 0; right: 0; width: 4px; height: 100%; background: rgba(0,0,0,0.12); border-radius: 0 2px 2px 0; }
     .cover-title { font-size: var(--sz-cover); font-weight: 600; color: rgba(255,255,255,0.9); text-align: center; line-height: 1.3; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
@@ -234,8 +273,29 @@
 
     /* LINKS — top-right */
     #links-block { top: var(--links-top); right: var(--links-right); transform: rotate(-1deg); }
-    .cal-lnk { font-size: var(--sz-lg); font-weight: 700; color: var(--clr-ink); display: block; text-decoration: none; margin-bottom: 0.3rem; }
-    .cal-lnk:hover { text-decoration: underline; }
+    .links-row { display: flex; align-items: center; gap: 1.4rem; }
+    .links-col { display: flex; flex-direction: column; gap: 0.45rem; }
+    .cal-patch {
+      position: relative;
+      display: inline-block;
+      padding: 8px 14px 9px;
+      transform: rotate(-1deg);
+      flex-shrink: 0;
+      cursor: pointer;
+      pointer-events: auto;
+      transition: transform 0.15s;
+    }
+    .cal-patch:hover { transform: rotate(-1deg) translateY(-3px); }
+    .cal-patch:hover .cal-patch-bg { box-shadow: 3px 7px 22px #00000030, 0 2px 7px #0000001a; }
+    .cal-patch-bg {
+      position: absolute; inset: -3px;
+      background-image: url('/fabrics/pink_cotton.jpeg');
+      background-size: 480px; background-position: 20px -40px;
+      box-shadow: 1px 2px 10px #00000020, 0 1px 4px #00000012;
+      filter: url(#cloth-edge);
+      z-index: 0;
+    }
+    .cal-lnk { font-size: var(--sz-lg); font-weight: 700; color: #2a1208; display: block; text-decoration: none; position: relative; z-index: 1; }
     .sm-links { display: flex; gap: 1rem; margin-top: 0.4rem; }
     .sm-lnk { font-size: var(--sz-body); font-weight: 300; color: var(--clr-brown); font-style: italic; text-decoration: none; }
     .sm-lnk:hover { color: var(--clr-ink); }
@@ -245,9 +305,193 @@
       font-size: var(--sz-xs); font-style: italic; color: #8a7248; opacity: 0.6;
       pointer-events: none; z-index: 10;
     }
+
+    /* ─────────────────────────────────────────────────────────
+       SECTION WRAPPERS
+       display:contents on desktop → children keep their fixed
+       positions exactly as before, wrapper is invisible.
+       On mobile the wrapper becomes a real block container.
+    ───────────────────────────────────────────────────────── */
+    .s-header, .s-intro, .s-work, .s-projects,
+    .s-community, .s-reading, .s-links,
+    .photo-strip { display: contents; }
+
+    /* ══ TIER 2 — TABLET (520px – 1199px) ══════════════════ */
+    @media (max-width: 1199px) {
+      html, body { overflow-y: auto; height: auto; min-height: 100vh; }
+      #dot-layer { pointer-events: none; }
+      #threads, #canvas, #hint { display: none; }
+      #hi-label { display: none !important; }
+
+      .s-header, .s-intro, .s-work, .s-projects,
+      .s-community, .s-reading, .s-links { display: block; position: relative; }
+      .photo-strip { display: flex; }
+
+      /* Override fixed positioning on all islands */
+      .island, .photo-ph, #community-block {
+        position: relative !important;
+        top: auto !important; left: auto !important;
+        right: auto !important; bottom: auto !important;
+        width: auto !important; z-index: 1;
+      }
+
+      /* Section padding + tilt rhythm */
+      .s-header    { display: flex; flex-wrap: wrap; align-items: flex-start; padding: 32px 24px 20px; gap: 16px; }
+      .photo-strip { width: 100%; }
+      #name-block  { flex: 1; }
+      #photo-3     { align-self: center; }
+      #photo-3 img { width: 13vw; max-width: 80px; height: 17vw; max-height: 104px; }
+      .s-intro     { padding: 28px 24px; transform: rotate(-0.8deg); transform-origin: left; }
+      .s-work      { padding: 28px 24px 0; transform: rotate(0.5deg); transform-origin: right; }
+      .s-projects  { padding: 28px 24px 0; transform: rotate(-0.6deg); transform-origin: left; }
+      .s-community { padding: 28px 24px 0; transform: rotate(0.9deg); transform-origin: right; }
+      .s-reading   { padding: 28px 24px 0; transform: rotate(-0.4deg); transform-origin: left; }
+      .s-links     { padding: 28px 24px 60px; transform: rotate(0.6deg); transform-origin: right; }
+
+      /* Photos — row, keep natural tilts (no !important — preserves hover) */
+      .photo-strip { gap: 12px; align-items: flex-end; }
+      .photo-strip .photo-ph img { width: 13vw; max-width: 80px; height: 17vw; max-height: 104px; }
+      #photo-name { display: none; }
+
+      /* Name */
+      #name-block { transform: rotate(-2deg); transform-origin: left; }
+      #hero-name  { font-size: clamp(2.6rem, 7vw, 4.5rem) !important; }
+
+      /* Work — side by side on tablet */
+      #work-block { transform: none; }
+      .w-row { flex-direction: row; }
+
+      /* Projects */
+      #projects-block { transform: rotate(1deg); }
+
+      /* Community */
+      #community-block { transform: rotate(2deg); transform-origin: right; }
+
+      /* Bookshelf — row 1: 6 blue+green, row 2: 4 red */
+      #book-list {
+        position: static !important;
+        width: auto !important; height: auto !important;
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 8px;
+      }
+      .cover {
+        position: relative !important;
+        left: auto !important; top: auto !important;
+        transform: none !important;
+        width: auto !important; height: auto !important;
+        aspect-ratio: 3 / 4;
+      }
+
+      /* Links */
+      #links-block .links-row { flex-direction: row; }
+    }
+
+    /* ══ TIER 2 PAIR ROWS — tablet only (520px – 1199px) ══ */
+    @media (min-width: 520px) and (max-width: 1199px) {
+      /* Grid so projects/community and reading/links sit side by side */
+      body {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+          "header    header"
+          "intro     intro"
+          "work      work"
+          "projects  community"
+          "reading   links";
+        align-items: start;
+      }
+      .s-header    { grid-area: header; }
+      .s-intro     { grid-area: intro; }
+      .s-work      { grid-area: work; }
+      .s-projects  { grid-area: projects; }
+      .s-community { grid-area: community; }
+      .s-reading   { grid-area: reading; }
+      .s-links     { grid-area: links; }
+
+      /* All 4 photos in one row — photo-3 joins the strip */
+      .photo-strip { width: auto; }
+      #photo-3     { order: 0; }
+      #name-block  { flex: 0 0 100%; order: 1; }
+
+      /* Community: shrink to content width, no more full-column teal band */
+      #community-block { width: fit-content !important; }
+
+      /* Projects: center the patches in their column */
+      .s-projects { display: flex; justify-content: center; }
+
+      /* Links: center block in column, stack contents vertically */
+      .s-links { display: flex; justify-content: center; align-items: center; align-self: stretch; padding-top: 0; padding-bottom: 0; }
+      #links-block .links-row { flex-direction: column; align-items: flex-start; }
+      /* Breathing room so books don't reach the viewport edge */
+      .s-reading { padding-bottom: 48px; }
+    }
+
+    /* ══ TIER 1 — PHONE (< 520px) ══════════════════════════ */
+    @media (max-width: 519px) {
+      .s-header { padding: 6px 18px 14px; gap: 10px; }
+      .s-intro  { padding-top: 14px; }
+      .s-intro, .s-work, .s-projects,
+      .s-community, .s-reading, .s-links { padding-left: 18px; padding-right: 18px; }
+
+      /* Strip photos + photo-3 — same size */
+      .photo-strip .photo-ph img, #photo-3 img {
+        width: 19vw !important; height: 24vw !important;
+        max-width: none !important; max-height: none !important;
+      }
+      /* Space out the 3 strip photos */
+      .photo-strip { justify-content: space-between; }
+      /* Nudge photo-3 up and left without disturbing layout */
+      #photo-3 { transform: translate(-22px, -16px) rotate(2.5deg); }
+      #hi-label { width: 100%; }
+
+      /* hi, I'm — was position:fixed in base CSS, needs relative to scroll with page */
+      #hi-label {
+        display: block !important;
+        position: relative !important;
+        top: auto !important; left: auto !important;
+        font-size: var(--sz-sm); font-weight: 400;
+        color: var(--clr-ink2);
+        transform: rotate(-4deg); transform-origin: left;
+      }
+
+      #hero-name { font-size: clamp(2.2rem, 9vw, 3rem) !important; }
+
+      /* Work — stacked */
+      .w-row { flex-direction: column !important; }
+
+      /* Projects — three cards in a row */
+      #projects-block .proj-row { gap: 10px; }
+      #projects-block .proj-row-center { padding-left: 0; margin-top: 10px; }
+      #projects-block .proj-card {
+        width: calc((100vw - 56px) / 3) !important;
+        height: calc((100vw - 56px) / 3) !important;
+        min-width: 0 !important; min-height: 0 !important;
+      }
+
+      /* Books — increase cover title font on small screens */
+      .cover-title { font-size: 0.5rem; }
+
+      /* Links — keep horizontal like desktop, more gap from bookshelf */
+      .s-links { padding-top: 48px !important; }
+      .cal-lnk { white-space: nowrap; font-size: 1rem; }
+    }
   </style>
 </head>
 <body>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <filter id="cloth-edge" x="-8%" y="-8%" width="116%" height="116%">
+      <feTurbulence type="turbulence" baseFrequency="0.04" numOctaves="4" seed="7" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="cloth-edge-subtle" x="-6%" y="-6%" width="112%" height="112%">
+      <feTurbulence type="turbulence" baseFrequency="0.04" numOctaves="4" seed="3" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
 
 <div id="board"></div>
 <canvas id="canvas"></canvas>
@@ -255,108 +499,128 @@
 <div id="dot-layer"></div>
 <div id="cover-tip"></div>
 
-<div class="photo-ph" id="photo-1"><img src="/pics/eagx_image.jpg" alt="" style="object-position: center 15%"></div>
-<div class="photo-ph" id="photo-2"><img src="/pics/wappu_image.JPG" alt="" style="object-position: center 20%"></div>
-<div class="photo-ph" id="photo-3"><img src="/pics/amazon.jpg" alt="" style="object-position: center 10%"></div>
-<div class="photo-ph" id="photo-4"><img src="/pics/stupid_image.jpg" alt="" style="object-position: center 15%"></div>
-
-<div class="island" id="name-block">
-  <div id="hero-name">Aayush<span class="ln2">Kucheria</span></div>
-</div>
-
-<div class="island" id="projects-block">
-  <div class="proj-card patch">
-    <div class="proj-title">Project X</div>
-    <div class="proj-sub">adding soon</div>
+<section class="s-header">
+  <div class="photo-strip">
+    <div class="photo-ph" id="photo-1"><img src="/pics/eagx_image.jpg" alt="" style="object-position: center 15%"></div>
+    <div class="photo-ph" id="photo-2"><img src="/pics/wappu_image.JPG" alt="" style="object-position: center 20%"></div>
+    <div class="photo-ph" id="photo-4"><img src="/pics/stupid_image.jpg" alt="" style="object-position: center 15%"></div>
   </div>
-  <div class="proj-card patch">
-    <div class="proj-title">Project Y</div>
-    <div class="proj-sub">adding soon</div>
+  <span id="hi-label">hi, I'm</span>
+  <div class="island" id="name-block">
+    <div id="hero-name">Aayush<span class="ln2">Kucheria</span></div>
   </div>
-  <div class="proj-card patch">
-    <div class="proj-title">Project Z</div>
-    <div class="proj-sub">adding soon</div>
+  <div class="photo-ph" id="photo-3"><img src="/pics/amazon.jpg" alt="" style="object-position: center 10%"></div>
+</section>
+
+<section class="s-intro">
+  <div class="island" id="research-block">
+    <p class="res-txt">I care about how humans and AI systems come to understand each other — not just technically, but in the full human sense. I spend most of my time designing interfaces that make alignment research legible and building prototypes that explore what thoughtful AI interaction could look like.</p>
+    <p class="res-txt2">Before that: community organizing, a philosophy detour, and a lot of books about minds and embodiment. I'm based in Helsinki and always up for a conversation — the cal link is over there.</p>
   </div>
-</div>
+</section>
 
-<div class="island" id="research-block">
-  <span class="res-label">hi, I'm Aayush :)</span>
-  <p class="res-txt">I'll say more about myself here soon — check back in a bit.</p>
-</div>
-
-<div class="island" id="work-block">
-  <div id="work-lbl">work</div>
-  <div class="w-row">
-  <div class="w-area">
-    <div class="w-core patch">
-      <div class="w-heading">Design × Alignment</div>
-      <div class="w-subtitle"><a href="https://groundless.ai" target="_blank">Groundless Alignment →</a></div>
-      <div class="w-body">Designed interfaces, built prototypes, owned a project — fellowship to full-time over 1.5 years.</div>
-      <div class="stamp-row">
-        <span class="stamp" style="color:#5a4830; transform:rotate(-2.5deg);">AISC 2026 team lead</span>
-        <span class="stamp" style="color:#5a4830; transform:rotate(1.5deg);">guest lecturer, Gabriel Weil's AI &amp; Law '26</span>
-      </div>
-      <div class="pills">
-        <div class="pill-card">
-          <div class="pill-name">ACL Workshop 2025</div>
-          <div class="pill-desc">adding soon</div>
+<section class="s-work">
+  <div class="island" id="work-block">
+    <div id="work-lbl">work</div>
+    <div class="w-row">
+      <div class="w-area">
+        <div class="w-core patch">
+          <div class="w-heading">Design × Alignment</div>
+          <div class="w-subtitle"><a href="https://groundless.ai" target="_blank">Groundless Alignment →</a></div>
+          <div class="w-body">Designed interfaces, built prototypes, owned a project — fellowship to full-time over 1.5 years.</div>
+          <div class="stamp-row">
+            <span class="stamp" style="color:#5a4830; transform:rotate(-2.5deg);">AISC 2026 team lead</span>
+            <span class="stamp" style="color:#5a4830; transform:rotate(1.5deg);">guest lecturer, Gabriel Weil's AI &amp; Law '26</span>
+          </div>
+          <div class="pills">
+            <div class="pill-card">
+              <div class="pill-name">ACL Workshop 2025</div>
+              <div class="pill-desc">adding soon</div>
+            </div>
+            <div class="pill-card">
+              <div class="pill-name">PracticeSpace, co-founder</div>
+              <div class="pill-desc">LLM simulations of therapy patients for trainees — founded with NHS CBT practitioners.</div>
+            </div>
+          </div>
         </div>
-        <div class="pill-card">
-          <div class="pill-name">PracticeSpace, co-founder</div>
-          <div class="pill-desc">LLM simulations of therapy patients for trainees — founded with NHS CBT practitioners.</div>
+      </div>
+      <div class="w-area">
+        <div class="w-core patch">
+          <div class="w-heading">Machine Learning</div>
+          <div class="w-body">BSc + MSc in machine learning at Aalto University, Finland.</div>
+          <div class="stamp-row">
+            <span class="stamp" style="color:#5a4830; transform:rotate(-2deg);">Latent ethical landscape of LLMs</span>
+            <span class="stamp" style="color:#5a4a30; transform:rotate(-2.5deg);">Gaussian Modelling, University of Helsinki</span>
+            <span class="stamp" style="color:#5a4a30; transform:rotate(1.5deg);">talk: transformers</span>
+            <span class="stamp" style="color:#5a4a30; transform:rotate(-1deg);">adding links + a couple more interesting things soon</span>
+          </div>
         </div>
       </div>
     </div>
   </div>
+</section>
 
-  <div class="w-area">
-    <div class="w-core patch">
-      <div class="w-heading">Machine Learning</div>
-      <div class="w-body">BSc + MSc in machine learning at Aalto University, Finland.</div>
-      <div class="stamp-row">
-        <span class="stamp" style="color:#5a4830; transform:rotate(-2deg);">Latent ethical landscape of LLMs</span>
-        <span class="stamp" style="color:#5a4a30; transform:rotate(-2.5deg);">Gaussian Modelling, University of Helsinki</span>
-        <span class="stamp" style="color:#5a4a30; transform:rotate(1.5deg);">talk: transformers</span>
-        <span class="stamp" style="color:#5a4a30; transform:rotate(-1deg);">adding links + a couple more interesting things soon</span>
+<section class="s-projects">
+  <div class="island" id="projects-block">
+    <div class="proj-row">
+      <div class="proj-card"></div>
+      <div class="proj-card"></div>
+    </div>
+    <div class="proj-row-center">
+      <div class="proj-card"></div>
+    </div>
+  </div>
+</section>
+
+<section class="s-community">
+  <div id="community-block">
+    <div class="comm-patch">
+      <div class="comm-patch-bg"></div>
+      <span class="comm-label">community</span>
+      <div class="comm-entries">
+        <div class="comm-org">co-founded the EA chapter at Aalto</div>
+        <div class="comm-org">mentored EA + AI safety groups via CEA</div>
       </div>
     </div>
   </div>
+</section>
+
+<section class="s-reading">
+  <div class="island" id="reading-block">
+    <span class="r-label">bookshelf</span>
+    <div id="book-list">
+      <a class="cover t1" id="c-dream"  href="https://www.goodreads.com/book/show/722412.The_Dream_Machine" target="_blank" rel="noopener" data-tip="The Dream Machine — M. Mitchell Waldrop"><span class="cover-title">Dream Machine</span></a>
+      <a class="cover t1" id="c-phil"   href="https://www.goodreads.com/book/show/62707933-the-philosopher-of-palo-alto" target="_blank" rel="noopener" data-tip="The Philosopher of Palo Alto — John Tinnell"><span class="cover-title">Philosopher of Palo Alto</span></a>
+      <a class="cover t1" id="c-mind"   href="https://www.goodreads.com/book/show/703532.Mindstorms" target="_blank" rel="noopener" data-tip="Mindstorms — Seymour Papert"><span class="cover-title">Mindstorms</span></a>
+      <a class="cover t2" id="c-spell"  href="https://www.goodreads.com/book/show/48582.The_Spell_of_the_Sensuous" target="_blank" rel="noopener" data-tip="The Spell of the Sensuous — David Abram"><span class="cover-title">Spell of the Sensuous</span></a>
+      <a class="cover t2" id="c-become" href="https://www.goodreads.com/book/show/7822953-becoming-animal" target="_blank" rel="noopener" data-tip="Becoming Animal — David Abram"><span class="cover-title">Becoming Animal</span></a>
+      <a class="cover t2" id="c-love"   href="https://www.goodreads.com/book/show/1373530.Love_and_Will" target="_blank" rel="noopener" data-tip="Love and Will — Rollo May"><span class="cover-title">Love &amp; Will</span></a>
+      <a class="cover t3" id="c-precip" href="https://www.goodreads.com/book/show/50485582-the-precipice" target="_blank" rel="noopener" data-tip="The Precipice — Toby Ord"><span class="cover-title">Precipice</span></a>
+      <a class="cover t3" id="c-other"  href="https://www.lesswrong.com/s/BbAvHtorCZqp97X9W" target="_blank" rel="noopener" data-tip="Otherness and Control in the Age of AGI — Joe Carlsmith"><span class="cover-title">Otherness &amp; Control AGI</span></a>
+      <a class="cover t3" id="c-live"   href="https://www.lesswrong.com/s/aMz2JMvgXrLBkq4h3" target="_blank" rel="noopener" data-tip="Live Theory Sequence — Sahil"><span class="cover-title">Live Theory Seq.</span></a>
+      <a class="cover t3" id="c-align"  href="https://www.goodreads.com/book/show/50489349-the-alignment-problem" target="_blank" rel="noopener" data-tip="The Alignment Problem — Brian Christian"><span class="cover-title">Alignment Problem</span></a>
+    </div>
   </div>
+</section>
 
-</div>
-
-
-
-<div id="community-block">
-  <span class="comm-label">community</span>
-  <em style="font-size:0.75rem; opacity:0.5; color:var(--clr-muted);">adding soon</em>
-</div>
-
-<div class="island" id="reading-block">
-  <span class="r-label">bookshelf</span>
-  <div id="book-list">
-    <a class="cover t1" id="c-dream"  href="https://www.goodreads.com/book/show/722412.The_Dream_Machine" target="_blank" rel="noopener" data-tip="The Dream Machine — M. Mitchell Waldrop"><span class="cover-title">Dream Machine</span></a>
-    <a class="cover t1" id="c-phil"   href="https://www.goodreads.com/book/show/62707933-the-philosopher-of-palo-alto" target="_blank" rel="noopener" data-tip="The Philosopher of Palo Alto — John Tinnell"><span class="cover-title">Philosopher of Palo Alto</span></a>
-    <a class="cover t1" id="c-mind"   href="https://www.goodreads.com/book/show/703532.Mindstorms" target="_blank" rel="noopener" data-tip="Mindstorms — Seymour Papert"><span class="cover-title">Mindstorms</span></a>
-    <a class="cover t2" id="c-spell"  href="https://www.goodreads.com/book/show/48582.The_Spell_of_the_Sensuous" target="_blank" rel="noopener" data-tip="The Spell of the Sensuous — David Abram"><span class="cover-title">Spell of the Sensuous</span></a>
-    <a class="cover t2" id="c-become" href="https://www.goodreads.com/book/show/7822953-becoming-animal" target="_blank" rel="noopener" data-tip="Becoming Animal — David Abram"><span class="cover-title">Becoming Animal</span></a>
-    <a class="cover t2" id="c-love"   href="https://www.goodreads.com/book/show/1373530.Love_and_Will" target="_blank" rel="noopener" data-tip="Love and Will — Rollo May"><span class="cover-title">Love &amp; Will</span></a>
-    <a class="cover t3" id="c-precip" href="https://www.goodreads.com/book/show/50485582-the-precipice" target="_blank" rel="noopener" data-tip="The Precipice — Toby Ord"><span class="cover-title">Precipice</span></a>
-    <a class="cover t3" id="c-other"  href="https://www.lesswrong.com/s/BbAvHtorCZqp97X9W" target="_blank" rel="noopener" data-tip="Otherness and Control in the Age of AGI — Joe Carlsmith"><span class="cover-title">Otherness &amp; Control AGI</span></a>
-    <a class="cover t3" id="c-live"   href="https://www.lesswrong.com/s/aMz2JMvgXrLBkq4h3" target="_blank" rel="noopener" data-tip="Live Theory Sequence — Sahil"><span class="cover-title">Live Theory Seq.</span></a>
-    <a class="cover t3" id="c-align"  href="https://www.goodreads.com/book/show/50489349-the-alignment-problem" target="_blank" rel="noopener" data-tip="The Alignment Problem — Brian Christian"><span class="cover-title">Alignment Problem</span></a>
+<section class="s-links">
+  <div class="island" id="links-block">
+    <div class="links-row">
+      <div class="cal-patch">
+        <div class="cal-patch-bg"></div>
+        <a class="cal-lnk" href="https://cal.com/aayushk/chat" target="_blank">let's chat</a>
+      </div>
+      <div class="links-col">
+        <a class="sm-lnk" href="mailto:aayush.kucheria@gmail.com">aayush.kucheria@gmail.com</a>
+        <div class="sm-links">
+          <a class="sm-lnk" href="https://github.com/AayushKucheria" target="_blank">GitHub</a>
+          <a class="sm-lnk" href="https://linkedin.com/in/aayushkucheria" target="_blank">LinkedIn</a>
+          <a class="sm-lnk" href="https://twitter.com/aay17ush" target="_blank">X</a>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
-
-<div class="island" id="links-block">
-  <a class="cal-lnk" href="https://cal.com/aayushk/chat" target="_blank">→ book a call</a>
-  <a class="sm-lnk" href="mailto:aayush.kucheria@gmail.com">aayush.kucheria@gmail.com</a>
-  <div class="sm-links">
-    <a class="sm-lnk" href="https://github.com/AayushKucheria" target="_blank">GitHub</a>
-    <a class="sm-lnk" href="https://linkedin.com/in/aayushkucheria" target="_blank">LinkedIn</a>
-    <a class="sm-lnk" href="https://twitter.com/aay17ush" target="_blank">X</a>
-  </div>
-</div>
+</section>
 
 <div id="hint">click anywhere to leave a mark</div>
 
@@ -540,11 +804,8 @@
       el.appendChild(span);
       setTimeout(() => { span.style.opacity = '1'; }, 700 + i * 520);
     });
-    setTimeout(() => {
-      annotate(document.querySelector('.res-label'), {
-        type: 'underline', color: '#b09060', roughness: 3.5, strokeWidth: 2, animationDuration: 500,
-      }).show();
-    }, 700 + chunks.length * 520 + 400);
+    const p2 = document.querySelector('.res-txt2');
+    if (p2) setTimeout(() => { p2.style.opacity = '1'; }, 700 + chunks.length * 520 + 200);
   }
 
   function runAnnotations() {
@@ -555,14 +816,69 @@
   }
 
   const tip = document.getElementById('cover-tip');
+  let coverZ = 10;
   document.querySelectorAll('.cover').forEach(c => {
-    c.addEventListener('mouseenter', () => { tip.style.display = 'block'; tip.textContent = c.dataset.tip; });
+    c.addEventListener('mouseenter', () => { tip.style.display = 'block'; tip.textContent = c.dataset.tip; c.style.zIndex = ++coverZ; });
     c.addEventListener('mousemove', e => { tip.style.left = (e.clientX + 12) + 'px'; tip.style.top = (e.clientY - 30) + 'px'; });
     c.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
   });
 
-  window.addEventListener('load', () => { drawAll(); drawThreads(); runAnnotations(); streamIntro(); });
-  window.addEventListener('resize', () => { drawAll(); drawThreads(); });
+  // ── Overlap detector — fires on load + resize, logs to console ──────────
+  // Islands that may legitimately touch due to intentional placement.
+  const KNOWN_OK = new Set([
+    'hi-label|name-block',   // "hi, I'm" sits above the name by design
+    'photo-1|photo-2', 'photo-1|photo-3', 'photo-1|photo-4',
+    'photo-2|photo-3', 'photo-2|photo-4', 'photo-3|photo-4', // photos can fan
+  ]);
+  // Overlap on BOTH axes must exceed this many px to count as a violation.
+  // Accounts for rotation: getBoundingClientRect() returns the AABB of a
+  // rotated box, which is larger than the visual element, so small overlaps
+  // in the AABB are expected and fine.
+  const OVERLAP_THRESHOLD = 18;
+
+  function checkOverlaps() {
+    const els = [
+      ...document.querySelectorAll('.island, .photo-ph'),
+      document.getElementById('community-block'),
+      document.getElementById('hi-label'),
+    ].filter(Boolean);
+
+    let violations = 0;
+    for (let i = 0; i < els.length; i++) {
+      for (let j = i + 1; j < els.length; j++) {
+        const a = els[i], b = els[j];
+        const idA = a.id || a.className.split(' ')[0];
+        const idB = b.id || b.className.split(' ')[0];
+        const key = [idA, idB].sort().join('|');
+        if (KNOWN_OK.has(key)) continue;
+
+        const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+        const overlapX = Math.min(ra.right, rb.right) - Math.max(ra.left, rb.left);
+        const overlapY = Math.min(ra.bottom, rb.bottom) - Math.max(ra.top, rb.top);
+        if (overlapX > OVERLAP_THRESHOLD && overlapY > OVERLAP_THRESHOLD) {
+          console.error(
+            `[layout] OVERLAP: "${idA}" and "${idB}" — ` +
+            `${overlapX.toFixed(0)}px × ${overlapY.toFixed(0)}px`
+          );
+          violations++;
+        }
+      }
+    }
+    if (violations === 0) console.log('[layout] ✓ no overlaps detected');
+  }
+
+  const isDesktop = () => window.innerWidth >= 1200;
+
+  window.addEventListener('load', () => {
+    drawAll();
+    if (isDesktop()) { drawThreads(); checkOverlaps(); }
+    runAnnotations();
+    streamIntro();
+  });
+  window.addEventListener('resize', () => {
+    drawAll();
+    if (isDesktop()) { drawThreads(); checkOverlaps(); }
+  });
 </script>
 
 </body>

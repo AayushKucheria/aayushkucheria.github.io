@@ -94,11 +94,11 @@ SURFACE ZONES (approx 1440 × 900)
 |---|---|---|---|
 | `#name-block` | bare | top, left:13.5vw, -2° | "Aayush Kucheria" 5rem/3.9rem |
 | `#photo-1/4` | `.photo-ph` polaroid (cream border) | around name | eagx + wappu + selfie + group |
-| `#projects-block` | `.patch` flex row | top, left:50vw, +1° | 3 project cards |
-| `#links-block` | bare | top-right, -1° | cal.com + email + socials |
-| `#research-block` | bare | left, left:4vw, top:28vh, -1.5° | "hi, I'm Aayush" streams in; roughnotation underline fires after |
+| `#projects-block` | `.patch` fabric squares | bottom-right, +1° | 3 square patches (2 in row + 1 below) |
+| `#links-block` | bare | top-right, -1° | "let's chat" fabric patch + email + socials |
+| `#research-block` | bare | left, left:4vw, top:28vh, -1.5°, **width:65vw** | intro text streams in; roughnotation underline fires after |
 | `#work-block` | bare wrapper + `.patch` cards | bottom strip, top:52vh, -1.5° | stitch label + 2 `.patch` cards side-by-side (`.w-row`) |
-| `#community-block` | bare (color TBD) | center-right, +2° | "community" heading |
+| `#community-block` | aqua `.comm-patch` | center-right, +2° | stitch label + 2 side-by-side `.comm-org` entries |
 | `#reading-block` | bare | bottom-right, +1° | stitch label + 10 book covers + roughnotation bracket |
 
 ## Intro streaming — `streamIntro()`
@@ -120,15 +120,38 @@ Runs on load and resize. Draws into `#threads` (SVG, `inset: 0`):
 Click anywhere on `#dot-layer` → organic SVG paint splash with spring bounce. Fresh: `#8a4820`. Return-visit: `#4a3018`, faded. Max 100, stored in `localStorage` key `wb-v1`.
 
 ## Bookshelf block
-10 book covers, 2 rows of 5. Flat solid cloth colors — no gradients:
+10 book covers. Flat solid cloth colors — no gradients:
 - **Slate** (`#4a6272`): machines & minds — Dream Machine, Philosopher of Palo Alto, Mindstorms
 - **Sage** (`#476055`): embodiment — Spell of the Sensuous, Becoming Animal, Love and Will
 - **Terracotta** (`#724038`): AI futures — Precipice, Otherness & Control AGI, Live Theory Seq., Alignment Problem
+
+Desktop: absolute-positioned in a `25vw × 18vh` container, 2 rows of 5, manually placed with `left/top %` on each cover.
+Tablet/mobile: CSS grid `repeat(6, 1fr)` — 6 blue+green books on row 1, 4 terracotta on row 2.
 Hover shows `#cover-tip` tooltip (title + author).
+
+## Responsive layout — two tiers
+
+Desktop is the primary experience (fixed, no scroll). Tablet and mobile are scrollable fallbacks.
+
+### Tier 2 — Tablet (520px – 1199px)
+`@media (max-width: 1199px)` resets all islands to `position: relative` and stacks sections as scrollable blocks. A second block `@media (min-width: 520px) and (max-width: 1199px)` then applies tablet-specific layout on top:
+
+- `body { display: grid; grid-template-columns: 1fr 1fr }` with named areas: header/intro/work span full width; `projects | community` and `reading | links` are side-by-side pairs.
+- All 4 photos in one row: `.photo-strip { width: auto }` + `#photo-3 { order: 0 }` + `#name-block { order: 1; flex: 0 0 100% }`.
+- Community shrunk to content width: `#community-block { width: fit-content !important }`.
+- Projects centered in left column: `.s-projects { display: flex; justify-content: center }`.
+- Links: `.s-links { display: flex; justify-content: center; align-items: center; align-self: stretch }` — stretches to bookshelf row height for vertical centering. `links-row` is `flex-direction: column` (stacked: button → email → socials).
+- Bookshelf: `repeat(6, 1fr)` grid — blue+green row, then red row.
+
+### Tier 1 — Phone (< 520px)
+`@media (max-width: 519px)` further overrides: tighter padding, stacked work cards, 3 project patches all visible (`.proj-row-center` no longer hidden), intro text `padding-top: 14px`.
+
+## "let's chat" patch
+The `.cal-patch` wrapper has `pointer-events: auto` explicitly — needed because `.island` sets `pointer-events: none` and only restores it on `<a>` elements. Without this the hover lift doesn't fire on the first approach (mouse lands on fabric, not text).
 
 ## Preferences (do not change without asking)
 - No CSS borders for section dividers
-- No centered column layouts — full viewport, absolute positioning
+- No centered column layouts — full viewport, absolute positioning (desktop)
 - No dark backgrounds
 - No outer wall/border around the board — single cloth surface
 - roughness 3.5+ on roughnotation annotations — wobblier is better
