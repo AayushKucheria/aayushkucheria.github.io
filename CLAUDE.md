@@ -83,7 +83,7 @@ SURFACE ZONES (approx 1440 × 900)
 ┌──────────────────────────────────────────────────────────┐
 │ [ph][ph] [  name  ] [ph][ph]  [proj][proj][proj] [links] │
 │                                              [community] │
-│ [intro — bare, streams in]                               │
+│ [intro — bare, static]                                   │
 │                                                          │
 │ [W O R K — horizontal strip ————————————]  [bookshelf]   │
 └──────────────────────────────────────────────────────────┘
@@ -96,17 +96,13 @@ SURFACE ZONES (approx 1440 × 900)
 | `#photo-1/4` | `.photo-ph` polaroid (cream border) | around name | eagx + wappu + selfie + group |
 | `#projects-block` | `.patch` fabric squares | bottom-right, +1° | 3 square patches (2 in row + 1 below) |
 | `#links-block` | bare | top-right, -1° | "let's chat" fabric patch + email + socials |
-| `#research-block` | bare | left, left:4vw, top:28vh, -1.5°, **width:65vw** | intro text streams in; roughnotation underline fires after |
+| `#research-block` | bare | left, left:4vw, top:28vh, -1.5°, **width:65vw** | two static paragraphs; second ends with "conversation" hyperlinked to cal.com |
 | `#work-block` | bare wrapper + `.patch` cards | bottom strip, top:52vh, -1.5° | stitch label + 2 `.patch` cards side-by-side (`.w-row`) |
 | `#community-block` | aqua `.comm-patch` | center-right, +2° | stitch label + 2 side-by-side `.comm-org` entries |
 | `#reading-block` | bare | bottom-right, +1° | stitch label + 10 book covers + roughnotation bracket |
 
-## Intro streaming — `streamIntro()`
-Fires on load. Splits `.res-txt` into 6-word chunks, fades each in with 520ms stagger starting at 700ms. After all chunks appear, fires a roughnotation underline on `.res-label` (tan `#b09060`, roughness 3.5).
-
 ## Annotations (roughnotation)
 - Bracket on `#book-list` — tan `#b09060`, left side, 400ms delay, 700ms animation
-- Underline on `.res-label` — fires after intro streaming completes
 
 ## Canvas (roughjs) — `drawAll()`
 Runs on load and resize. Resizes canvas only — no drawings currently. (Curly brace on work block was removed when work became a horizontal strip.)
@@ -126,7 +122,8 @@ Click anywhere on `#dot-layer` → organic SVG paint splash with spring bounce. 
 - **Terracotta** (`#724038`): AI futures — Precipice, Otherness & Control AGI, Live Theory Seq., Alignment Problem
 
 Desktop: absolute-positioned in a `25vw × 18vh` container, 2 rows of 5, manually placed with `left/top %` on each cover.
-Tablet/mobile: CSS grid `repeat(6, 1fr)` — 6 blue+green books on row 1, 4 terracotta on row 2.
+Tablet: CSS grid `repeat(6, 1fr)` — 6 blue+green books on row 1, 4 terracotta on row 2.
+Phone: CSS grid `repeat(4, 1fr)` — one color per row (slate row, sage row, terracotta row). `nth-child(4)` and `nth-child(7)` forced to `grid-column-start: 1` to break rows. Each cover has a unique rotation + Y-offset for organic feel.
 Hover shows `#cover-tip` tooltip (title + author).
 
 ## Responsive layout — two tiers

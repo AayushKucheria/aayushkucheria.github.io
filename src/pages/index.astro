@@ -189,7 +189,7 @@
     #research-block { top: var(--research-top); left: var(--research-left); width: 65vw; transform: rotate(-1.5deg); }
     .res-label { font-size: var(--sz-xl); font-weight: 800; color: var(--clr-ink); display: block; margin-bottom: 0.55rem; }
     .res-txt { font-size: var(--sz-body); font-weight: 400; color: var(--clr-ink2); line-height: 1.65; }
-    .res-txt2 { font-size: var(--sz-body); font-weight: 400; color: var(--clr-ink2); line-height: 1.65; margin-top: 0.9rem; opacity: 0; transition: opacity 0.5s ease; }
+    .res-txt2 { font-size: var(--sz-body); font-weight: 400; color: var(--clr-ink2); line-height: 1.65; margin-top: 0.9rem; }
 
     /* WORK — hero, left→center */
     #work-block { top: var(--work-top); left: var(--work-left); width: var(--work-w); transform: rotate(-1.5deg); }
@@ -469,7 +469,24 @@
         min-width: 0 !important; min-height: 0 !important;
       }
 
-      /* Books — increase cover title font on small screens */
+      /* Books — one row per color group, organic tilt */
+      #book-list {
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 10px 6px !important;
+        align-items: end;
+      }
+      #book-list .cover:nth-child(4),
+      #book-list .cover:nth-child(7) { grid-column-start: 1; }
+      #book-list .cover:nth-child(1)  { transform: rotate(-3deg)   translateY(3px)  !important; }
+      #book-list .cover:nth-child(2)  { transform: rotate(1.5deg)  translateY(-4px) !important; }
+      #book-list .cover:nth-child(3)  { transform: rotate(-1deg)   translateY(2px)  !important; }
+      #book-list .cover:nth-child(4)  { transform: rotate(2.5deg)  translateY(-2px) !important; }
+      #book-list .cover:nth-child(5)  { transform: rotate(-2deg)   translateY(5px)  !important; }
+      #book-list .cover:nth-child(6)  { transform: rotate(1deg)    translateY(-3px) !important; }
+      #book-list .cover:nth-child(7)  { transform: rotate(-1.5deg) translateY(4px)  !important; }
+      #book-list .cover:nth-child(8)  { transform: rotate(3deg)    translateY(-5px) !important; }
+      #book-list .cover:nth-child(9)  { transform: rotate(-2.5deg) translateY(2px)  !important; }
+      #book-list .cover:nth-child(10) { transform: rotate(1.5deg)  translateY(-3px) !important; }
       .cover-title { font-size: 0.5rem; }
 
       /* Links — keep horizontal like desktop, more gap from bookshelf */
@@ -515,7 +532,7 @@
 <section class="s-intro">
   <div class="island" id="research-block">
     <p class="res-txt">I care about how humans and AI systems come to understand each other — not just technically, but in the full human sense. I spend most of my time designing interfaces that make alignment research legible and building prototypes that explore what thoughtful AI interaction could look like.</p>
-    <p class="res-txt2">Before that: community organizing, a philosophy detour, and a lot of books about minds and embodiment. I'm based in Helsinki and always up for a conversation — the cal link is over there.</p>
+    <p class="res-txt2">Before that: community organizing, a philosophy detour, and a lot of books about minds and embodiment. I'm based in Helsinki and always up for a <a href="https://cal.com/aayushk/chat" target="_blank" style="color:inherit; font-weight:500; text-decoration: underline dotted #b09060; text-underline-offset: 3px;">conversation</a>.</p>
   </div>
 </section>
 
@@ -787,27 +804,6 @@
     });
   }
 
-  function streamIntro() {
-    const el = document.querySelector('.res-txt');
-    if (!el) return;
-    const words = el.textContent.trim().split(/\s+/);
-    const CHUNK = 6;
-    const chunks = [];
-    for (let i = 0; i < words.length; i += CHUNK) {
-      chunks.push(words.slice(i, i + CHUNK).join(' '));
-    }
-    el.innerHTML = '';
-    chunks.forEach((chunk, i) => {
-      const span = document.createElement('span');
-      span.textContent = (i > 0 ? ' ' : '') + chunk;
-      span.style.cssText = 'opacity:0; transition: opacity 0.28s ease';
-      el.appendChild(span);
-      setTimeout(() => { span.style.opacity = '1'; }, 700 + i * 520);
-    });
-    const p2 = document.querySelector('.res-txt2');
-    if (p2) setTimeout(() => { p2.style.opacity = '1'; }, 700 + chunks.length * 520 + 200);
-  }
-
   function runAnnotations() {
     setTimeout(() => annotate(document.getElementById('book-list'), {
       type: 'bracket', color: '#b09060',
@@ -873,7 +869,6 @@
     drawAll();
     if (isDesktop()) { drawThreads(); checkOverlaps(); }
     runAnnotations();
-    streamIntro();
   });
   window.addEventListener('resize', () => {
     drawAll();
