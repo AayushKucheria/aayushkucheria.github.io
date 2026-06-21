@@ -4,6 +4,7 @@
 - Astro (static output) → deploys to GitHub Pages at aayushkucheria.github.io
 - `npm run dev` — dev server on **localhost:4321** (port pinned)
 - `npm run build` — static build to `dist/`
+- `npm test` — Playwright splash regression tests (`build` + preview on **4322**)
 - Single page: `src/pages/index.astro`
 - Push to `main` → auto-deploy via GitHub Actions
 
@@ -21,7 +22,7 @@ The site is a **cloth surface** — not a scrolling document, not a whiteboard. 
 Four levels of importance, achieved through position, typography, and motion — not color:
 
 1. **Name + face** — large type, polaroid photos, top zone
-2. **Intro** (`#research-block`) — bare text on cloth, left side, streams in on load word-by-word, roughnotation underline fires after streaming. The gravitational center.
+2. **Intro** (`#research-block`) — bare text on cloth, left side, static paragraphs. The gravitational center.
 3. **Work** — horizontal two-card strip, lower on the board (52vh). Quieter typography (`--sz-xl` not `--sz-2xl`). Presence without dominance.
 4. **Projects, Community** — equal weight, supporting
 5. **Book a call** — prominent but not competing (`--sz-lg` bold)
@@ -92,12 +93,12 @@ SURFACE ZONES (approx 1440 × 900)
 ## Content islands
 | ID | Type | Zone | Content |
 |---|---|---|---|
-| `#name-block` | bare | top, left:13.5vw, -2° | "Aayush Kucheria" 5rem/3.9rem |
+| `#name-block` | bare | top, left:13.5vw, -2° | "Aayush Kucheria" 5rem/3.9rem + `#name-coda` (Helsinki, cal.com link) |
 | `#photo-1/4` | `.photo-ph` polaroid (cream border) | around name | eagx + wappu + selfie + group |
 | `#projects-block` | `.patch` fabric squares | bottom-right, +1° | 3 square patches (2 in row + 1 below) |
 | `#links-block` | bare | top-right, -1° | "let's chat" fabric patch + email + socials |
-| `#research-block` | bare | left, left:4vw, top:28vh, -1.5°, **width:65vw** | two static paragraphs; second ends with "conversation" hyperlinked to cal.com |
-| `#work-block` | bare wrapper + `.patch` cards | bottom strip, top:52vh, -1.5° | stitch label + 2 `.patch` cards side-by-side (`.w-row`) |
+| `#research-block` | bare | left, left:4vw, top:28vh, -1.5°, **width:65vw** | intro copy + two numbered questions + closing paragraph |
+| `#work-block` | bare wrapper + `.patch` cards | bottom strip, top:52vh, -1.5° | stitch label + 2 `.patch` cards (`.w-row`); Design × Alignment card has full-width Groundless `.pill-card` + ACL/PracticeSpace pills below |
 | `#community-block` | aqua `.comm-patch` | center-right, +2° | stitch label + 2 side-by-side `.comm-org` entries |
 | `#reading-block` | bare | bottom-right, +1° | stitch label + 10 book covers + roughnotation bracket |
 
@@ -113,7 +114,7 @@ Runs on load and resize. Draws into `#threads` (SVG, `inset: 0`):
 - **Loose filaments**: 20 stray thread ends scattered across the cloth — short curved paths, 0.7px, ~0.15–0.33 opacity. Replace the old roughjs atmospheric squiggles.
 
 ## Paint splash interaction
-Click anywhere on `#dot-layer` → organic SVG paint splash with spring bounce. Fresh: `#8a4820`. Return-visit: `#4a3018`, faded. Max 100, stored in `localStorage` key `wb-v1`.
+Click anywhere on `#dot-layer` → organic SVG paint splash with spring bounce. Splashes append to `document.body` (not `#dot-layer`) so they aren't clipped by island stacking; `:global(.splash-wrap)` is `position: fixed; z-index: 5` (above `.island` at z-index 2). Fresh: `#8a4820`. Return-visit: `#4a3018`, faded. Max 100, stored in `localStorage` key `wb-v1`. Regression tests in `scripts/test-splash-*.mjs`, run via `npm test`.
 
 ## Bookshelf block
 10 book covers. Flat solid cloth colors — no gradients:
