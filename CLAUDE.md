@@ -56,9 +56,11 @@ Reference: `prototypes/primitive-taxonomy.html`. CSS is organized by piece.
   (`.slate/.sage/.terracotta/.umber`, a thin stitched accent edge via `::after`,
   not a fill), size (`.patch` / `.patch.sm`), and **spine** (`.spine`, deep-dyed,
   for books). Work cards, ideas, now-cards, and books are all this one piece.
-- **Photo** — `.photo` polaroid (cream border `#f2ede4`) + `.cap`.
+- **Photo** — `.photo-ph` polaroid (cream border `#f2ede4`, bottom padding, no
+  captions): individual tilts per `#photo-1`…`#photo-4`, hover scale/lift.
 - **Tag** — `.tag` (`.string` + `.card`): paper tag on a thread, for tiny meta.
-  Used for the "Based in Helsinki" coda.
+  Rest tilt + pendulum swing on hover (`transform-origin: top center`). Used for
+  the "Based in Helsinki" coda.
 - **Thread** — SVG line: loose-filament atmosphere + the roughnotation reading
   bracket.
 - **Containers:** Corner (`<section class="corner">`) and Label-list
@@ -67,7 +69,7 @@ Reference: `prototypes/primitive-taxonomy.html`. CSS is organized by piece.
 ## Contact CTAs (cloth, not tags)
 "let's chat" and "buy me a coffee" are fabric **cloth patches** (`.cal-patch`
 with `.cal-patch-bg`), not tags: `let's chat` = `/fabrics/pink_cotton.jpeg`,
-`buy me a coffee` = `/fabrics/blue_linen.jpeg`, each with the `#cloth-edge`
+`buy me a coffee` = `/fabrics/sunshine.jpg`, each with the `#cloth-edge`
 torn-edge filter. Other fabrics available in `public/fabrics/`.
 
 ## Color system
@@ -88,10 +90,13 @@ torn-edge filter. Other fabrics available in `public/fabrics/`.
 ## Paint splash interaction
 Click empty right-pane cloth → organic SVG paint splash (spring bounce). A
 document-level listener paints unless the click target is interactive/content
-(`PAINT_IGNORE`) or the left `.home-pane`; `#dot-layer` is a non-blocking
-geometry element that also sizes the canvas/threads to the right pane. Splashes
-append to `document.body` (`.splash-wrap`, `position: fixed; z-index: 5`), max
-100, stored in `localStorage` key `wb-v1`. Regression tests:
+(`PAINT_IGNORE`), the click is left of `#dot-layer`, or the target is the static
+`.home-pane`. Three paint colors at equal weight (`#d4a828`, `#3d6658`,
+`#3a5570`); on load, stored coords in `localStorage` key `wb-v1` are pruned to
+the right pane only (drops legacy marks from the old full-board layout).
+`#dot-layer` is a non-blocking geometry element that also sizes the canvas/threads
+to the right pane. Splashes append to `document.body` (`.splash-wrap`,
+`position: fixed; z-index: 5`), max 100. Regression tests:
 `scripts/test-splash-*.mjs`, run via `npm test`.
 
 ## corner-nav must stay transparent
