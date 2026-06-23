@@ -96,7 +96,7 @@ SURFACE ZONES (approx 1440 × 900)
 | `#name-block` | bare | top, left:13.5vw, -2° | "Aayush Kucheria" 5rem/3.9rem + `#name-coda` (Helsinki, cal.com link) |
 | `#photo-1/4` | `.photo-ph` polaroid (cream border) | around name | eagx + wappu + selfie + group |
 | `#projects-block` | `.patch` fabric squares | bottom-right, +1° | 3 square patches (2 in row + 1 below) |
-| `#links-block` | bare | top-right, -1° | "let's chat" fabric patch + email + socials |
+| `#links-block` | bare | top-right, -1° | "let's chat" fabric patch + email + socials + Buttondown newsletter form |
 | `#research-block` | bare | left, left:4vw, top:28vh, -1.5°, **width:65vw** | intro copy + two numbered questions + closing paragraph |
 | `#work-block` | bare wrapper + `.patch` cards | bottom strip, top:52vh, -1.5° | stitch label + 2 `.patch` cards (`.w-row`); Design × Alignment card has full-width Groundless `.pill-card` + ACL/PracticeSpace pills below |
 | `#community-block` | aqua `.comm-patch` | center-right, +2° | stitch label + 2 side-by-side `.comm-org` entries |

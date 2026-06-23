@@ -305,6 +305,9 @@
     .sm-lnk { font-size: var(--sz-body); font-weight: 300; color: var(--clr-brown); font-style: italic; text-decoration: none; }
     .sm-lnk:hover { color: var(--clr-ink); }
 
+    .embeddable-buttondown-form p { text-align: right; }
+    .embeddable-buttondown-form p a { font-size: var(--sz-sm); color: var(--clr-ink3); opacity: 0.6; }
+
     #hint {
       position: fixed; bottom: 8px; left: 50%; transform: translateX(-50%);
       font-size: var(--sz-xs); font-style: italic; color: #8a7248; opacity: 0.6;
@@ -644,6 +647,20 @@
           <a class="sm-lnk" href="https://linkedin.com/in/aayushkucheria" target="_blank">LinkedIn</a>
           <a class="sm-lnk" href="https://twitter.com/aay17ush" target="_blank">X</a>
         </div>
+        <form
+          action="https://buttondown.com/api/emails/embed-subscribe/aayushk"
+          method="post"
+          class="embeddable-buttondown-form"
+        >
+          <label for="bd-email">for occasional updates</label>
+          <input type="email" name="email" id="bd-email" />
+          <input type="submit" value="Subscribe" />
+          <p>
+            <a href="https://buttondown.com/refer/aayushk" target="_blank">
+              Powered by Buttondown.
+            </a>
+          </p>
+        </form>
       </div>
     </div>
   </div>
