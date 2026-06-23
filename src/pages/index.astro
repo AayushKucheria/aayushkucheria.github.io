@@ -57,19 +57,12 @@
       max-width: 220px; line-height: 1.4;
     }
 
-    #hint {
-      position: fixed; bottom: 8px; left: calc(var(--pocket-width) + (100vw - var(--pocket-width)) / 2);
-      transform: translateX(-50%);
-      font-size: 0.6rem; font-style: italic; color: #8a7248; opacity: 0.6;
-      pointer-events: none; z-index: 10;
-    }
-
     /* ── LAYOUT ── */
     .layout { position: relative; z-index: 2; display: grid; grid-template-columns: var(--pocket-width) 1fr; }
 
     .home-pane {
       position: fixed; top: 0; left: 0; width: var(--pocket-width); height: 100vh;
-      overflow: visible; padding: 5vh 46px 4vh; display: flex; flex-direction: column; z-index: 5;
+      overflow: visible; padding: 3.2vh 46px 4vh; display: flex; flex-direction: column; z-index: 5;
     }
     .pocket-bg {
       position: absolute; top: -12px; bottom: -12px; left: -80px; right: 0; z-index: 0;
@@ -87,7 +80,7 @@
     .corner-pane { grid-column: 2; position: relative; z-index: 2; min-height: 100vh; padding: 0 48px 100px; }
 
     /* ── MARK ── */
-    .hero { font-size: clamp(2.3rem, 3.4vw, 3.6rem); font-weight: 800; line-height: 0.9; letter-spacing: -0.03em; color: var(--clr-ink); transform: rotate(-2deg); transform-origin: left; }
+    .hero { font-size: clamp(2.3rem, 3.4vw, 3.6rem); font-weight: 800; line-height: 0.9; letter-spacing: -0.03em; color: var(--clr-ink); transform: rotate(-2deg); transform-origin: left; margin-top: -0.2rem; }
     .hero .ln2 { display: block; font-size: 0.78em; }
     .home-desc { font-size: 0.9rem; font-weight: 400; color: var(--clr-ink2); line-height: 1.5; margin-top: 1.2rem; }
     .about-body { font-size: 0.92rem; font-weight: 400; color: var(--clr-ink2); line-height: 1.55; max-width: 560px; }
@@ -99,8 +92,20 @@
     .corner-lead { font-size: 0.92rem; color: var(--clr-ink2); line-height: 1.5; max-width: 520px; margin-bottom: 20px; }
     .comm-line { font-size: 0.88rem; font-weight: 400; color: var(--clr-ink2); line-height: 1.55; max-width: 280px; }
 
-    /* ── TAG ── */
-    .tag { display: inline-flex; flex-direction: column; align-items: center; margin-top: 0.7rem; }
+    /* ── TAG — paper tag on a thread; swings from the pin on hover ── */
+    .tag {
+      --tag-tilt: 2.5deg;
+      --tag-swing: 4deg;
+      display: inline-flex; flex-direction: column; align-items: center;
+      margin-top: calc(0.15rem - 6px); margin-left: 2.4rem;
+      transform: rotate(var(--tag-tilt)); transform-origin: top center;
+      cursor: default; transition: transform 0.45s ease-out;
+    }
+    .tag:hover { animation: tag-swing 1.75s ease-in-out infinite; transition: none; }
+    @keyframes tag-swing {
+      0%, 100% { transform: rotate(calc(var(--tag-tilt) - var(--tag-swing))); }
+      50%      { transform: rotate(calc(var(--tag-tilt) + var(--tag-swing))); }
+    }
     .tag .string { width: 1.5px; height: 26px; background: linear-gradient(to bottom, #9a7248, #c0a878); opacity: 0.7; }
     .tag .string.tall { height: 40px; }
     .tag .card {
@@ -113,13 +118,19 @@
     .tag .card span { display: block; margin-top: 7px; font-weight: 400; font-size: 0.68rem; color: var(--clr-ink3); }
     .tag .card a { color: var(--clr-ink2); text-decoration: underline dotted var(--clr-tan); text-underline-offset: 3px; }
 
-    /* ── PHOTO ── */
-    .photo-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 1.4rem; transform: rotate(-1.5deg); transform-origin: left; }
-    .photo { background: #f2ede4; padding: 4px 4px 13px; box-shadow: 2px 4px 14px #00000030; }
-    .photo:nth-child(odd)  { transform: rotate(-5deg); }
-    .photo:nth-child(even) { transform: rotate(3deg) translateY(8px); }
-    .photo img { width: 84px; height: 92px; display: block; object-fit: cover; background: #bcae90; }
-    .photo .cap { font-size: 0.58rem; font-style: italic; color: var(--clr-ink3); text-align: center; margin-top: 4px; }
+    /* ── PHOTO — polaroid-style prints (original cloth-poster behavior) ── */
+    .photo-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin-top: 0.2rem; }
+    .photo-ph {
+      position: relative; background: #f2ede4; padding: 5px 5px 20px;
+      box-shadow: 2px 4px 14px #00000030;
+      transition: transform 0.15s, box-shadow 0.15s; cursor: pointer;
+    }
+    .photo-ph img { display: block; width: 76px; height: 86px; object-fit: cover; background: #bcae90; }
+    .photo-ph:hover { transform: scale(1.35) translateY(8px) !important; box-shadow: 4px 8px 24px #00000050; z-index: 20; }
+    #photo-1 { transform: rotate(7deg); z-index: 6; }
+    #photo-2 { transform: rotate(-5deg) translateY(10px); z-index: 5; }
+    #photo-3 { transform: rotate(2.5deg); }
+    #photo-4 { transform: rotate(-6deg) translateY(6px); }
 
     /* ── CONTACT ── */
     .contact { margin-top: auto; padding-top: 1.4rem; }
@@ -127,7 +138,8 @@
     /* cloth CTAs — fabric patches with a hand-cut edge (let's chat / coffee) */
     .cta-row { display: flex; gap: 18px; flex-wrap: wrap; }
     .cal-patch { position: relative; display: inline-block; padding: 9px 15px 10px; transform: rotate(-1.5deg); cursor: pointer; transition: transform 0.15s; }
-    .cal-patch:hover { transform: rotate(-1.5deg) translateY(-3px); }
+    .cal-patch:hover,
+    .coffee-patch:hover { transform: translateY(-2px) rotate(0deg); }
     .cal-patch:hover .cal-patch-bg { box-shadow: 3px 7px 22px #00000030, 0 2px 7px #0000001a; }
     .cal-patch-bg {
       position: absolute; inset: -3px; z-index: 0;
@@ -137,8 +149,7 @@
     }
     .cal-lnk { position: relative; z-index: 1; display: block; font-size: 1.02rem; font-weight: 700; color: #2a1208; text-decoration: none; }
     .coffee-patch { transform: rotate(1.5deg); }
-    .coffee-patch:hover { transform: rotate(1.5deg) translateY(-3px); }
-    .coffee-patch .cal-patch-bg { background-image: url('/fabrics/blue_linen.jpeg'); background-size: 420px; background-position: -30px -20px; }
+    .coffee-patch .cal-patch-bg { background-image: url('/fabrics/sunshine.jpg'); background-size: 420px; background-position: -30px -20px; }
     .email { display: inline-block; margin-top: 0.9rem; font-size: 0.82rem; font-style: italic; color: var(--clr-ink2); text-decoration: none; }
     .email:hover { color: var(--clr-ink); }
     .sm-links { display: flex; gap: 0.9rem; flex-wrap: wrap; margin-top: 0.5rem; }
@@ -227,12 +238,12 @@
     /* ── BREAKPOINT — panes stack at 960px ── */
     @media (max-width: 959px) {
       #canvas, #threads, #dot-layer { left: 0; }
-      #hint { left: 50%; }
 
       .layout { grid-template-columns: 1fr; }
       .home-pane { position: static; width: auto; height: auto; overflow: visible; padding: 6vh 24px 24px; z-index: auto; }
       .pocket-bg { display: none; }
       .contact { margin-top: 1.6rem; }
+      .photo-row .photo-ph img { width: 13vw; max-width: 80px; height: 17vw; max-height: 104px; }
       .corner-pane { grid-column: 1; padding: 16px 24px 90px; }
       .corner-nav { display: none; }
       .corner { display: block !important; margin-bottom: 34px; }
@@ -264,7 +275,6 @@
 <svg id="threads" xmlns="http://www.w3.org/2000/svg"></svg>
 <div id="dot-layer"></div>
 <div id="cover-tip"></div>
-<div id="hint">click anywhere to leave a mark</div>
 
 <div class="layout">
 
@@ -272,20 +282,17 @@
     <div class="pocket-bg"></div>
 
     <div class="photo-row">
-      <div class="photo"><img src="/pics/eagx_image.jpg" alt="" style="object-position: center 15%" /><div class="cap">EAGx</div></div>
-      <div class="photo"><img src="/pics/wappu_image.JPG" alt="" style="object-position: center 20%" /><div class="cap">wappu</div></div>
-      <div class="photo"><img src="/pics/stupid_image.jpg" alt="" style="object-position: center 15%" /><div class="cap">selfie</div></div>
-      <div class="photo"><img src="/pics/amazon.jpg" alt="" style="object-position: center 10%" /><div class="cap">group</div></div>
+      <div class="photo-ph" id="photo-1"><img src="/pics/eagx_image.jpg" alt="" style="object-position: center 15%" /></div>
+      <div class="photo-ph" id="photo-2"><img src="/pics/wappu_image.JPG" alt="" style="object-position: center 20%" /></div>
+      <div class="photo-ph" id="photo-3"><img src="/pics/amazon.jpg" alt="" style="object-position: center 10%" /></div>
+      <div class="photo-ph" id="photo-4"><img src="/pics/stupid_image.jpg" alt="" style="object-position: center 15%" /></div>
     </div>
 
     <div class="hero">Aayush<span class="ln2">Kucheria</span></div>
 
     <div class="tag">
       <span class="string"></span>
-      <div class="card">
-        Based in Helsinki
-        <span>Always up for a <a href="https://cal.com/aayushk/chat" target="_blank" rel="noopener">conversation</a></span>
-      </div>
+      <div class="card">Based in Helsinki</div>
     </div>
 
     <p class="home-desc">Researcher and interface thinker. I care about AI being good for the people it touches — especially where a human and a model actually meet.</p>
@@ -434,9 +441,20 @@
   import { annotate } from 'rough-notation';
 
   const dotLayer = document.getElementById('dot-layer');
-  const stored = JSON.parse(localStorage.getItem('wb-v1') || '[]');
+  let stored = JSON.parse(localStorage.getItem('wb-v1') || '[]');
   const MAX = 100;
   const NS = 'http://www.w3.org/2000/svg';
+
+  /* splashes only live on the right pane — drop legacy marks from the old full-board layout */
+  const inRightPane = (x, clientX) =>
+    (clientX != null ? clientX : x * window.innerWidth) >= dotLayer.getBoundingClientRect().left - 1;
+
+  stored = stored.filter(([x]) => inRightPane(x));
+  localStorage.setItem('wb-v1', JSON.stringify(stored));
+
+  /* three paint colors — equal weight, contrast against --clr-board (#ddd5be) */
+  const PAINT = ['#d4a828', '#3d6658', '#3a5570'];
+  const pickPaint = () => PAINT[Math.floor(Math.random() * PAINT.length)];
 
   function blob(cx, cy, r) {
     const n = 9;
@@ -465,7 +483,7 @@
 
     const sz   = isOld ? (22 + Math.random() * 12) : (32 + Math.random() * 18);
     const rot  = Math.random() * 360;
-    const col  = isOld ? '#4a3018' : '#8a4820';
+    const col  = pickPaint();
     const base = isOld ? 0.12 : (0.68 + Math.random() * 0.18);
 
     const svg = document.createElementNS(NS, 'svg');
@@ -496,7 +514,7 @@
       el.setAttribute('cx', ecx); el.setAttribute('cy', ecy);
       el.setAttribute('rx', dr.toFixed(1));
       el.setAttribute('ry', (dr * (0.45 + Math.random() * 0.9)).toFixed(1));
-      el.setAttribute('fill', col);
+      el.setAttribute('fill', Math.random() < 0.3 ? pickPaint() : col);
       el.setAttribute('opacity', (base * (0.35 + Math.random() * 0.65)).toFixed(2));
       el.setAttribute('transform', `rotate(${(Math.random()*120-60).toFixed(0)} ${ecx} ${ecy})`);
       svg.appendChild(el);
@@ -516,9 +534,10 @@
 
   /* Paint on empty right-pane clicks. Ignore interactive pieces, content
      patches, and the static left pane so they stay clickable. */
-  const PAINT_IGNORE = 'a, button, input, textarea, select, label, form, .corner-tab, .patch, .spine, .tag, .photo, .home-pane';
+  const PAINT_IGNORE = 'a, button, input, textarea, select, label, form, .corner-tab, .patch, .spine, .tag, .photo-ph, .home-pane';
   document.addEventListener('click', e => {
     if (e.target.closest(PAINT_IGNORE)) return;
+    if (!inRightPane(null, e.clientX)) return;
     const x = e.clientX / window.innerWidth;
     const y = e.clientY / window.innerHeight;
     renderSplash(x, y, false);
