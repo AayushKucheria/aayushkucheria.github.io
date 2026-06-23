@@ -11,76 +11,26 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet" />
   <style>
-    /*
-      BOARD LAYOUT (approx 1440 × 900 viewport)
-      ┌──────────────────────────────────────────────────────────┐
-      │ [ph][ph] [  name  ]      [ph]  [proj][proj][proj] [rsrch]│
-      │                                        [community]       │
-      │ [W O R K  ——  hero, 580px wide]  [intro]                 │
-      │                         [float]         [think-card]     │
-      │ [links]                                 [bookshelf]      │
-      └──────────────────────────────────────────────────────────┘
-      All island positions live here. Change a number here to move a section.
-    */
     :root {
-      /* ── DESIGN TOKENS — change things here ──────────── */
-      --font:       'Shantell Sans', cursive;
-
-      /* type scale */
-      --sz-name:    clamp(3.5rem, 5.5vw, 7rem);    /* "Aayush" */
-      --sz-name2:   clamp(2.8rem, 4.3vw, 5.5rem);  /* "Kucheria" */
-      --sz-2xl:     1.5rem;    /* section headings: community, bookshelf */
-      --sz-xl:      1.3rem;    /* large labels: r-label */
-      --sz-lg:      1.1rem;    /* medium labels: res-label, cal-lnk, work-lbl */
-      --sz-md:      0.95rem;   /* base prose: intro, proj-title */
-      --sz-body:    0.9rem;    /* body text: comm body, links, subtitle */
-      --sz-card:    0.84rem;   /* card body, pill name */
-      --sz-sm:      0.78rem;   /* small: stamps, proj-sub, pill-desc */
-      --sz-xs:      0.6rem;    /* hint */
-      --sz-cover:   clamp(0.38rem, 0.5vw, 0.58rem); /* book spine text */
-
-      /* color palette */
-      --clr-wall:   #b0a890;   /* outer wall — undyed linen */
-      --clr-board:  #ddd5be;   /* board surface — unbleached canvas */
-      --clr-paper:  #ede8dc;   /* cards & torn paper */
-      --clr-sticky: #f0e060;   /* sticky note yellow */
-      --clr-ink:    #2a2218;   /* primary ink — warm near-black */
-      --clr-ink2:   #5a4830;   /* secondary ink — warm brown (labels, subtitles) */
-      --clr-ink3:   #7a6a50;   /* tertiary ink — muted (body text, captions) */
-      --clr-tan:    #b09060;   /* connective tissue — roughjs lines, atmosphere only */
-      --clr-brown:  #5a4830;   /* alias for ink2, kept for compatibility */
-      --clr-muted:  #7a6a50;   /* alias for ink3, kept for compatibility */
-
-      /* ── ISLAND POSITIONS — move sections here ─────────── */
-      /* name cluster — top-left */
-      --name-top: 4.9vh;        --name-left: 13.5vw;
-      --photo1-top: 4.9vh;      --photo1-left: 6.8vw;
-      --photo2-top: 8vh;        --photo2-left: 34.7vw;
-      --photo3-top: 5.1vh;      --photo3-left: 39.7vw;
-      --photo4-top: 5.6vh;      --photo4-left: 2.5vw;
-      /* projects — right column, between community and bookshelf */
-      --proj-bottom: 36vh;      --proj-right: 1.2vw;
-      /* intro — left, bare on cloth */
-      --research-top: 27vh;     --research-left: 4vw;
-      /* work — horizontal strip, low */
-      --work-top: 52vh;         --work-left: 3.3vw;   --work-w: max(60vw, 700px);
-      /* community — bottom-right, near bookshelf */
-      --community-bottom: 68vh; --community-right: 3.6vw;
-      /* reading — bottom-right */
-      --reading-bottom: 5.8vh;  --reading-right: 3.3vw;
-      /* links/contact — top-right */
-      --links-top: 4.9vh;       --links-right: 3.6vw;
+      --font: 'Shantell Sans', cursive;
+      --clr-board: #ddd5be;
+      --clr-ink: #2a2218;
+      --clr-ink2: #5a4830;
+      --clr-ink3: #7a6a50;
+      --clr-tan: #b09060;
+      --pocket-width: clamp(360px, 40vw, 560px);
+      --pocket-color: #ccc2a6;
+      --pocket-lift: 8px 0 30px rgba(28,18,6,0.18);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
-      width: 100%; height: 100%; overflow: hidden;
       background: var(--clr-board);
       font-family: var(--font);
       color: var(--clr-ink);
+      min-height: 100%;
     }
 
-    /* Single cloth surface — canvas weave texture */
     body::before {
       content: '';
       position: fixed; inset: 0; z-index: 0; pointer-events: none;
@@ -92,597 +42,397 @@
       mix-blend-mode: multiply;
     }
 
-    #board { position: fixed; inset: 0; }
-
-    #canvas    { position: fixed; inset: 0; pointer-events: none; z-index: 2; }
-    #threads   { position: fixed; inset: 0; pointer-events: none; z-index: 2; }
-    #dot-layer { position: fixed; inset: 0; cursor: crosshair; z-index: 3; }
-
+    /* ── atmosphere layers (right pane on desktop) ── */
+    #canvas { position: fixed; left: var(--pocket-width); right: 0; top: 0; bottom: 0; pointer-events: none; z-index: 1; }
+    #threads { position: fixed; left: var(--pocket-width); right: 0; top: 0; bottom: 0; pointer-events: none; z-index: 1; width: auto; height: auto; }
+    /* geometry only — sizes the canvas/threads to the right pane. Never blocks
+       clicks (painting is handled by a guarded document-level listener). */
+    #dot-layer { position: fixed; left: var(--pocket-width); right: 0; top: 0; bottom: 0; pointer-events: none; z-index: 3; }
     :global(.splash-wrap) { position: fixed; pointer-events: none; z-index: 5; }
 
-    .island { position: fixed; z-index: 4; pointer-events: none; }
-    .island a, .island p, .island div { pointer-events: auto; }
-
-    /* Default text link hover — ink deepen + nudge right */
-    .island a:not(.cover):not(.cal-lnk) {
-      display: inline-block;
-      transition: color 0.12s, transform 0.12s;
-    }
-    .island a:not(.cover):not(.cal-lnk):hover {
-      color: var(--clr-ink);
-      transform: translateX(2px);
+    #cover-tip {
+      position: fixed; background: #faf7f0; border-radius: 3px;
+      padding: 5px 9px; font-size: 0.84rem; color: #4a3820;
+      box-shadow: 1px 2px 6px #00000020; pointer-events: none; display: none; z-index: 30;
+      max-width: 220px; line-height: 1.4;
     }
 
-    /* Patch — cloth piece on cloth, same linen weave as surface but distinct color */
+    #hint {
+      position: fixed; bottom: 8px; left: calc(var(--pocket-width) + (100vw - var(--pocket-width)) / 2);
+      transform: translateX(-50%);
+      font-size: 0.6rem; font-style: italic; color: #8a7248; opacity: 0.6;
+      pointer-events: none; z-index: 10;
+    }
+
+    /* ── LAYOUT ── */
+    .layout { position: relative; z-index: 2; display: grid; grid-template-columns: var(--pocket-width) 1fr; }
+
+    .home-pane {
+      position: fixed; top: 0; left: 0; width: var(--pocket-width); height: 100vh;
+      overflow: visible; padding: 5vh 46px 4vh; display: flex; flex-direction: column; z-index: 5;
+    }
+    .pocket-bg {
+      position: absolute; top: -12px; bottom: -12px; left: -80px; right: 0; z-index: 0;
+      background-color: var(--pocket-color);
+      background-image:
+        repeating-linear-gradient(0deg,  transparent 0 1px, rgba(40,28,10,0.085) 1px 2px),
+        repeating-linear-gradient(90deg, transparent 0 1px, rgba(40,28,10,0.07) 1px 2px),
+        repeating-linear-gradient(94deg, transparent 0 3px, rgba(255,240,200,0.05) 3px 4px),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85 0.02' numOctaves='2' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.2'/%3E%3C/svg%3E");
+      box-shadow: var(--pocket-lift);
+      filter: url(#cloth-edge);
+    }
+    .home-pane > *:not(.pocket-bg) { position: relative; z-index: 1; }
+
+    .corner-pane { grid-column: 2; position: relative; z-index: 2; min-height: 100vh; padding: 0 48px 100px; }
+
+    /* ── MARK ── */
+    .hero { font-size: clamp(2.3rem, 3.4vw, 3.6rem); font-weight: 800; line-height: 0.9; letter-spacing: -0.03em; color: var(--clr-ink); transform: rotate(-2deg); transform-origin: left; }
+    .hero .ln2 { display: block; font-size: 0.78em; }
+    .home-desc { font-size: 0.9rem; font-weight: 400; color: var(--clr-ink2); line-height: 1.5; margin-top: 1.2rem; }
+    .about-body { font-size: 0.92rem; font-weight: 400; color: var(--clr-ink2); line-height: 1.55; max-width: 560px; }
+    .about-q { font-size: 0.92rem; font-weight: 400; font-style: italic; color: var(--clr-ink); line-height: 1.55; margin-top: 0.5rem; padding-left: 1.4em; text-indent: -1.4em; }
+    .about-n { color: var(--clr-ink3); font-weight: 300; font-style: normal; margin-right: 0.4em; }
+    .about-coda { font-size: 0.88rem; font-weight: 300; color: var(--clr-ink3); line-height: 1.55; margin-top: 1.2rem; max-width: 560px; }
+    .stitch-label { display: inline-block; margin-bottom: 20px; font-size: 0.9rem; font-weight: 700; font-style: italic; letter-spacing: 0.13em; color: var(--clr-ink3); text-decoration: underline dotted var(--clr-tan); text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+    .sub-label { display: block; margin: 24px 0 12px; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; color: var(--clr-ink2); transform: rotate(-0.8deg); }
+    .corner-lead { font-size: 0.92rem; color: var(--clr-ink2); line-height: 1.5; max-width: 520px; margin-bottom: 20px; }
+    .comm-line { font-size: 0.88rem; font-weight: 400; color: var(--clr-ink2); line-height: 1.55; max-width: 280px; }
+
+    /* ── TAG ── */
+    .tag { display: inline-flex; flex-direction: column; align-items: center; margin-top: 0.7rem; }
+    .tag .string { width: 1.5px; height: 26px; background: linear-gradient(to bottom, #9a7248, #c0a878); opacity: 0.7; }
+    .tag .string.tall { height: 40px; }
+    .tag .card {
+      position: relative; background: #f0e8d4; border-radius: 3px;
+      padding: 13px 13px 11px; box-shadow: 1px 3px 10px #00000022;
+      font-size: 0.72rem; font-weight: 600; color: var(--clr-ink2); white-space: nowrap;
+    }
+    .tag .card::before { content: ''; position: absolute; top: 5px; left: 50%; transform: translateX(-50%);
+      width: 7px; height: 7px; border-radius: 50%; background: var(--clr-board); border: 1px solid #c0a070; }
+    .tag .card span { display: block; margin-top: 7px; font-weight: 400; font-size: 0.68rem; color: var(--clr-ink3); }
+    .tag .card a { color: var(--clr-ink2); text-decoration: underline dotted var(--clr-tan); text-underline-offset: 3px; }
+
+    /* ── PHOTO ── */
+    .photo-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 1.4rem; transform: rotate(-1.5deg); transform-origin: left; }
+    .photo { background: #f2ede4; padding: 4px 4px 13px; box-shadow: 2px 4px 14px #00000030; }
+    .photo:nth-child(odd)  { transform: rotate(-5deg); }
+    .photo:nth-child(even) { transform: rotate(3deg) translateY(8px); }
+    .photo img { width: 84px; height: 92px; display: block; object-fit: cover; background: #bcae90; }
+    .photo .cap { font-size: 0.58rem; font-style: italic; color: var(--clr-ink3); text-align: center; margin-top: 4px; }
+
+    /* ── CONTACT ── */
+    .contact { margin-top: auto; padding-top: 1.4rem; }
+
+    /* cloth CTAs — fabric patches with a hand-cut edge (let's chat / coffee) */
+    .cta-row { display: flex; gap: 18px; flex-wrap: wrap; }
+    .cal-patch { position: relative; display: inline-block; padding: 9px 15px 10px; transform: rotate(-1.5deg); cursor: pointer; transition: transform 0.15s; }
+    .cal-patch:hover { transform: rotate(-1.5deg) translateY(-3px); }
+    .cal-patch:hover .cal-patch-bg { box-shadow: 3px 7px 22px #00000030, 0 2px 7px #0000001a; }
+    .cal-patch-bg {
+      position: absolute; inset: -3px; z-index: 0;
+      background-image: url('/fabrics/pink_cotton.jpeg'); background-size: 480px; background-position: 20px -40px;
+      box-shadow: 1px 2px 10px #00000020, 0 1px 4px #00000012;
+      filter: url(#cloth-edge);
+    }
+    .cal-lnk { position: relative; z-index: 1; display: block; font-size: 1.02rem; font-weight: 700; color: #2a1208; text-decoration: none; }
+    .coffee-patch { transform: rotate(1.5deg); }
+    .coffee-patch:hover { transform: rotate(1.5deg) translateY(-3px); }
+    .coffee-patch .cal-patch-bg { background-image: url('/fabrics/blue_linen.jpeg'); background-size: 420px; background-position: -30px -20px; }
+    .email { display: inline-block; margin-top: 0.9rem; font-size: 0.82rem; font-style: italic; color: var(--clr-ink2); text-decoration: none; }
+    .email:hover { color: var(--clr-ink); }
+    .sm-links { display: flex; gap: 0.9rem; flex-wrap: wrap; margin-top: 0.5rem; }
+    .sm-links a { font-size: 0.8rem; font-weight: 300; font-style: italic; color: var(--clr-ink2); text-decoration: none; }
+    .sm-links a:hover { color: var(--clr-ink); }
+    .news { margin-top: 0.9rem; }
+    .news label { display: block; font-size: 0.72rem; font-style: italic; color: var(--clr-ink3); margin-bottom: 5px; }
+    .news .news-row { display: flex; gap: 6px; }
+    .news input { flex: 1; font-family: var(--font); font-size: 0.78rem; padding: 5px 9px; border: 1px dotted #b0906088; background: #00000008; color: var(--clr-ink); border-radius: 2px; }
+    .news input::placeholder { color: var(--clr-ink3); }
+    .news button { font-family: var(--font); font-size: 0.76rem; font-weight: 700; padding: 5px 11px; border: none; background: #cdbf9f; color: #2a1208; cursor: pointer; border-radius: 2px; }
+    .embeddable-buttondown-form p { margin-top: 4px; }
+    .embeddable-buttondown-form p a { font-size: 0.68rem; color: var(--clr-ink3); opacity: 0.6; text-decoration: none; }
+
+    /* ── CORNER NAV + CORNERS ── */
+    /* Transparent so the single fixed body::before cloth shows through —
+       no separate fill/weave/mask, otherwise the nav reads as a distinct
+       lighter, differently-woven band (confirmed via runtime measurement). */
+    .corner-nav {
+      position: sticky; top: 0; z-index: 20; display: flex; flex-wrap: wrap; gap: 14px 26px; align-items: baseline;
+      padding: 4.4vh 0 28px;
+    }
+    .corner-tab {
+      font-size: 0.96rem; font-weight: 600; font-style: italic; color: var(--clr-ink3); letter-spacing: 0.03em;
+      cursor: pointer; background: none; border: none; font-family: var(--font); padding: 1px 0; transition: color 0.12s;
+    }
+    .corner-tab:nth-child(odd) { transform: rotate(-1.4deg); }
+    .corner-tab:nth-child(even) { transform: rotate(1deg); }
+    .corner-tab:hover { color: var(--clr-ink2); }
+    .corner-tab.active { color: var(--clr-ink); font-weight: 700; text-decoration: underline dotted var(--clr-tan); text-underline-offset: 5px; text-decoration-thickness: 2px; }
+
+    .corner { display: none; }
+    .corner.active { display: block; }
+    .corner-h { display: none; }
+
+    /* ── CONTAINERS ── */
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; align-items: start; }
+    .grid > *:nth-child(4n+1) { transform: rotate(-1.8deg) translateY(3px); }
+    .grid > *:nth-child(4n+2) { transform: rotate(1.4deg) translateY(-7px); }
+    .grid > *:nth-child(4n+3) { transform: rotate(-0.8deg) translateY(9px); }
+    .grid > *:nth-child(4n+4) { transform: rotate(2deg) translateY(-4px); }
+    .wrap { display: flex; flex-wrap: wrap; gap: 14px; }
+    .wrap > *:nth-child(odd) { transform: rotate(-2deg); }
+    .wrap > *:nth-child(even) { transform: rotate(1.6deg); }
+
+    /* ── PATCH ── */
     .patch {
-      background-color: #cec3ac;
-      box-shadow: 2px 4px 18px #0000001e, 0 1px 5px #00000012;
+      position: relative; background-color: #cec3ac; box-shadow: 2px 4px 16px #0000001e, 0 1px 5px #00000012;
       background-image:
         repeating-linear-gradient(0deg,   transparent 0px, transparent 1px, rgba(40,28,10,0.065) 1px, rgba(40,28,10,0.065) 2px),
         repeating-linear-gradient(90deg,  transparent 0px, transparent 1px, rgba(40,28,10,0.055) 1px, rgba(40,28,10,0.055) 2px),
         repeating-linear-gradient(94deg,  transparent 0px, transparent 3px, rgba(255,240,200,0.05) 3px, rgba(255,240,200,0.05) 4px),
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85 0.02' numOctaves='2' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.2'/%3E%3C/svg%3E");
+      padding: 14px 18px 16px; --accent: #b09060;
     }
+    .patch::after { content: ''; position: absolute; left: 12px; right: 12px; top: 8px; height: 2px; background: repeating-linear-gradient(90deg, var(--accent) 0 5px, transparent 5px 9px); opacity: 0.85; }
+    .patch.slate { --accent: #4a6272; }
+    .patch.sage { --accent: #476055; }
+    .patch.terracotta { --accent: #724038; }
+    .patch.umber { --accent: #8a5a36; }
+    .patch.sm { padding: 10px 13px 12px; }
+    .patch.sm .patch-title { font-size: 0.82rem; }
+    .patch-title { font-size: 0.98rem; font-weight: 700; color: var(--clr-ink); line-height: 1.2; margin-top: 7px; }
+    .patch-title a { color: inherit; text-decoration: none; }
+    .patch-title a:hover { color: var(--clr-ink2); }
+    .patch-line { font-size: 0.8rem; font-weight: 300; font-style: italic; color: var(--clr-ink3); line-height: 1.5; margin-top: 5px; }
+    .meta-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+    .stamp { font-size: 0.66rem; border: 1px solid #5a483066; color: var(--clr-ink2); padding: 2px 8px 3px; opacity: 0.8; }
+    .patch.idea .patch-title { font-size: 0.88rem; font-weight: 600; }
 
-    /* Tag — ochre cloth label. Community only. */
-    .tag {
-      position: relative;
-      background: #c0993a;
-      padding: 10px 14px 14px;
-      box-shadow: 1px 2px 8px #00000018;
-    }
-    .tag::before {
-      content: '';
-      position: absolute; inset: 0; pointer-events: none;
-      background-image:
-        repeating-linear-gradient(0deg,   transparent 0, transparent 2px, rgba(80,50,10,0.08) 2px, rgba(80,50,10,0.08) 3px),
-        repeating-linear-gradient(90deg,  transparent 0, transparent 2px, rgba(80,50,10,0.06) 2px, rgba(80,50,10,0.06) 3px);
-      mix-blend-mode: multiply;
-    }
-
-    /* PHOTOS — polaroid-style prints */
-    .photo-ph {
-      position: fixed; z-index: 4;
-      background: #f2ede4;
-      padding: 5px 5px 20px;
-      box-shadow: 2px 4px 14px #00000030;
-    }
-    .photo-ph img {
-      display: block;
-      width: 5.3vw; height: 6vw;
-      object-fit: cover;
-    }
-    .photo-ph { transition: transform 0.15s, box-shadow 0.15s; cursor: pointer; }
-    .photo-ph:hover { transform: scale(1.35) translateY(8px) !important; box-shadow: 4px 8px 24px #00000050; z-index: 20; }
-    #photo-1 { top: var(--photo1-top); left: var(--photo1-left); transform: rotate(7deg); z-index: 6; }
-    #photo-2 { top: var(--photo2-top); left: var(--photo2-left); transform: rotate(-5deg); z-index: 5; }
-    #photo-3 { top: var(--photo3-top); left: var(--photo3-left); transform: rotate(2.5deg); }
-    #photo-4 { top: var(--photo4-top); left: var(--photo4-left); transform: rotate(-6deg); }
-
-    /* NAME */
-    #name-block { top: var(--name-top); left: var(--name-left); transform: rotate(-2deg); }
-    #hero-name { font-size: var(--sz-name); font-weight: 800; line-height: 0.88; letter-spacing: -0.04em; color: var(--clr-ink); }
-    #hero-name .ln2 { display: block; color: var(--clr-ink); font-size: var(--sz-name2); }
-    #name-coda { font-size: var(--sz-sm); font-weight: 300; color: var(--clr-ink3); margin-top: 0.7rem; text-align: right; pointer-events: auto; }
-    #hi-label { position: fixed; top: 2.2vh; left: 9.5vw; font-size: var(--sz-sm); font-weight: 400; color: var(--clr-ink2); transform: rotate(-5deg); z-index: 5; pointer-events: none; }
-
-    /* PROJECTS — three fabric patches, staggered */
-    #projects-block { bottom: var(--proj-bottom); right: var(--proj-right); width: 22vw; transform: rotate(1deg); position: fixed; z-index: 4; }
-    .proj-row { display: flex; gap: 18px; }
-    .proj-row-center { display: flex; justify-content: flex-start; padding-left: 4vw; margin-top: 14px; }
-    .proj-card {
-      width: 5.5vw; min-width: 52px; height: 5.2vw; min-height: 50px;
-      background-color: #c4a882;
-      background-image:
-        repeating-linear-gradient(0deg,   transparent 0px, transparent 1px, rgba(40,20,5,0.075) 1px, rgba(40,20,5,0.075) 2px),
-        repeating-linear-gradient(90deg,  transparent 0px, transparent 1px, rgba(40,20,5,0.06)  1px, rgba(40,20,5,0.06)  2px),
-        repeating-linear-gradient(91deg,  transparent 0px, transparent 3px, rgba(255,230,180,0.07) 3px, rgba(255,230,180,0.07) 4px),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85 0.02' numOctaves='2' seed='15' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.2'/%3E%3C/svg%3E");
-      box-shadow: 1px 2px 8px #00000022, 0 1px 3px #00000012;
-      pointer-events: none;
-      filter: url(#cloth-edge-subtle);
-    }
-    .proj-row .proj-card:nth-child(1) { transform: rotate(-3deg); }
-    .proj-row .proj-card:nth-child(2) { transform: rotate(2deg); margin-top: 8px; }
-    .proj-row-center .proj-card       { transform: rotate(-1.5deg); }
-
-    /* INTRO — bare text on cloth, left side */
-    #research-block { top: var(--research-top); left: var(--research-left); width: 65vw; transform: rotate(-1.5deg); }
-    .res-label { font-size: var(--sz-xl); font-weight: 800; color: var(--clr-ink); display: block; margin-bottom: 0.55rem; }
-    .res-txt { font-size: var(--sz-body); font-weight: 400; color: var(--clr-ink2); line-height: 1.45; }
-    .res-txt2 { font-size: var(--sz-body); font-weight: 400; color: var(--clr-ink2); line-height: 1.45; margin-top: 0.65rem; }
-    .res-coda { font-size: var(--sz-sm); font-weight: 300; color: var(--clr-ink3); line-height: 1.45; margin-top: 1.2rem; letter-spacing: 0.01em; }
-    .res-q { font-size: var(--sz-body); font-weight: 400; font-style: italic; color: var(--clr-ink); line-height: 1.45; margin-top: 0.4rem; padding-left: 1.4em; text-indent: -1.4em; }
-    .res-n { color: var(--clr-ink3); font-weight: 300; font-style: normal; margin-right: 0.4em; }
-
-    /* WORK — hero, left→center */
-    #work-block { top: var(--work-top); left: var(--work-left); width: var(--work-w); transform: rotate(-1.5deg); }
-    #work-lbl { font-size: var(--sz-lg); font-weight: 700; font-style: italic; color: #5a4030; letter-spacing: 0.12em; display: inline-block; margin-bottom: 14px; text-decoration: underline dotted #b09060; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
-    .w-row { display: flex; gap: 12px; align-items: flex-start; }
-    .w-area { flex: 1; position: relative; }
-    .w-core { padding: 10px 16px 12px; width: 100%; position: relative; overflow: visible; box-sizing: border-box; }
-    .w-heading { font-size: var(--sz-xl); font-weight: 700; color: var(--clr-ink2); line-height: 1.1; letter-spacing: -0.01em; }
-    .w-subtitle { margin-top: 0.15rem; font-size: var(--sz-body); font-weight: 600; }
-    .w-subtitle a { color: var(--clr-brown); text-decoration: none; border-bottom: 1.5px solid #b0906066; }
-    .w-subtitle a:hover { color: var(--clr-ink); }
-    .w-body { font-size: var(--sz-card); font-weight: 300; font-style: italic; color: var(--clr-muted); margin-top: 0.3rem; line-height: 1.55; }
-    .stamp-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 7px; }
-    .stamp { display: inline-block; border: 1px solid currentColor; padding: 2px 9px 3px; font-size: var(--sz-sm); font-weight: 400; letter-spacing: 0.02em; line-height: 1.3; background: transparent; opacity: 0.75; }
-    .w-core > .pill-card { margin-top: 6px; }
-    .pills { display: flex; gap: 7px; margin-top: 8px; padding-top: 8px; border-top: 1px solid #e0d4c077; }
-    .pill-card { flex: 1; background: var(--clr-board); border: 1px solid #d4c0a866; padding: 5px 9px 7px; }
-    .pill-name { font-size: var(--sz-card); font-weight: 700; color: #6a5038; line-height: 1.2; }
-    .pill-desc { font-size: var(--sz-sm); font-weight: 300; font-style: italic; color: #9a8060; margin-top: 3px; line-height: 1.45; }
-
-    /* THINKING — index card, kept as decorative visual (skeleton content) */
-    .sk-card { height: 8px; background: #1c1a1412; border-radius: 2px; margin-bottom: 9px; }
-
-    /* COMMUNITY — aqua fabric patch, side by side entries */
-    #community-block { bottom: var(--community-bottom); right: var(--community-right); transform: rotate(2deg); position: fixed; z-index: 4; }
-    .comm-patch {
-      position: relative;
-      padding: 11px 15px 13px;
-    }
-    .comm-patch-bg {
-      position: absolute; inset: -3px;
-      background-color: #88b8b4;
-      background-image:
-        repeating-linear-gradient(0deg,   transparent 0px, transparent 1px, rgba(10,40,38,0.08) 1px, rgba(10,40,38,0.08) 2px),
-        repeating-linear-gradient(90deg,  transparent 0px, transparent 1px, rgba(10,40,38,0.06) 1px, rgba(10,40,38,0.06) 2px),
-        repeating-linear-gradient(88deg,  transparent 0px, transparent 3px, rgba(200,255,248,0.07) 3px, rgba(200,255,248,0.07) 4px),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85 0.02' numOctaves='2' seed='12' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.18'/%3E%3C/svg%3E");
-      box-shadow: 1px 2px 10px #00000018, 0 1px 4px #00000010;
-      filter: url(#cloth-edge-subtle);
-      z-index: 0;
-    }
-    .comm-label { font-size: var(--sz-sm); font-weight: 700; font-style: italic; letter-spacing: 0.11em; color: #1a4a48; display: block; margin-bottom: 0.5rem; text-decoration: underline dotted #2a7a78; text-underline-offset: 3px; position: relative; z-index: 1; }
-    .comm-entries { display: flex; gap: 1.4rem; align-items: flex-start; position: relative; z-index: 1; }
-    .comm-org { font-size: var(--sz-sm); font-weight: 400; color: #1a3a38; line-height: 1.45; max-width: 110px; }
-
-    /* READING — bottom-right */
-    #reading-block { bottom: var(--reading-bottom); right: var(--reading-right); transform: rotate(1deg); }
-    .r-label { font-size: var(--sz-lg); font-weight: 700; color: #7a6a50; letter-spacing: 0.12em; display: block; margin-bottom: 0.5rem; text-decoration: underline dotted #b09060; text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
-    #book-list { position: relative; width: 25vw; height: 18vh; }
-    .cover {
-      position: absolute; width: 3.7vw; height: 4.9vw;
-      border-radius: 1px 3px 3px 1px;
+    /* ── SPINE ── */
+    .spine {
+      width: 64px; height: 94px; border-radius: 1px 3px 3px 1px;
       box-shadow: 2px 3px 8px #00000030, inset -3px 0 6px #00000018;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      padding: 5px;
-      transition: transform 0.15s, box-shadow 0.15s;
-      cursor: pointer; pointer-events: auto; text-decoration: none;
+      display: flex; align-items: center; justify-content: center;
+      padding: 7px; text-align: center;
+      font-size: 0.52rem; font-weight: 600; color: rgba(255,255,255,0.92);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.4); line-height: 1.3;
+      text-decoration: none; transition: transform 0.14s;
     }
-    .cover:hover { transform: scale(1.18) translateY(-5px) !important; box-shadow: 3px 6px 18px #00000045; }
-    .cover::before { content: ''; position: absolute; top: 5px; left: 5px; right: 5px; height: 1px; background: rgba(255,255,255,0.2); }
-    .cover::after  { content: ''; position: absolute; top: 0; right: 0; width: 4px; height: 100%; background: rgba(0,0,0,0.12); border-radius: 0 2px 2px 0; }
-    .cover-title { font-size: var(--sz-cover); font-weight: 600; color: rgba(255,255,255,0.9); text-align: center; line-height: 1.3; text-shadow: 0 1px 2px rgba(0,0,0,0.4); }
-    .t1 { background: #4a6272; }
-    .t2 { background: #476055; }
-    .t3 { background: #724038; }
-    #c-dream  { left: 0.5%;  top: 2.2%;  transform: rotate(-3deg);   z-index: 3; }
-    #c-phil   { left: 16.9%; top: 0%;    transform: rotate(1.5deg);  z-index: 2; }
-    #c-mind   { left: 33.3%; top: 2.8%;  transform: rotate(-1deg);   z-index: 3; }
-    #c-spell  { left: 49.7%; top: 1.1%;  transform: rotate(2.5deg);  z-index: 3; }
-    #c-become { left: 66.2%; top: 3.9%;  transform: rotate(-2deg);   z-index: 2; }
-    #c-love   { left: 82.6%; top: 1.7%;  transform: rotate(1deg);    z-index: 3; }
-    #c-precip { left: 2.1%;  top: 51.7%; transform: rotate(-2deg);   z-index: 3; }
-    #c-other  { left: 19%;   top: 48.9%; transform: rotate(2deg);    z-index: 2; }
-    #c-live   { left: 35.4%; top: 52.8%; transform: rotate(-1.5deg); z-index: 3; }
-    #c-align  { left: 51.8%; top: 49.4%; transform: rotate(3deg);    z-index: 2; }
-    #cover-tip {
-      position: fixed; background: #faf7f0; border-radius: 3px;
-      padding: 5px 9px; font-size: var(--sz-card); color: #4a3820;
-      box-shadow: 1px 2px 6px #00000020; pointer-events: none; display: none; z-index: 30;
-      max-width: 220px; line-height: 1.4;
-    }
+    .spine:hover { transform: scale(1.12) translateY(-4px) !important; }
+    .spine.slate { background: #4a6272; }
+    .spine.sage { background: #476055; }
+    .spine.terra { background: #724038; }
 
-    /* LINKS — top-right */
-    #links-block { top: var(--links-top); right: var(--links-right); transform: rotate(-1deg); }
-    .links-row { display: flex; align-items: center; gap: 1.4rem; }
-    .links-col { display: flex; flex-direction: column; gap: 0.45rem; }
-    .cal-patch {
-      position: relative;
-      display: inline-block;
-      padding: 8px 14px 9px;
-      transform: rotate(-1deg);
-      flex-shrink: 0;
-      cursor: pointer;
-      pointer-events: auto;
-      transition: transform 0.15s;
-    }
-    .cal-patch:hover { transform: rotate(-1deg) translateY(-3px); }
-    .cal-patch:hover .cal-patch-bg { box-shadow: 3px 7px 22px #00000030, 0 2px 7px #0000001a; }
-    .cal-patch-bg {
-      position: absolute; inset: -3px;
-      background-image: url('/fabrics/pink_cotton.jpeg');
-      background-size: 480px; background-position: 20px -40px;
-      box-shadow: 1px 2px 10px #00000020, 0 1px 4px #00000012;
-      filter: url(#cloth-edge);
-      z-index: 0;
-    }
-    .cal-lnk { font-size: var(--sz-lg); font-weight: 700; color: #2a1208; display: block; text-decoration: none; position: relative; z-index: 1; }
-    .coffee-patch { transform: rotate(1.5deg); }
-    .coffee-patch:hover { transform: rotate(1.5deg) translateY(-3px); }
-    .coffee-patch .cal-patch-bg {
-      background-image: url('/fabrics/sunshine.jpg');
-      background-size: 420px; background-position: -30px -20px;
-    }
-    .sm-links { display: flex; gap: 1rem; margin-top: 0.4rem; }
-    .sm-lnk { font-size: var(--sz-body); font-weight: 300; color: var(--clr-brown); font-style: italic; text-decoration: none; }
-    .sm-lnk:hover { color: var(--clr-ink); }
+    /* ── BREAKPOINT — panes stack at 960px ── */
+    @media (max-width: 959px) {
+      #canvas, #threads, #dot-layer { left: 0; }
+      #hint { left: 50%; }
 
-    .embeddable-buttondown-form p { text-align: right; }
-    .embeddable-buttondown-form p a { font-size: var(--sz-sm); color: var(--clr-ink3); opacity: 0.6; }
-
-    #hint {
-      position: fixed; bottom: 8px; left: 50%; transform: translateX(-50%);
-      font-size: var(--sz-xs); font-style: italic; color: #8a7248; opacity: 0.6;
-      pointer-events: none; z-index: 10;
-    }
-
-    /* ─────────────────────────────────────────────────────────
-       SECTION WRAPPERS
-       display:contents on desktop → children keep their fixed
-       positions exactly as before, wrapper is invisible.
-       On mobile the wrapper becomes a real block container.
-    ───────────────────────────────────────────────────────── */
-    .s-header, .s-intro, .s-work, .s-projects,
-    .s-community, .s-reading, .s-links,
-    .photo-strip { display: contents; }
-
-    /* ══ TIER 2 — TABLET (520px – 1199px) ══════════════════ */
-    @media (max-width: 1199px) {
-      html, body { overflow-y: auto; height: auto; min-height: 100vh; }
-      #dot-layer { pointer-events: none; }
-      #threads, #canvas, #hint { display: none; }
-      #hi-label { display: none !important; }
-
-      .s-header, .s-intro, .s-work, .s-projects,
-      .s-community, .s-reading, .s-links { display: block; position: relative; }
-      .photo-strip { display: flex; }
-
-      /* Override fixed positioning on all islands */
-      .island, .photo-ph, #community-block {
-        position: relative !important;
-        top: auto !important; left: auto !important;
-        right: auto !important; bottom: auto !important;
-        width: auto !important; z-index: 1;
+      .layout { grid-template-columns: 1fr; }
+      .home-pane { position: static; width: auto; height: auto; overflow: visible; padding: 6vh 24px 24px; z-index: auto; }
+      .pocket-bg { display: none; }
+      .contact { margin-top: 1.6rem; }
+      .corner-pane { grid-column: 1; padding: 16px 24px 90px; }
+      .corner-nav { display: none; }
+      .corner { display: block !important; margin-bottom: 34px; }
+      .corner-h {
+        display: inline-block; margin-bottom: 16px;
+        font-size: 0.95rem; font-weight: 700; font-style: italic; letter-spacing: 0.13em; color: var(--clr-ink2);
+        text-decoration: underline dotted var(--clr-tan); text-underline-offset: 4px; text-decoration-thickness: 1.5px;
       }
-
-      /* Section padding + tilt rhythm */
-      .s-header    { display: flex; flex-wrap: wrap; align-items: flex-start; padding: 32px 24px 20px; gap: 16px; }
-      .photo-strip { width: 100%; }
-      #name-block  { flex: 1; }
-      #photo-3     { align-self: center; }
-      #photo-3 img { width: 13vw; max-width: 80px; height: 17vw; max-height: 104px; }
-      .s-intro     { padding: 28px 24px; transform: rotate(-0.8deg); transform-origin: left; }
-      .s-work      { padding: 28px 24px 0; transform: rotate(0.5deg); transform-origin: right; }
-      .s-projects  { padding: 28px 24px 0; transform: rotate(-0.6deg); transform-origin: left; }
-      .s-community { padding: 28px 24px 0; transform: rotate(0.9deg); transform-origin: right; }
-      .s-reading   { padding: 28px 24px 0; transform: rotate(-0.4deg); transform-origin: left; }
-      .s-links     { padding: 28px 24px 60px; transform: rotate(0.6deg); transform-origin: right; }
-
-      /* Photos — row, keep natural tilts (no !important — preserves hover) */
-      .photo-strip { gap: 12px; align-items: flex-end; }
-      .photo-strip .photo-ph img { width: 13vw; max-width: 80px; height: 17vw; max-height: 104px; }
-      #photo-name { display: none; }
-
-      /* Name */
-      #name-block { transform: rotate(-2deg); transform-origin: left; }
-      #hero-name  { font-size: clamp(2.6rem, 7vw, 4.5rem) !important; }
-
-      /* Work — side by side on tablet */
-      #work-block { transform: none; }
-      .w-row { flex-direction: row; }
-
-      /* Projects */
-      #projects-block { transform: rotate(1deg); }
-
-      /* Community */
-      #community-block { transform: rotate(2deg); transform-origin: right; }
-
-      /* Bookshelf — row 1: 6 blue+green, row 2: 4 red */
-      #book-list {
-        position: static !important;
-        width: auto !important; height: auto !important;
-        display: grid;
-        grid-template-columns: repeat(6, 1fr);
-        gap: 8px;
-      }
-      .cover {
-        position: relative !important;
-        left: auto !important; top: auto !important;
-        transform: none !important;
-        width: auto !important; height: auto !important;
-        aspect-ratio: 3 / 4;
-      }
-
-      /* Links */
-      #links-block .links-row { flex-direction: row; }
     }
 
-    /* ══ TIER 2 PAIR ROWS — tablet only (520px – 1199px) ══ */
-    @media (min-width: 520px) and (max-width: 1199px) {
-      /* Grid so projects/community and reading/links sit side by side */
-      body {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-template-areas:
-          "header    header"
-          "intro     intro"
-          "work      work"
-          "projects  community"
-          "reading   links";
-        align-items: start;
-      }
-      .s-header    { grid-area: header; }
-      .s-intro     { grid-area: intro; }
-      .s-work      { grid-area: work; }
-      .s-projects  { grid-area: projects; }
-      .s-community { grid-area: community; }
-      .s-reading   { grid-area: reading; }
-      .s-links     { grid-area: links; }
-
-      /* All 4 photos in one row — photo-3 joins the strip */
-      .photo-strip { width: auto; }
-      #photo-3     { order: 0; }
-      #name-block  { flex: 0 0 100%; order: 1; }
-
-      /* Community: shrink to content width, no more full-column teal band */
-      #community-block { width: fit-content !important; }
-
-      /* Projects: center the patches in their column */
-      .s-projects { display: flex; justify-content: center; }
-
-      /* Links: center block in column, stack contents vertically */
-      .s-links { display: flex; justify-content: center; align-items: center; align-self: stretch; padding-top: 0; padding-bottom: 0; }
-      #links-block .links-row { flex-direction: column; align-items: flex-start; }
-      /* Breathing room so books don't reach the viewport edge */
-      .s-reading { padding-bottom: 48px; }
-    }
-
-    /* ══ TIER 1 — PHONE (< 520px) ══════════════════════════ */
     @media (max-width: 519px) {
-      .s-header { padding: 6px 18px 14px; gap: 10px; }
-      .s-intro  { padding-top: 14px; }
-      .s-intro, .s-work, .s-projects,
-      .s-community, .s-reading, .s-links { padding-left: 18px; padding-right: 18px; }
-
-      /* Strip photos + photo-3 — same size */
-      .photo-strip .photo-ph img, #photo-3 img {
-        width: 19vw !important; height: 24vw !important;
-        max-width: none !important; max-height: none !important;
-      }
-      /* Space out the 3 strip photos */
-      .photo-strip { justify-content: space-between; }
-      /* Nudge photo-3 up and left without disturbing layout */
-      #photo-3 { transform: translate(-22px, -16px) rotate(2.5deg); }
-      #hi-label { width: 100%; }
-
-      /* hi, I'm — was position:fixed in base CSS, needs relative to scroll with page */
-      #hi-label {
-        display: block !important;
-        position: relative !important;
-        top: auto !important; left: auto !important;
-        font-size: var(--sz-sm); font-weight: 400;
-        color: var(--clr-ink2);
-        transform: rotate(-4deg); transform-origin: left;
-      }
-
-      #hero-name { font-size: clamp(2.2rem, 9vw, 3rem) !important; }
-
-      /* Work — stacked */
-      .w-row { flex-direction: column !important; }
-
-      /* Projects — three cards in a row */
-      #projects-block .proj-row { gap: 10px; }
-      #projects-block .proj-row-center { padding-left: 0; margin-top: 10px; }
-      #projects-block .proj-card {
-        width: calc((100vw - 56px) / 3) !important;
-        height: calc((100vw - 56px) / 3) !important;
-        min-width: 0 !important; min-height: 0 !important;
-      }
-
-      /* Books — one row per color group, organic tilt */
-      #book-list {
-        grid-template-columns: repeat(4, 1fr) !important;
-        gap: 10px 6px !important;
-        align-items: end;
-      }
-      #book-list .cover:nth-child(4),
-      #book-list .cover:nth-child(7) { grid-column-start: 1; }
-      #book-list .cover:nth-child(1)  { transform: rotate(-3deg)   translateY(3px)  !important; }
-      #book-list .cover:nth-child(2)  { transform: rotate(1.5deg)  translateY(-4px) !important; }
-      #book-list .cover:nth-child(3)  { transform: rotate(-1deg)   translateY(2px)  !important; }
-      #book-list .cover:nth-child(4)  { transform: rotate(2.5deg)  translateY(-2px) !important; }
-      #book-list .cover:nth-child(5)  { transform: rotate(-2deg)   translateY(5px)  !important; }
-      #book-list .cover:nth-child(6)  { transform: rotate(1deg)    translateY(-3px) !important; }
-      #book-list .cover:nth-child(7)  { transform: rotate(-1.5deg) translateY(4px)  !important; }
-      #book-list .cover:nth-child(8)  { transform: rotate(3deg)    translateY(-5px) !important; }
-      #book-list .cover:nth-child(9)  { transform: rotate(-2.5deg) translateY(2px)  !important; }
-      #book-list .cover:nth-child(10) { transform: rotate(1.5deg)  translateY(-3px) !important; }
-      .cover-title { font-size: 0.5rem; }
-
-      /* Links — keep horizontal like desktop, more gap from bookshelf */
-      .s-links { padding-top: 48px !important; }
-      .cal-lnk { white-space: nowrap; font-size: 1rem; }
+      .home-desc { font-size: 0.86rem; }
+      .corner-tab { font-size: 0.9rem; }
     }
   </style>
 </head>
 <body>
 
-<svg width="0" height="0" style="position:absolute">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
-    <filter id="cloth-edge" x="-8%" y="-8%" width="116%" height="116%">
-      <feTurbulence type="turbulence" baseFrequency="0.04" numOctaves="4" seed="7" result="noise"/>
-      <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" xChannelSelector="R" yChannelSelector="G"/>
-    </filter>
-    <filter id="cloth-edge-subtle" x="-6%" y="-6%" width="112%" height="112%">
-      <feTurbulence type="turbulence" baseFrequency="0.04" numOctaves="4" seed="3" result="noise"/>
-      <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    <filter id="cloth-edge" x="-15%" y="-10%" width="130%" height="120%">
+      <feTurbulence type="turbulence" baseFrequency="0.010 0.03" numOctaves="4" seed="7" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="18" xChannelSelector="R" yChannelSelector="G"/>
     </filter>
   </defs>
 </svg>
 
-<div id="board"></div>
 <canvas id="canvas"></canvas>
 <svg id="threads" xmlns="http://www.w3.org/2000/svg"></svg>
 <div id="dot-layer"></div>
 <div id="cover-tip"></div>
-
-<section class="s-header">
-  <div class="photo-strip">
-    <div class="photo-ph" id="photo-1"><img src="/pics/eagx_image.jpg" alt="" style="object-position: center 15%"></div>
-    <div class="photo-ph" id="photo-2"><img src="/pics/wappu_image.JPG" alt="" style="object-position: center 20%"></div>
-    <div class="photo-ph" id="photo-4"><img src="/pics/stupid_image.jpg" alt="" style="object-position: center 15%"></div>
-  </div>
-  <span id="hi-label">hi, I'm</span>
-  <div class="island" id="name-block">
-    <div id="hero-name">Aayush<span class="ln2">Kucheria</span></div>
-    <div id="name-coda">Based in Helsinki. Always up for a <a href="https://cal.com/aayushk/chat" target="_blank" style="color:inherit; text-decoration: underline dotted #b09060; text-underline-offset: 3px;">conversation</a>.</div>
-  </div>
-  <div class="photo-ph" id="photo-3"><img src="/pics/amazon.jpg" alt="" style="object-position: center 10%"></div>
-</section>
-
-<section class="s-intro">
-  <div class="island" id="research-block">
-    <p class="res-txt">I care about AI being good for the people it touches. Two questions hold most of my attention:</p>
-    <p class="res-q"><span class="res-n">1</span> What's in the latent space, and can we learn to read it and reach in?</p>
-    <p class="res-q"><span class="res-n">2</span> What happens where a human and an AI meet, and how do we design that interface?</p>
-    <p class="res-txt2">Both questions point to something far more complex, subtle, and fertile than first appears, rewarding a kind of close attention I'm drawn towards.</p>
-  </div>
-</section>
-
-<section class="s-work">
-  <div class="island" id="work-block">
-    <div id="work-lbl">work</div>
-    <div class="w-row">
-      <div class="w-area">
-        <div class="w-core patch">
-          <div class="w-heading">Design × Alignment</div>
-          <div class="pill-card">
-            <div class="pill-name"><a href="https://groundless.ai" target="_blank" style="color:inherit; text-decoration:none;">Groundless Alignment →</a></div>
-            <div class="pill-desc">Designed interfaces, built prototypes, owned a project — fellowship to full-time over 1.5 years.</div>
-            <div class="stamp-row">
-              <span class="stamp" style="color:#5a4830; transform:rotate(-2.5deg);">AISC 2026 team lead</span>
-              <span class="stamp" style="color:#5a4830; transform:rotate(1.5deg);">guest lecturer, Gabriel Weil's AI &amp; Law '26</span>
-            </div>
-          </div>
-          <div class="pills">
-            <div class="pill-card">
-              <div class="pill-name">ACL Workshop 2025</div>
-              <div class="pill-desc">adding soon</div>
-            </div>
-            <div class="pill-card">
-              <div class="pill-name">PracticeSpace, co-founder</div>
-              <div class="pill-desc">LLM simulations of therapy patients for trainees — founded with NHS CBT practitioners.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="w-area">
-        <div class="w-core patch">
-          <div class="w-heading">Machine Learning</div>
-          <div class="w-body">BSc + MSc in machine learning at Aalto University, Finland.</div>
-          <div class="stamp-row">
-            <span class="stamp" style="color:#5a4830; transform:rotate(-2deg);">Latent ethical landscape of LLMs</span>
-            <span class="stamp" style="color:#5a4a30; transform:rotate(-2.5deg);">Gaussian Modelling, University of Helsinki</span>
-            <span class="stamp" style="color:#5a4a30; transform:rotate(1.5deg);">talk: transformers</span>
-            <span class="stamp" style="color:#5a4a30; transform:rotate(-1deg);">adding links + a couple more interesting things soon</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="s-projects">
-  <div class="island" id="projects-block">
-    <div class="proj-row">
-      <div class="proj-card"></div>
-      <div class="proj-card"></div>
-    </div>
-    <div class="proj-row-center">
-      <div class="proj-card"></div>
-    </div>
-  </div>
-</section>
-
-<section class="s-community">
-  <div id="community-block">
-    <div class="comm-patch">
-      <div class="comm-patch-bg"></div>
-      <span class="comm-label">community</span>
-      <div class="comm-entries">
-        <div class="comm-org">co-founded the EA chapter at Aalto</div>
-        <div class="comm-org">mentored EA + AI safety groups via CEA</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="s-reading">
-  <div class="island" id="reading-block">
-    <span class="r-label">bookshelf</span>
-    <div id="book-list">
-      <a class="cover t1" id="c-dream"  href="https://www.goodreads.com/book/show/722412.The_Dream_Machine" target="_blank" rel="noopener" data-tip="The Dream Machine — M. Mitchell Waldrop"><span class="cover-title">Dream Machine</span></a>
-      <a class="cover t1" id="c-phil"   href="https://www.goodreads.com/book/show/62707933-the-philosopher-of-palo-alto" target="_blank" rel="noopener" data-tip="The Philosopher of Palo Alto — John Tinnell"><span class="cover-title">Philosopher of Palo Alto</span></a>
-      <a class="cover t1" id="c-mind"   href="https://www.goodreads.com/book/show/703532.Mindstorms" target="_blank" rel="noopener" data-tip="Mindstorms — Seymour Papert"><span class="cover-title">Mindstorms</span></a>
-      <a class="cover t2" id="c-spell"  href="https://www.goodreads.com/book/show/48582.The_Spell_of_the_Sensuous" target="_blank" rel="noopener" data-tip="The Spell of the Sensuous — David Abram"><span class="cover-title">Spell of the Sensuous</span></a>
-      <a class="cover t2" id="c-become" href="https://www.goodreads.com/book/show/7822953-becoming-animal" target="_blank" rel="noopener" data-tip="Becoming Animal — David Abram"><span class="cover-title">Becoming Animal</span></a>
-      <a class="cover t2" id="c-love"   href="https://www.goodreads.com/book/show/1373530.Love_and_Will" target="_blank" rel="noopener" data-tip="Love and Will — Rollo May"><span class="cover-title">Love &amp; Will</span></a>
-      <a class="cover t3" id="c-precip" href="https://www.goodreads.com/book/show/50485582-the-precipice" target="_blank" rel="noopener" data-tip="The Precipice — Toby Ord"><span class="cover-title">Precipice</span></a>
-      <a class="cover t3" id="c-other"  href="https://www.lesswrong.com/s/BbAvHtorCZqp97X9W" target="_blank" rel="noopener" data-tip="Otherness and Control in the Age of AGI — Joe Carlsmith"><span class="cover-title">Otherness &amp; Control AGI</span></a>
-      <a class="cover t3" id="c-live"   href="https://www.lesswrong.com/s/aMz2JMvgXrLBkq4h3" target="_blank" rel="noopener" data-tip="Live Theory Sequence — Sahil"><span class="cover-title">Live Theory Seq.</span></a>
-      <a class="cover t3" id="c-align"  href="https://www.goodreads.com/book/show/50489349-the-alignment-problem" target="_blank" rel="noopener" data-tip="The Alignment Problem — Brian Christian"><span class="cover-title">Alignment Problem</span></a>
-    </div>
-  </div>
-</section>
-
-<section class="s-links">
-  <div class="island" id="links-block">
-    <div class="links-row">
-      <div class="cal-patch">
-        <div class="cal-patch-bg"></div>
-        <a class="cal-lnk" href="https://cal.com/aayushk/chat" target="_blank">let's chat</a>
-      </div>
-      <div class="cal-patch coffee-patch">
-        <div class="cal-patch-bg"></div>
-        <a class="cal-lnk" href="https://buymeacoffee.com/aayushkucheria" target="_blank">buy me a coffee</a>
-      </div>
-      <div class="links-col">
-        <a class="sm-lnk" href="mailto:aayush.kucheria@gmail.com">aayush.kucheria@gmail.com</a>
-        <div class="sm-links">
-          <a class="sm-lnk" href="https://github.com/AayushKucheria" target="_blank">GitHub</a>
-          <a class="sm-lnk" href="https://linkedin.com/in/aayushkucheria" target="_blank">LinkedIn</a>
-          <a class="sm-lnk" href="https://twitter.com/aay17ush" target="_blank">X</a>
-        </div>
-        <form
-          action="https://buttondown.com/api/emails/embed-subscribe/aayushk"
-          method="post"
-          class="embeddable-buttondown-form"
-        >
-          <label for="bd-email">for occasional updates</label>
-          <input type="email" name="email" id="bd-email" />
-          <input type="submit" value="Subscribe" />
-          <p>
-            <a href="https://buttondown.com/refer/aayushk" target="_blank">
-              Powered by Buttondown.
-            </a>
-          </p>
-        </form>
-      </div>
-    </div>
-  </div>
-</section>
-
 <div id="hint">click anywhere to leave a mark</div>
+
+<div class="layout">
+
+  <aside class="home-pane">
+    <div class="pocket-bg"></div>
+
+    <div class="photo-row">
+      <div class="photo"><img src="/pics/eagx_image.jpg" alt="" style="object-position: center 15%" /><div class="cap">EAGx</div></div>
+      <div class="photo"><img src="/pics/wappu_image.JPG" alt="" style="object-position: center 20%" /><div class="cap">wappu</div></div>
+      <div class="photo"><img src="/pics/stupid_image.jpg" alt="" style="object-position: center 15%" /><div class="cap">selfie</div></div>
+      <div class="photo"><img src="/pics/amazon.jpg" alt="" style="object-position: center 10%" /><div class="cap">group</div></div>
+    </div>
+
+    <div class="hero">Aayush<span class="ln2">Kucheria</span></div>
+
+    <div class="tag">
+      <span class="string"></span>
+      <div class="card">
+        Based in Helsinki
+        <span>Always up for a <a href="https://cal.com/aayushk/chat" target="_blank" rel="noopener">conversation</a></span>
+      </div>
+    </div>
+
+    <p class="home-desc">Researcher and interface thinker. I care about AI being good for the people it touches — especially where a human and a model actually meet.</p>
+
+    <div class="contact">
+      <div class="cta-row">
+        <div class="cal-patch">
+          <div class="cal-patch-bg"></div>
+          <a class="cal-lnk" href="https://cal.com/aayushk/chat" target="_blank" rel="noopener">let's chat</a>
+        </div>
+        <div class="cal-patch coffee-patch">
+          <div class="cal-patch-bg"></div>
+          <a class="cal-lnk" href="https://buymeacoffee.com/aayushkucheria" target="_blank" rel="noopener">buy me a coffee</a>
+        </div>
+      </div>
+      <a class="email" href="mailto:aayush.kucheria@gmail.com">aayush.kucheria@gmail.com</a>
+      <div class="sm-links">
+        <a href="https://github.com/AayushKucheria" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/aayushkucheria" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://twitter.com/aay17ush" target="_blank" rel="noopener">X</a>
+      </div>
+      <form action="https://buttondown.com/api/emails/embed-subscribe/aayushk" method="post" class="news embeddable-buttondown-form">
+        <label for="bd-email">for occasional updates</label>
+        <div class="news-row">
+          <input type="email" name="email" id="bd-email" placeholder="you@email.com" />
+          <button type="submit">subscribe</button>
+        </div>
+        <p><a href="https://buttondown.com/refer/aayushk" target="_blank" rel="noopener">Powered by Buttondown.</a></p>
+      </form>
+    </div>
+  </aside>
+
+  <main class="corner-pane">
+
+    <nav class="corner-nav">
+      <button class="corner-tab active" data-corner="work">work</button>
+      <button class="corner-tab" data-corner="about">about</button>
+      <button class="corner-tab" data-corner="ideas">steal these ideas</button>
+      <button class="corner-tab" data-corner="reading">reading</button>
+      <button class="corner-tab" data-corner="now">now</button>
+      <button class="corner-tab" data-corner="community">community</button>
+    </nav>
+
+    <section class="corner active" id="c-work">
+      <span class="corner-h">work</span>
+      <div class="grid">
+        <div class="patch slate">
+          <div class="patch-title"><a href="https://groundless.ai" target="_blank" rel="noopener">Groundless Alignment →</a></div>
+          <div class="patch-line">Design × alignment. Interfaces as alignment surfaces — making AI legible, contestable, humane. Fellowship to full-time over 1.5 years.</div>
+          <div class="meta-row">
+            <span class="stamp">AISC 2026 team lead</span>
+            <span class="stamp">guest lecturer, Gabriel Weil's AI &amp; Law '26</span>
+          </div>
+        </div>
+        <div class="patch sage">
+          <div class="patch-title">PracticeSpace — co-founder</div>
+          <div class="patch-line">LLM simulations of therapy patients for trainees. Founded with NHS CBT practitioners.</div>
+        </div>
+        <div class="patch umber">
+          <div class="patch-title">Machine Learning</div>
+          <div class="patch-line">BSc + MSc in machine learning at Aalto University, Finland.</div>
+          <div class="meta-row">
+            <span class="stamp">Latent ethical landscape of LLMs</span>
+            <span class="stamp">Gaussian Modelling, University of Helsinki</span>
+            <span class="stamp">talk: transformers</span>
+          </div>
+        </div>
+        <div class="patch terracotta">
+          <div class="patch-title">ACL Workshop 2025</div>
+          <div class="patch-line">adding soon</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="corner" id="c-about">
+      <span class="corner-h">about</span>
+      <p class="about-body">I care about AI being good for the people it touches. Two questions hold most of my attention:</p>
+      <p class="about-q"><span class="about-n">1</span> What's in the latent space, and can we learn to read it and reach in?</p>
+      <p class="about-q"><span class="about-n">2</span> What happens where a human and an AI meet, and how do we design that interface?</p>
+      <p class="about-coda">Both questions point to something far more complex, subtle, and fertile than first appears, rewarding a kind of close attention I'm drawn towards.</p>
+    </section>
+
+    <section class="corner" id="c-ideas">
+      <span class="corner-h">steal these ideas</span>
+      <div class="corner-lead">Ideas I'd love to see exist but won't get to. Take any of them, no credit needed.</div>
+      <div class="grid">
+        <div class="patch idea umber"><div class="patch-title">A reader that shows the latent space of what you're reading</div></div>
+        <div class="patch idea umber"><div class="patch-title">Therapy-sim for hard conversations you're about to have</div></div>
+        <div class="patch idea umber"><div class="patch-title">An interface to "reach into" a model's reasoning and nudge it</div></div>
+        <div class="patch idea umber"><div class="patch-title">A personal site that's a place, not a poster</div></div>
+        <div class="patch idea umber"><div class="patch-title">Margin notes that argue back</div></div>
+        <div class="patch idea umber"><div class="patch-title">A bookshelf that remembers why you loved each book</div></div>
+      </div>
+    </section>
+
+    <section class="corner" id="c-reading">
+      <span class="corner-h">reading</span>
+      <span class="sub-label" style="margin-top:0">machines &amp; minds</span>
+      <div class="wrap" id="book-group-1">
+        <a class="spine slate" href="https://www.goodreads.com/book/show/722412.The_Dream_Machine" target="_blank" rel="noopener" data-tip="The Dream Machine — M. Mitchell Waldrop">Dream Machine</a>
+        <a class="spine slate" href="https://www.goodreads.com/book/show/62707933-the-philosopher-of-palo-alto" target="_blank" rel="noopener" data-tip="The Philosopher of Palo Alto — John Tinnell">Philosopher of Palo Alto</a>
+        <a class="spine slate" href="https://www.goodreads.com/book/show/703532.Mindstorms" target="_blank" rel="noopener" data-tip="Mindstorms — Seymour Papert">Mindstorms</a>
+      </div>
+      <span class="sub-label">embodiment</span>
+      <div class="wrap">
+        <a class="spine sage" href="https://www.goodreads.com/book/show/48582.The_Spell_of_the_Sensuous" target="_blank" rel="noopener" data-tip="The Spell of the Sensuous — David Abram">Spell of the Sensuous</a>
+        <a class="spine sage" href="https://www.goodreads.com/book/show/7822953-becoming-animal" target="_blank" rel="noopener" data-tip="Becoming Animal — David Abram">Becoming Animal</a>
+        <a class="spine sage" href="https://www.goodreads.com/book/show/1373530.Love_and_Will" target="_blank" rel="noopener" data-tip="Love and Will — Rollo May">Love &amp; Will</a>
+      </div>
+      <span class="sub-label">AI futures</span>
+      <div class="wrap">
+        <a class="spine terra" href="https://www.goodreads.com/book/show/50485582-the-precipice" target="_blank" rel="noopener" data-tip="The Precipice — Toby Ord">The Precipice</a>
+        <a class="spine terra" href="https://www.lesswrong.com/s/BbAvHtorCZqp97X9W" target="_blank" rel="noopener" data-tip="Otherness and Control in the Age of AGI — Joe Carlsmith">Otherness &amp; Control AGI</a>
+        <a class="spine terra" href="https://www.lesswrong.com/s/aMz2JMvgXrLBkq4h3" target="_blank" rel="noopener" data-tip="Live Theory Sequence — Sahil">Live Theory Seq.</a>
+        <a class="spine terra" href="https://www.goodreads.com/book/show/50489349-the-alignment-problem" target="_blank" rel="noopener" data-tip="The Alignment Problem — Brian Christian">The Alignment Problem</a>
+      </div>
+    </section>
+
+    <section class="corner" id="c-now">
+      <span class="corner-h">now</span>
+      <div class="corner-lead">Updated June 2026, from Helsinki.</div>
+      <div class="grid">
+        <div class="patch sage"><div class="patch-title">Reading</div><div class="patch-line">Joe Carlsmith's "Otherness and Control in the Age of AGI."</div></div>
+        <div class="patch umber"><div class="patch-title">Building</div><div class="patch-line">Rethinking this very site — from a single-screen poster into a place with corners.</div></div>
+        <div class="patch slate"><div class="patch-title">Leading</div><div class="patch-line">The AISC 2026 team.</div></div>
+      </div>
+    </section>
+
+    <section class="corner" id="c-community">
+      <span class="corner-h">community</span>
+      <div class="grid">
+        <div class="patch sage sm">
+          <div class="patch-line">co-founded the EA chapter at Aalto</div>
+        </div>
+        <div class="patch sage sm">
+          <div class="patch-line">mentored EA + AI safety groups via CEA</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
 
 <script>
   import rough from 'roughjs';
   import { annotate } from 'rough-notation';
 
-  const INSET = 0;
   const dotLayer = document.getElementById('dot-layer');
   const stored = JSON.parse(localStorage.getItem('wb-v1') || '[]');
   const MAX = 100;
@@ -764,7 +514,11 @@
 
   stored.forEach(([x, y]) => renderSplash(x, y, true));
 
-  dotLayer.addEventListener('click', e => {
+  /* Paint on empty right-pane clicks. Ignore interactive pieces, content
+     patches, and the static left pane so they stay clickable. */
+  const PAINT_IGNORE = 'a, button, input, textarea, select, label, form, .corner-tab, .patch, .spine, .tag, .photo, .home-pane';
+  document.addEventListener('click', e => {
+    if (e.target.closest(PAINT_IGNORE)) return;
     const x = e.clientX / window.innerWidth;
     const y = e.clientY / window.innerHeight;
     renderSplash(x, y, false);
@@ -773,64 +527,51 @@
     localStorage.setItem('wb-v1', JSON.stringify(stored));
   });
 
+  /* tab switching — instant */
+  const tabs = document.querySelectorAll('.corner-tab');
+  const corners = document.querySelectorAll('.corner');
+  tabs.forEach(tab => tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    corners.forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('c-' + tab.dataset.corner).classList.add('active');
+  }));
+
   function drawAll() {
     const canvas = document.getElementById('canvas');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const pane = dotLayer.getBoundingClientRect();
+    canvas.width = pane.width;
+    canvas.height = pane.height;
   }
 
   function drawThreads() {
     const svg = document.getElementById('threads');
+    const pane = dotLayer.getBoundingClientRect();
+    svg.setAttribute('viewBox', `0 0 ${pane.width} ${pane.height}`);
     svg.innerHTML = '';
     const THREAD = '#9a7a45';
 
-    function edge(id, side, fx, fy) {
-      const r = document.getElementById(id).getBoundingClientRect();
-      if (side === 'r') return { x: r.right,              y: r.top + r.height * (fy ?? 0.5) };
-      if (side === 'b') return { x: r.left + r.width * (fx ?? 0.5), y: r.bottom };
-      if (side === 'l') return { x: r.left,               y: r.top + r.height * (fy ?? 0.5) };
-      if (side === 't') return { x: r.left + r.width * (fx ?? 0.5), y: r.top };
-    }
-
     function thread(x1, y1, x2, y2, cx, cy, op) {
-      const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      const p = document.createElementNS(NS, 'path');
       p.setAttribute('d', `M ${x1},${y1} Q ${cx},${cy} ${x2},${y2}`);
       p.setAttribute('stroke', THREAD);
-      p.setAttribute('stroke-width', '0.9');
+      p.setAttribute('stroke-width', '0.7');
       p.setAttribute('fill', 'none');
-      p.setAttribute('opacity', op ?? '0.5');
+      p.setAttribute('opacity', op ?? '0.25');
       p.setAttribute('stroke-linecap', 'round');
       svg.appendChild(p);
     }
 
-    // Connection threads
-    let a, b;
-
-    // name → work
-    a = edge('name-block', 'b', 0.2);  b = edge('work-block', 't', 0.12);
-    thread(a.x, a.y, b.x, b.y, a.x - 20, (a.y + b.y) / 2 + 15);
-
-    // name → research
-    a = edge('name-block', 'r', null, 0.4);  b = edge('research-block', 'l', null, 0.5);
-    thread(a.x, a.y, b.x, b.y, a.x + 60, (a.y + b.y) / 2 - 20);
-
-    // name → projects
-    a = edge('name-block', 'r', null, 0.5);  b = edge('projects-block', 'l', null, 0.5);
-    thread(a.x, a.y, b.x, b.y, (a.x + b.x) / 2, a.y - 18);
-
-    // work → reading
-    a = edge('work-block', 'b', 0.7);  b = edge('reading-block', 't', 0.2);
-    thread(a.x, a.y, b.x, b.y, a.x + 80, (a.y + b.y) / 2 + 30);
-
-    // Loose thread filaments — stray ends scattered on the cloth
+    const w = pane.width, h = pane.height;
     const filaments = [
-      [120,180,38,18],[300,420,112,20],[580,80,160,16],[820,300,55,19],
-      [1050,180,200,14],[1280,420,80,18],[200,640,140,17],[450,740,20,20],
-      [700,670,165,15],[950,810,95,22],[1100,590,130,17],[1350,720,45,19],
-      [80,470,75,16],[380,270,190,21],[640,490,30,18],[880,670,155,16],
-      [1200,310,85,20],[1400,170,175,14],[260,550,60,22],[740,200,130,17],
+      [0.08,0.20,38,18],[0.22,0.47,112,20],[0.42,0.09,160,16],[0.60,0.33,55,19],
+      [0.76,0.20,200,14],[0.92,0.47,80,18],[0.14,0.71,140,17],[0.32,0.82,20,20],
+      [0.50,0.74,165,15],[0.68,0.90,95,22],[0.80,0.66,130,17],[0.96,0.80,45,19],
+      [0.06,0.52,75,16],[0.28,0.30,190,21],[0.46,0.54,30,18],[0.62,0.74,155,16],
+      [0.84,0.34,85,20],[0.98,0.19,175,14],[0.18,0.61,60,22],[0.54,0.22,130,17],
     ];
-    filaments.forEach(([x, y, ang, len]) => {
+    filaments.forEach(([fx, fy, ang, len]) => {
+      const x = fx * w, y = fy * h;
       const rad = ang * Math.PI / 180;
       const perp = (ang + 90) * Math.PI / 180;
       const bow = (Math.sin(x * 0.1 + y * 0.07) - 0.5) * 5;
@@ -842,74 +583,29 @@
   }
 
   function runAnnotations() {
-    setTimeout(() => annotate(document.getElementById('book-list'), {
+    const target = document.getElementById('book-group-1');
+    if (!target) return;
+    setTimeout(() => annotate(target, {
       type: 'bracket', color: '#b09060',
       roughness: 3.8, strokeWidth: 2.5, padding: [18, 6, 12, 6], brackets: ['left'], animationDuration: 700,
     }).show(), 400);
   }
 
   const tip = document.getElementById('cover-tip');
-  let coverZ = 10;
-  document.querySelectorAll('.cover').forEach(c => {
-    c.addEventListener('mouseenter', () => { tip.style.display = 'block'; tip.textContent = c.dataset.tip; c.style.zIndex = ++coverZ; });
+  document.querySelectorAll('.spine[data-tip]').forEach(c => {
+    c.addEventListener('mouseenter', () => { tip.style.display = 'block'; tip.textContent = c.dataset.tip; });
     c.addEventListener('mousemove', e => { tip.style.left = (e.clientX + 12) + 'px'; tip.style.top = (e.clientY - 30) + 'px'; });
     c.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
   });
 
-  // ── Overlap detector — fires on load + resize, logs to console ──────────
-  // Islands that may legitimately touch due to intentional placement.
-  const KNOWN_OK = new Set([
-    'hi-label|name-block',   // "hi, I'm" sits above the name by design
-    'photo-1|photo-2', 'photo-1|photo-3', 'photo-1|photo-4',
-    'photo-2|photo-3', 'photo-2|photo-4', 'photo-3|photo-4', // photos can fan
-  ]);
-  // Overlap on BOTH axes must exceed this many px to count as a violation.
-  // Accounts for rotation: getBoundingClientRect() returns the AABB of a
-  // rotated box, which is larger than the visual element, so small overlaps
-  // in the AABB are expected and fine.
-  const OVERLAP_THRESHOLD = 18;
-
-  function checkOverlaps() {
-    const els = [
-      ...document.querySelectorAll('.island, .photo-ph'),
-      document.getElementById('community-block'),
-      document.getElementById('hi-label'),
-    ].filter(Boolean);
-
-    let violations = 0;
-    for (let i = 0; i < els.length; i++) {
-      for (let j = i + 1; j < els.length; j++) {
-        const a = els[i], b = els[j];
-        const idA = a.id || a.className.split(' ')[0];
-        const idB = b.id || b.className.split(' ')[0];
-        const key = [idA, idB].sort().join('|');
-        if (KNOWN_OK.has(key)) continue;
-
-        const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
-        const overlapX = Math.min(ra.right, rb.right) - Math.max(ra.left, rb.left);
-        const overlapY = Math.min(ra.bottom, rb.bottom) - Math.max(ra.top, rb.top);
-        if (overlapX > OVERLAP_THRESHOLD && overlapY > OVERLAP_THRESHOLD) {
-          console.error(
-            `[layout] OVERLAP: "${idA}" and "${idB}" — ` +
-            `${overlapX.toFixed(0)}px × ${overlapY.toFixed(0)}px`
-          );
-          violations++;
-        }
-      }
-    }
-    if (violations === 0) console.log('[layout] ✓ no overlaps detected');
-  }
-
-  const isDesktop = () => window.innerWidth >= 1200;
-
   window.addEventListener('load', () => {
     drawAll();
-    if (isDesktop()) { drawThreads(); checkOverlaps(); }
+    drawThreads();
     runAnnotations();
   });
   window.addEventListener('resize', () => {
     drawAll();
-    if (isDesktop()) { drawThreads(); checkOverlaps(); }
+    drawThreads();
   });
 </script>
 

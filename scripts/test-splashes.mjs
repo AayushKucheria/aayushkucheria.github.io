@@ -1,5 +1,6 @@
 /**
  * Regression test: paint splashes must honor stored viewport coordinates.
+ * Uses 800×900 (below 960px breakpoint) so stacked layout is covered too.
  * Run: node scripts/test-splashes.mjs
  * Requires preview server: npx astro preview --port 4322
  */

@@ -19,7 +19,7 @@ const page = await browser.newPage({ viewport: VIEWPORT });
 await page.addInitScript(() => localStorage.removeItem('wb-v1'));
 await page.goto(BASE, { waitUntil: 'networkidle' });
 
-const click = { x: 420, y: 360 };
+const click = { x: 600, y: 360 };
 await page.evaluate(({ x, y }) => {
   document.getElementById('dot-layer').dispatchEvent(
     new MouseEvent('click', { bubbles: true, clientX: x, clientY: y })

@@ -26,8 +26,8 @@ await page.addInitScript(() => localStorage.removeItem('wb-v1'));
 await page.goto(BASE, { waitUntil: 'networkidle' });
 await page.waitForTimeout(300);
 
-// Click under research intro — previously hidden beneath z-index 4 islands
-const pt = { x: 400, y: 280 };
+// Click on right pane — #dot-layer covers corner-pane only (not home pocket)
+const pt = { x: 1000, y: 420 };
 const before = await clipHash(page, pt.x, pt.y);
 
 await page.evaluate(({ x, y }) => {
@@ -54,7 +54,22 @@ assert(state.splashCount >= 1, 'click creates a splash');
 assert(state.parent === 'BODY', `splash appended to body (got ${state.parent})`);
 assert(state.position === 'fixed', `splash uses position:fixed (got ${state.position})`);
 assert(parseInt(state.zIndex, 10) > 4, `splash z-index above islands (got ${state.zIndex})`);
-assert(before !== after, `splash changes visible pixels at research area (${pt.x},${pt.y})`);
+assert(before !== after, `splash changes visible pixels at right pane (${pt.x},${pt.y})`);
+
+const leftPaneSplash = await page.evaluate(() => {
+  const beforeCount = document.querySelectorAll('.splash-wrap').length;
+  document.querySelector('.home-pane')?.dispatchEvent(
+    new MouseEvent('click', { bubbles: true, clientX: 120, clientY: 400 })
+  );
+  return {
+    beforeCount,
+    afterCount: document.querySelectorAll('.splash-wrap').length,
+  };
+});
+assert(
+  leftPaneSplash.afterCount === leftPaneSplash.beforeCount,
+  `click on home-pane does not create splash (${leftPaneSplash.beforeCount} → ${leftPaneSplash.afterCount})`
+);
 
 await browser.close();
 if (failed) { console.error(`\n${failed} assertion(s) failed`); process.exit(1); }

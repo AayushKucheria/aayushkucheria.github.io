@@ -55,6 +55,9 @@ try {
 
   console.log('\n--- storage tests ---');
   await run('node', ['scripts/test-splash-storage.mjs'], { SPLASH_TEST_URL: BASE });
+
+  console.log('\n--- corners tests ---');
+  await run('node', ['scripts/test-corners.mjs'], { SPLASH_TEST_URL: BASE });
 } catch (err) {
   console.error(err.message);
   exitCode = 1;
