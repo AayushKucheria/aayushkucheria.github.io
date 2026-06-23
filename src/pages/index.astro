@@ -443,14 +443,44 @@
   const dotLayer = document.getElementById('dot-layer');
   let stored = JSON.parse(localStorage.getItem('wb-v1') || '[]');
   const MAX = 100;
+  const FADE_MS = 30_000;
   const NS = 'http://www.w3.org/2000/svg';
 
   /* splashes only live on the right pane — drop legacy marks from the old full-board layout */
   const inRightPane = (x, clientX) =>
     (clientX != null ? clientX : x * window.innerWidth) >= dotLayer.getBoundingClientRect().left - 1;
 
-  stored = stored.filter(([x]) => inRightPane(x));
+  const now = Date.now();
+  stored = stored
+    .filter(e => e.length >= 3 && now - e[2] < FADE_MS)
+    .filter(([x]) => inRightPane(x));
   localStorage.setItem('wb-v1', JSON.stringify(stored));
+
+  function removeFromStored(createdAt) {
+    const i = stored.findIndex(([, , t]) => t === createdAt);
+    if (i === -1) return;
+    stored.splice(i, 1);
+    localStorage.setItem('wb-v1', JSON.stringify(stored));
+  }
+
+  function scheduleFade(wrap, createdAt) {
+    const remaining = FADE_MS - (Date.now() - createdAt);
+    if (remaining <= 0) {
+      wrap.remove();
+      removeFromStored(createdAt);
+      return;
+    }
+    wrap.style.opacity = String(remaining / FADE_MS);
+    wrap.style.transition = `opacity ${remaining}ms linear`;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      wrap.style.opacity = '0';
+    }));
+    wrap.addEventListener('transitionend', e => {
+      if (e.propertyName !== 'opacity') return;
+      wrap.remove();
+      removeFromStored(createdAt);
+    }, { once: true });
+  }
 
   /* three paint colors — equal weight, contrast against --clr-board (#ddd5be) */
   const PAINT = ['#d4a828', '#3d6658', '#3a5570'];
@@ -475,16 +505,19 @@
     return d + ' Z';
   }
 
-  function renderSplash(x, y, isOld) {
+  function renderSplash(x, y, { createdAt, fresh } = {}) {
+    createdAt = createdAt ?? Date.now();
+    if (FADE_MS - (Date.now() - createdAt) <= 0) return;
+
     const wrap = document.createElement('div');
     wrap.className = 'splash-wrap';
     wrap.style.left = (x * window.innerWidth) + 'px';
     wrap.style.top  = (y * window.innerHeight) + 'px';
 
-    const sz   = isOld ? (22 + Math.random() * 12) : (32 + Math.random() * 18);
+    const sz   = 40 + Math.random() * 10;
     const rot  = Math.random() * 360;
     const col  = pickPaint();
-    const base = isOld ? 0.12 : (0.68 + Math.random() * 0.18);
+    const base = 0.68 + Math.random() * 0.18;
 
     const svg = document.createElementNS(NS, 'svg');
     svg.setAttribute('viewBox', '0 0 100 100');
@@ -492,11 +525,11 @@
       `display:block`,
       `width:${sz}px`, `height:${sz}px`,
       `overflow:visible`,
-      `transform:translate(-50%,-50%) rotate(${rot}deg) scale(${isOld ? 1 : 0})`,
-      isOld ? '' : `transition:transform 0.38s cubic-bezier(0.34,1.56,0.64,1)`,
+      `transform:translate(-50%,-50%) rotate(${rot}deg) scale(${fresh ? 0 : 1})`,
+      fresh ? `transition:transform 0.38s cubic-bezier(0.34,1.56,0.64,1)` : '',
     ].join(';');
 
-    const bR = 17 + Math.random() * 9;
+    const bR = 20 + Math.random() * 6;
     const blobPath = document.createElementNS(NS, 'path');
     blobPath.setAttribute('d', blob(50, 50, bR));
     blobPath.setAttribute('fill', col);
@@ -523,14 +556,16 @@
     wrap.appendChild(svg);
     document.body.appendChild(wrap);
 
-    if (!isOld) {
+    if (fresh) {
       requestAnimationFrame(() => requestAnimationFrame(() => {
         svg.style.transform = `translate(-50%,-50%) rotate(${rot}deg) scale(1)`;
       }));
     }
+
+    scheduleFade(wrap, createdAt);
   }
 
-  stored.forEach(([x, y]) => renderSplash(x, y, true));
+  stored.forEach(([x, y, t]) => renderSplash(x, y, { createdAt: t, fresh: false }));
 
   /* Paint on empty right-pane clicks. Ignore interactive pieces, content
      patches, and the static left pane so they stay clickable. */
@@ -540,8 +575,9 @@
     if (!inRightPane(null, e.clientX)) return;
     const x = e.clientX / window.innerWidth;
     const y = e.clientY / window.innerHeight;
-    renderSplash(x, y, false);
-    stored.push([x, y]);
+    const createdAt = Date.now();
+    renderSplash(x, y, { createdAt, fresh: true });
+    stored.push([x, y, createdAt]);
     if (stored.length > MAX) stored.splice(0, stored.length - MAX);
     localStorage.setItem('wb-v1', JSON.stringify(stored));
   });

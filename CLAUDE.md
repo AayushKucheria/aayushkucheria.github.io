@@ -88,16 +88,19 @@ torn-edge filter. Other fabrics available in `public/fabrics/`.
   `.corner-h`. One minor tweak at 519px.
 
 ## Paint splash interaction
-Click empty right-pane cloth → organic SVG paint splash (spring bounce). A
+Click empty right-pane cloth → organic SVG paint splash (spring bounce, then
+linear fade over **30s** and removal from DOM + `localStorage`). A
 document-level listener paints unless the click target is interactive/content
 (`PAINT_IGNORE`), the click is left of `#dot-layer`, or the target is the static
 `.home-pane`. Three paint colors at equal weight (`#d4a828`, `#3d6658`,
-`#3a5570`); on load, stored coords in `localStorage` key `wb-v1` are pruned to
-the right pane only (drops legacy marks from the old full-board layout).
-`#dot-layer` is a non-blocking geometry element that also sizes the canvas/threads
-to the right pane. Splashes append to `document.body` (`.splash-wrap`,
-`position: fixed; z-index: 5`), max 100. Regression tests:
-`scripts/test-splash-*.mjs`, run via `npm test`.
+`#3a5570`); stored as `[x, y, timestamp]` in `localStorage` key `wb-v1`
+(legacy two-value entries dropped on load). On load, pruned to the right pane
+and splashes younger than 30s resume fading from their elapsed age. Size
+40–50px display / blob radius 20–26 (random within range). `#dot-layer` is a
+non-blocking geometry element that also sizes the canvas/threads to the right
+pane. Splashes append to `document.body` (`.splash-wrap`, `position: fixed;
+z-index: 5`), max 100. Regression tests: `scripts/test-splash-*.mjs`, run via
+`npm test`.
 
 ## corner-nav must stay transparent
 The sticky `.corner-nav` has **no** background fill, weave, or mask. Giving it

@@ -31,7 +31,7 @@ const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('wb-v1'
 const expectedX = click.x / VIEWPORT.width;
 const expectedY = click.y / VIEWPORT.height;
 
-assert(stored.length === 1, 'one coord pair stored after click');
+assert(stored.length === 1, 'one splash stored after click');
 assert(
   Math.abs(stored[0][0] - expectedX) < 0.001,
   `stored x ≈ ${expectedX} (got ${stored[0][0]})`
@@ -40,6 +40,7 @@ assert(
   Math.abs(stored[0][1] - expectedY) < 0.001,
   `stored y ≈ ${expectedY} (got ${stored[0][1]})`
 );
+assert(typeof stored[0][2] === 'number', 'stored timestamp is a number');
 
 await browser.close();
 if (failed) { console.error(`\n${failed} assertion(s) failed`); process.exit(1); }

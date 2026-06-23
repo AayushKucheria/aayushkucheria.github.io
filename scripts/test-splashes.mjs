@@ -7,7 +7,8 @@
 import { chromium } from 'playwright';
 
 const BASE = process.env.SPLASH_TEST_URL || 'http://localhost:4322/';
-const COORDS = [[0.1, 0.2], [0.5, 0.5], [0.9, 0.7]];
+const NOW = Date.now();
+const COORDS = [[0.1, 0.2, NOW], [0.5, 0.5, NOW], [0.9, 0.7, NOW]];
 
 let failed = 0;
 
