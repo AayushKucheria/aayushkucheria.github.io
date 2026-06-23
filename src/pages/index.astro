@@ -301,6 +301,12 @@
       z-index: 0;
     }
     .cal-lnk { font-size: var(--sz-lg); font-weight: 700; color: #2a1208; display: block; text-decoration: none; position: relative; z-index: 1; }
+    .coffee-patch { transform: rotate(1.5deg); }
+    .coffee-patch:hover { transform: rotate(1.5deg) translateY(-3px); }
+    .coffee-patch .cal-patch-bg {
+      background-image: url('/fabrics/sunshine.jpg');
+      background-size: 420px; background-position: -30px -20px;
+    }
     .sm-links { display: flex; gap: 1rem; margin-top: 0.4rem; }
     .sm-lnk { font-size: var(--sz-body); font-weight: 300; color: var(--clr-brown); font-style: italic; text-decoration: none; }
     .sm-lnk:hover { color: var(--clr-ink); }
@@ -639,6 +645,10 @@
       <div class="cal-patch">
         <div class="cal-patch-bg"></div>
         <a class="cal-lnk" href="https://cal.com/aayushk/chat" target="_blank">let's chat</a>
+      </div>
+      <div class="cal-patch coffee-patch">
+        <div class="cal-patch-bg"></div>
+        <a class="cal-lnk" href="https://buymeacoffee.com/aayushkucheria" target="_blank">buy me a coffee</a>
       </div>
       <div class="links-col">
         <a class="sm-lnk" href="mailto:aayush.kucheria@gmail.com">aayush.kucheria@gmail.com</a>
