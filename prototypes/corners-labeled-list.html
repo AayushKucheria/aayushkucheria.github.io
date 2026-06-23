@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<!--
+  PROTOTYPE — Corners as Labeled-lists  (the preferred direction)
+
+  Place, not poster. A row of "corner" tabs at the top (stitched into the
+  cloth, no dark navbar). Click a corner: the whole surface swaps instantly —
+  no panning, no transitions, exactly like your materials.html.
+
+  Each corner is filled with a LABEL-LIST: a stitch-label, then a flow of
+  pieces beneath it. Pieces come from the fixed taxonomy (Mark, Patch, Photo,
+  Tag, Spine). Flow is a centered column; long corners scroll. You never set a
+  coordinate — tilts are applied automatically by position.
+
+  Corners shown: home · work · ideas · reading · now · say hi
+  - reading demonstrates SUB-LABELS inside a corner (machines&minds / embodiment / AI futures)
+  - "steal these ideas" and "now" are the new corners you wanted
+
+  Key design choices:
+  - Home is sparse and breathing — it's an entrance, not a container.
+  - Patch colour = a thin stitched accent edge, not a fill: airy + readable.
+  - Content is real (your actual work, books, links).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Corners — labeled lists</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --font: 'Shantell Sans', cursive;
+    --clr-board: #ddd5be;
+    --clr-paper: #ede8dc;
+    --clr-ink:   #2a2218;
+    --clr-ink2:  #5a4830;
+    --clr-ink3:  #7a6a50;
+    --clr-tan:   #b09060;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--clr-board); font-family: var(--font); color: var(--clr-ink); min-height: 100%; }
+
+  /* VIBE LAYER — canvas weave */
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      repeating-linear-gradient(0deg,   transparent 0px, transparent 1px, rgba(40,28,10,0.055) 1px, rgba(40,28,10,0.055) 2px),
+      repeating-linear-gradient(90deg,  transparent 0px, transparent 1px, rgba(40,28,10,0.045) 1px, rgba(40,28,10,0.045) 2px),
+      repeating-linear-gradient(92deg,  transparent 0px, transparent 3px, rgba(255,240,200,0.05) 3px, rgba(255,240,200,0.05) 4px),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85 0.02' numOctaves='2' seed='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.22'/%3E%3C/svg%3E");
+    mix-blend-mode: multiply;
+  }
+
+  /* ── CORNER TABS — stitched into the cloth, not a navbar ── */
+  .corners-nav {
+    position: sticky; top: 0; z-index: 20;
+    display: flex; flex-wrap: wrap; gap: 22px 30px;
+    justify-content: center; align-items: baseline;
+    padding: 20px 24px 16px;
+    background: linear-gradient(to bottom, var(--clr-board) 72%, transparent);
+  }
+  .corner-tab {
+    font-size: 0.92rem; font-weight: 600; font-style: italic;
+    color: var(--clr-ink3); letter-spacing: 0.04em;
+    cursor: pointer; background: none; border: none; font-family: var(--font);
+    padding: 2px 0; transition: color 0.12s;
+  }
+  .corner-tab:nth-child(odd)  { transform: rotate(-1.5deg); }
+  .corner-tab:nth-child(even) { transform: rotate(1deg); }
+  .corner-tab:hover { color: var(--clr-ink2); }
+  .corner-tab.active {
+    color: var(--clr-ink); font-weight: 700;
+    text-decoration: underline dotted var(--clr-tan);
+    text-underline-offset: 5px; text-decoration-thickness: 2px;
+  }
+
+  /* ── CORNER (one cloth) ── */
+  .corner { display: none; max-width: 760px; margin: 0 auto; padding: 24px 36px 120px; position: relative; z-index: 1; }
+  .corner.active { display: block; }
+
+  /* ── LABEL-LIST ── */
+  .list { margin-bottom: 46px; }
+  .stitch-label {
+    display: inline-block; margin-bottom: 20px;
+    font-size: 0.86rem; font-weight: 700; font-style: italic; letter-spacing: 0.13em;
+    color: var(--clr-ink3);
+    text-decoration: underline dotted var(--clr-tan);
+    text-underline-offset: 4px; text-decoration-thickness: 1.5px;
+  }
+  .sub-label {
+    display: block; margin: 26px 0 12px;
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; color: var(--clr-ink2);
+    transform: rotate(-0.8deg);
+  }
+  .flow { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+  .flow.wrap { flex-direction: row; flex-wrap: wrap; gap: 14px; }
+  /* auto-tilt by position — you never choose these */
+  .flow > *:nth-child(4n+1) { transform: rotate(-1.4deg); }
+  .flow > *:nth-child(4n+2) { transform: rotate(1deg); }
+  .flow > *:nth-child(4n+3) { transform: rotate(-0.6deg); }
+  .flow > *:nth-child(4n+4) { transform: rotate(1.6deg); }
+
+  /* ── MARK ── */
+  .mark-h { font-size: clamp(2.6rem, 6vw, 4.2rem); font-weight: 800; line-height: 0.9; letter-spacing: -0.03em; color: var(--clr-ink); }
+  .mark-h .ln2 { display: block; font-size: 0.78em; }
+  .mark-b { font-size: 0.98rem; font-weight: 400; color: var(--clr-ink2); line-height: 1.5; max-width: 560px; }
+  .mark-q { font-size: 0.96rem; font-style: italic; color: var(--clr-ink); line-height: 1.5; padding-left: 1.4em; text-indent: -1.4em; }
+  .mark-q .n { color: var(--clr-ink3); font-style: normal; margin-right: 0.4em; }
+  .coda { font-size: 0.82rem; font-weight: 300; color: var(--clr-ink3); }
+  .coda a, .mark-b a { color: var(--clr-ink2); text-decoration: underline dotted var(--clr-tan); text-underline-offset: 3px; }
+
+  /* ── PATCH ── */
+  .patch {
+    position: relative; background-color: #cec3ac; width: 100%;
+    box-shadow: 2px 4px 16px #0000001e, 0 1px 5px #00000012;
+    background-image:
+      repeating-linear-gradient(0deg,   transparent 0px, transparent 1px, rgba(40,28,10,0.065) 1px, rgba(40,28,10,0.065) 2px),
+      repeating-linear-gradient(90deg,  transparent 0px, transparent 1px, rgba(40,28,10,0.055) 1px, rgba(40,28,10,0.055) 2px),
+      repeating-linear-gradient(94deg,  transparent 0px, transparent 3px, rgba(255,240,200,0.05) 3px, rgba(255,240,200,0.05) 4px),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85 0.02' numOctaves='2' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.2'/%3E%3C/svg%3E");
+    padding: 14px 18px 16px;
+    --accent: #b09060;
+  }
+  .patch::after { content: ''; position: absolute; left: 12px; right: 12px; top: 8px; height: 2px;
+    background: repeating-linear-gradient(90deg, var(--accent) 0 5px, transparent 5px 9px); opacity: 0.85; }
+  .patch.slate { --accent: #4a6272; } .patch.sage { --accent: #476055; }
+  .patch.terracotta { --accent: #724038; } .patch.umber { --accent: #8a5a36; }
+  .patch-title { font-size: 1rem; font-weight: 700; color: var(--clr-ink); line-height: 1.2; margin-top: 7px; }
+  .patch-title a { color: inherit; text-decoration: none; }
+  .patch-title a:hover { text-decoration: underline dotted var(--clr-tan); text-underline-offset: 3px; }
+  .patch-line { font-size: 0.8rem; font-weight: 300; font-style: italic; color: var(--clr-ink3); line-height: 1.5; margin-top: 5px; }
+  .patch .meta-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+  .stamp { font-size: 0.66rem; border: 1px solid #5a483066; color: var(--clr-ink2); padding: 2px 8px 3px; opacity: 0.8; }
+  /* idea patches — small, in a wrap flow */
+  .patch.idea { width: auto; max-width: 320px; padding: 11px 15px 13px; }
+  .patch.idea .patch-title { font-size: 0.86rem; margin-top: 6px; font-weight: 600; }
+
+  /* ── SPINE (book) ── */
+  .spine {
+    width: 62px; height: 92px; border-radius: 1px 3px 3px 1px;
+    box-shadow: 2px 3px 8px #00000030, inset -3px 0 6px #00000018;
+    display: flex; align-items: center; justify-content: center; padding: 7px; text-align: center;
+    font-size: 0.52rem; font-weight: 600; color: rgba(255,255,255,0.92);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.4); line-height: 1.3; text-decoration: none;
+    transition: transform 0.14s;
+  }
+  .spine:hover { transform: scale(1.12) translateY(-4px) !important; }
+  .spine.slate { background: #4a6272; } .spine.sage { background: #476055; } .spine.terra { background: #724038; }
+
+  /* ── PHOTO ── */
+  .photo { background: #f2ede4; padding: 5px 5px 18px; box-shadow: 2px 4px 14px #00000030; width: 118px; }
+  .photo .img { width: 108px; height: 120px; display: block; background: #bcae90;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='108' height='120'%3E%3Crect width='108' height='120' fill='%23bcae90'/%3E%3Ccircle cx='54' cy='46' r='22' fill='%23a8986f'/%3E%3Crect x='26' y='74' width='56' height='40' fill='%23a8986f'/%3E%3C/svg%3E"); }
+  .photo .cap { font-size: 0.64rem; font-style: italic; color: var(--clr-ink3); text-align: center; margin-top: 6px; }
+
+  /* ── TAG ── */
+  .tag { display: inline-flex; flex-direction: column; align-items: center; }
+  .tag .string { width: 1.5px; height: 24px; background: linear-gradient(to bottom, #9a7248, #c0a878); opacity: 0.7; }
+  .tag .card { position: relative; background: #f0e8d4; border-radius: 3px; padding: 13px 14px 11px;
+    box-shadow: 1px 3px 10px #00000022; font-size: 0.74rem; font-weight: 600; color: var(--clr-ink2); }
+  .tag .card::before { content: ''; position: absolute; top: 5px; left: 50%; transform: translateX(-50%);
+    width: 7px; height: 7px; border-radius: 50%; background: var(--clr-board); border: 1px solid #c0a070; }
+  .tag .card span { display: block; margin-top: 7px; font-weight: 300; font-style: italic; }
+
+  /* social row */
+  .sm-links { display: flex; gap: 1.1rem; flex-wrap: wrap; }
+  .sm-links a, .email { font-size: 0.86rem; font-weight: 300; font-style: italic; color: var(--clr-ink2); text-decoration: none; }
+  .sm-links a:hover, .email:hover { color: var(--clr-ink); }
+
+  .home-photos { display: flex; gap: 16px; margin-top: 36px; }
+</style>
+</head>
+<body>
+
+<nav class="corners-nav">
+  <button class="corner-tab active" data-corner="home">home</button>
+  <button class="corner-tab" data-corner="work">work</button>
+  <button class="corner-tab" data-corner="ideas">steal these ideas</button>
+  <button class="corner-tab" data-corner="reading">reading</button>
+  <button class="corner-tab" data-corner="now">now</button>
+  <button class="corner-tab" data-corner="hi">say hi</button>
+</nav>
+
+<!-- ── HOME — sparse, breathing entrance ── -->
+<section class="corner active" id="c-home">
+  <div class="list" style="margin-top:6vh;">
+    <div class="flow" style="gap:22px;">
+      <div class="mark-h">Aayush<span class="ln2">Kucheria</span></div>
+      <div class="coda">Based in Helsinki. Always up for a <a href="#">conversation</a>.</div>
+      <div class="mark-b" style="margin-top:10px;">I care about AI being good for the people it touches. Two questions hold most of my attention:</div>
+      <div class="mark-q"><span class="n">1</span> What's in the latent space, and can we learn to read it and reach in?</div>
+      <div class="mark-q"><span class="n">2</span> What happens where a human and an AI meet, and how do we design that interface?</div>
+    </div>
+  </div>
+  <div class="home-photos">
+    <div class="photo" style="transform:rotate(-3deg)"><span class="img"></span><div class="cap">EAGx</div></div>
+    <div class="photo" style="transform:rotate(2.5deg)"><span class="img"></span><div class="cap">wappu</div></div>
+  </div>
+</section>
+
+<!-- ── WORK ── -->
+<section class="corner" id="c-work">
+  <div class="list">
+    <span class="stitch-label">work</span>
+    <div class="flow">
+      <div class="patch slate">
+        <div class="patch-title"><a href="#">Groundless Alignment →</a></div>
+        <div class="patch-line">Design × alignment. Interfaces as alignment surfaces — making AI legible, contestable, humane. Fellowship to full-time over 1.5 years.</div>
+        <div class="meta-row"><span class="stamp">AISC 2026 team lead</span><span class="stamp">guest lecturer, AI &amp; Law '26</span></div>
+      </div>
+      <div class="patch sage">
+        <div class="patch-title">PracticeSpace — co-founder</div>
+        <div class="patch-line">LLM simulations of therapy patients for trainees. Founded with NHS CBT practitioners.</div>
+      </div>
+      <div class="patch umber">
+        <div class="patch-title">Machine Learning</div>
+        <div class="patch-line">BSc + MSc in machine learning at Aalto University, Finland.</div>
+        <div class="meta-row"><span class="stamp">Latent ethical landscape of LLMs</span><span class="stamp">Gaussian Modelling, U. Helsinki</span><span class="stamp">talk: transformers</span></div>
+      </div>
+      <div class="patch terracotta">
+        <div class="patch-title">ACL Workshop 2025</div>
+        <div class="patch-line">adding soon</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STEAL THESE IDEAS (new corner) ── -->
+<section class="corner" id="c-ideas">
+  <div class="list">
+    <span class="stitch-label">steal these ideas</span>
+    <div class="mark-b" style="margin-bottom:18px;">Ideas I'd love to see exist but won't get to. Take any of them, no credit needed — just tell me if you build it.</div>
+    <div class="flow wrap">
+      <div class="patch idea umber"><div class="patch-title">A reader that shows you the latent space of what you're reading</div></div>
+      <div class="patch idea umber"><div class="patch-title">Therapy-sim, but for hard conversations you're about to have</div></div>
+      <div class="patch idea umber"><div class="patch-title">An interface that lets you "reach into" a model's reasoning and nudge it</div></div>
+      <div class="patch idea umber"><div class="patch-title">A personal site that's a place, not a poster</div></div>
+      <div class="patch idea umber"><div class="patch-title">Margin notes that argue back</div></div>
+      <div class="patch idea umber"><div class="patch-title">A bookshelf that remembers why you loved each book</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── READING — labeled list with SUB-LABELS ── -->
+<section class="corner" id="c-reading">
+  <div class="list">
+    <span class="stitch-label">reading</span>
+    <span class="sub-label">machines &amp; minds</span>
+    <div class="flow wrap">
+      <a class="spine slate">The Dream Machine</a>
+      <a class="spine slate">Philosopher of Palo Alto</a>
+      <a class="spine slate">Mindstorms</a>
+    </div>
+    <span class="sub-label">embodiment</span>
+    <div class="flow wrap">
+      <a class="spine sage">Spell of the Sensuous</a>
+      <a class="spine sage">Becoming Animal</a>
+      <a class="spine sage">Love &amp; Will</a>
+    </div>
+    <span class="sub-label">AI futures</span>
+    <div class="flow wrap">
+      <a class="spine terra">The Precipice</a>
+      <a class="spine terra">Otherness &amp; Control AGI</a>
+      <a class="spine terra">Live Theory Seq.</a>
+      <a class="spine terra">The Alignment Problem</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── NOW (new corner) ── -->
+<section class="corner" id="c-now">
+  <div class="list">
+    <span class="stitch-label">now</span>
+    <div class="flow" style="gap:18px;">
+      <div class="mark-b">Updated June 2026, from Helsinki.</div>
+      <div class="tag" style="transform:rotate(-2deg)"><span class="string"></span><div class="card">leading the AISC 2026 team</div></div>
+      <div class="patch sage" style="max-width:420px"><div class="patch-title">Reading</div><div class="patch-line">Joe Carlsmith's "Otherness and Control in the Age of AGI."</div></div>
+      <div class="patch umber" style="max-width:420px"><div class="patch-title">Building</div><div class="patch-line">Rethinking this very site — from a single-screen poster into a place with corners.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SAY HI ── -->
+<section class="corner" id="c-hi">
+  <div class="list">
+    <span class="stitch-label">say hi</span>
+    <div class="flow" style="gap:20px;">
+      <div class="tag"><span class="string"></span><div class="card">let's chat<span>cal.com/aayushk/chat</span></div></div>
+      <a class="email" href="mailto:aayush.kucheria@gmail.com">aayush.kucheria@gmail.com</a>
+      <div class="sm-links">
+        <a href="#">GitHub</a><a href="#">LinkedIn</a><a href="#">X</a>
+      </div>
+      <div class="mark-b" style="font-size:0.82rem; font-style:italic;">or sign up for occasional updates →</div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const tabs = document.querySelectorAll('.corner-tab');
+  const corners = document.querySelectorAll('.corner');
+  tabs.forEach(tab => tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    corners.forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('c-' + tab.dataset.corner).classList.add('active');
+    window.scrollTo(0, 0);
+  }));
+</script>
+</body>
+</html>

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<!--
+  PROTOTYPE — Two-pane (master-detail), v2
+
+  Changes from v1, per feedback:
+  - LEFT column is now STATIC: no scrollbar, fixed to the viewport. It holds the
+    permanent "home base": name, photos, a short description, and all contact
+    (let's chat, buy me a coffee, email, socials, mailing list).
+  - The corner NAV (work / steal these ideas / reading / now) moved to the TOP
+    of the RIGHT column as a horizontal stitched row.
+  - Only the RIGHT column scrolls.
+
+  RESPONSIVE: at < 960px the panes stack (left home base on top, then the right
+  column with its nav + corners). Inside corners, patches use an auto-fit grid
+  so columns fill the width with no extra breakpoints.
+
+  Note: since the left column never scrolls, its content is kept compact so it
+  fits a normal laptop viewport. (The two "research questions" from before now
+  belong in a future 'about' corner rather than the static left column.)
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Corners — two-pane v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --font: 'Shantell Sans', cursive;
+    --clr-board: #ddd5be; --clr-ink: #2a2218; --clr-ink2: #5a4830; --clr-ink3: #7a6a50; --clr-tan: #b09060;
+
+    /* ─────────── TWEAK THE POCKET HERE ───────────
+       (the edge waviness is an SVG attribute — see "scale" on #cloth-edge below) */
+    --pocket-width:  clamp(360px, 40vw, 560px);   /* how wide the left panel is */
+    --pocket-color:  #ccc2a6;                      /* darker = more contrast with the right */
+    --pocket-lift:   8px 0 30px rgba(28,18,6,0.18);/* shadow = how much it lifts out */
+    /* ──────────────────────────────────────────── */
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--clr-board); font-family: var(--font); color: var(--clr-ink); min-height: 100%; }
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      repeating-linear-gradient(0deg,   transparent 0px, transparent 1px, rgba(40,28,10,0.055) 1px, rgba(40,28,10,0.055) 2px),
+      repeating-linear-gradient(90deg,  transparent 0px, transparent 1px, rgba(40,28,10,0.045) 1px, rgba(40,28,10,0.045) 2px),
+      repeating-linear-gradient(92deg,  transparent 0px, transparent 3px, rgba(255,240,200,0.05) 3px, rgba(255,240,200,0.05) 4px),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85 0.02' numOctaves='2' seed='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.22'/%3E%3C/svg%3E");
+    mix-blend-mode: multiply;
+  }
+
+  /* ── LAYOUT ── */
+  .layout { position: relative; z-index: 1; display: grid; grid-template-columns: var(--pocket-width) 1fr; }
+
+  /* LEFT — STATIC home base, never scrolls */
+  .home-pane {
+    position: fixed; top: 0; left: 0; width: var(--pocket-width); height: 100vh;
+    overflow: visible; padding: 5vh 46px 4vh; display: flex; flex-direction: column; z-index: 5;
+  }
+  /* THE POCKET — darker cloth with a hand-cut wavy edge. Kept as a separate
+     layer so the displacement filter warps the fabric edge, never the text. */
+  .pocket-bg {
+    position: absolute; top: -12px; bottom: -12px; left: -80px; right: 0; z-index: 0;
+    background-color: var(--pocket-color);
+    background-image:
+      repeating-linear-gradient(0deg,  transparent 0 1px, rgba(40,28,10,0.085) 1px 2px),
+      repeating-linear-gradient(90deg, transparent 0 1px, rgba(40,28,10,0.07) 1px 2px),
+      repeating-linear-gradient(94deg, transparent 0 3px, rgba(255,240,200,0.05) 3px 4px),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85 0.02' numOctaves='2' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.2'/%3E%3C/svg%3E");
+    box-shadow: var(--pocket-lift);
+    filter: url(#cloth-edge);
+  }
+  /* lift the CONTENT above the pocket layer — but NOT the pocket itself,
+     or it loses position:absolute and collapses to 0 height (invisible). */
+  .home-pane > *:not(.pocket-bg) { position: relative; z-index: 1; }
+
+  .hero { font-size: clamp(2.3rem, 3.4vw, 3.6rem); font-weight: 800; line-height: 0.9; letter-spacing: -0.03em; color: var(--clr-ink); transform: rotate(-2deg); transform-origin: left; }
+  .hero .ln2 { display: block; font-size: 0.78em; }
+  .coda { font-size: 0.8rem; font-weight: 300; color: var(--clr-ink3); margin-top: 0.6rem; }
+  .coda a { color: var(--clr-ink2); text-decoration: underline dotted var(--clr-tan); text-underline-offset: 3px; }
+  .home-desc { font-size: 0.9rem; font-weight: 400; color: var(--clr-ink2); line-height: 1.5; margin-top: 1.2rem; }
+
+  /* photos row */
+  .photo-row { display: flex; gap: 16px; margin-top: 1.4rem; transform: rotate(-1.5deg); transform-origin: left; }
+  .photo { background: #f2ede4; padding: 4px 4px 13px; box-shadow: 2px 4px 14px #00000030; }
+  .photo:nth-child(odd)  { transform: rotate(-5deg); }
+  .photo:nth-child(even) { transform: rotate(3deg) translateY(8px); }
+  .photo .img { width: 84px; height: 92px; display: block; background: #bcae90;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='92'%3E%3Crect width='84' height='92' fill='%23bcae90'/%3E%3Ccircle cx='42' cy='36' r='17' fill='%23a8986f'/%3E%3Crect x='20' y='58' width='44' height='32' fill='%23a8986f'/%3E%3C/svg%3E"); }
+  .photo .cap { font-size: 0.58rem; font-style: italic; color: var(--clr-ink3); text-align: center; margin-top: 4px; }
+
+  /* contact block — pushed to the bottom of the static pane */
+  .contact { margin-top: auto; padding-top: 1.4rem; }
+  .chat-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn-patch {
+    position: relative; display: inline-block; text-decoration: none;
+    padding: 8px 14px 9px; font-size: 0.86rem; font-weight: 700; color: #2a1208;
+    background-color: #cdbf9f; box-shadow: 1px 2px 9px #0000001f;
+    background-image:
+      repeating-linear-gradient(0deg,  transparent 0 1px, rgba(40,28,10,0.06) 1px 2px),
+      repeating-linear-gradient(90deg, transparent 0 1px, rgba(40,28,10,0.05) 1px 2px);
+  }
+  .btn-patch:nth-child(1) { transform: rotate(-1.5deg); }
+  .btn-patch:nth-child(2) { transform: rotate(1.5deg); }
+  .btn-patch:hover { transform: translateY(-2px) rotate(0deg); }
+  .email { display: inline-block; margin-top: 0.9rem; font-size: 0.82rem; font-style: italic; color: var(--clr-ink2); text-decoration: none; }
+  .email:hover { color: var(--clr-ink); }
+  .sm-links { display: flex; gap: 0.9rem; flex-wrap: wrap; margin-top: 0.5rem; }
+  .sm-links a { font-size: 0.8rem; font-weight: 300; font-style: italic; color: var(--clr-ink2); text-decoration: none; }
+  .sm-links a:hover { color: var(--clr-ink); }
+  .news { margin-top: 0.9rem; }
+  .news label { display: block; font-size: 0.72rem; font-style: italic; color: var(--clr-ink3); margin-bottom: 5px; }
+  .news .news-row { display: flex; gap: 6px; }
+  .news input { flex: 1; font-family: var(--font); font-size: 0.78rem; padding: 5px 9px; border: 1px dotted #b0906088; background: #00000008; color: var(--clr-ink); border-radius: 2px; }
+  .news input::placeholder { color: var(--clr-ink3); }
+  .news button { font-family: var(--font); font-size: 0.76rem; font-weight: 700; padding: 5px 11px; border: none; background: #cdbf9f; color: #2a1208; cursor: pointer; border-radius: 2px; }
+
+  /* RIGHT — scrolls */
+  .corner-pane { grid-column: 2; min-height: 100vh; padding: 0 48px 100px; }
+
+  /* corner nav — top of right column, horizontal */
+  .corner-nav {
+    position: sticky; top: 0; z-index: 20; display: flex; flex-wrap: wrap; gap: 14px 26px; align-items: baseline;
+    padding: 4.4vh 0 28px;
+    /* carry the same faint weave as the surface so it isn't a flat panel... */
+    background-color: var(--clr-board);
+    background-image:
+      repeating-linear-gradient(0deg,  transparent 0 1px, rgba(40,28,10,0.055) 1px 2px),
+      repeating-linear-gradient(90deg, transparent 0 1px, rgba(40,28,10,0.045) 1px 2px);
+    /* ...and fade the bottom edge gradually so there's no hard line */
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 60%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 0%, #000 60%, transparent 100%);
+  }
+  .corner-tab {
+    font-size: 0.96rem; font-weight: 600; font-style: italic; color: var(--clr-ink3); letter-spacing: 0.03em;
+    cursor: pointer; background: none; border: none; font-family: var(--font); padding: 1px 0; transition: color 0.12s;
+  }
+  .corner-tab:nth-child(odd) { transform: rotate(-1.4deg); } .corner-tab:nth-child(even) { transform: rotate(1deg); }
+  .corner-tab:hover { color: var(--clr-ink2); }
+  .corner-tab.active { color: var(--clr-ink); font-weight: 700; text-decoration: underline dotted var(--clr-tan); text-underline-offset: 5px; text-decoration-thickness: 2px; }
+
+  .corner { display: none; }
+  .corner.active { display: block; }
+  /* per-corner heading: hidden on desktop (the tab labels it), shown on phone */
+  .corner-h { display: none; }
+  .stitch-label { display: inline-block; margin-bottom: 20px; font-size: 0.9rem; font-weight: 700; font-style: italic; letter-spacing: 0.13em; color: var(--clr-ink3); text-decoration: underline dotted var(--clr-tan); text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+  .sub-label { display: block; margin: 24px 0 12px; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; color: var(--clr-ink2); transform: rotate(-0.8deg); }
+  .corner-lead { font-size: 0.92rem; color: var(--clr-ink2); line-height: 1.5; max-width: 520px; margin-bottom: 20px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; align-items: start; }
+  .grid > *:nth-child(4n+1) { transform: rotate(-1.8deg) translateY(3px); }
+  .grid > *:nth-child(4n+2) { transform: rotate(1.4deg) translateY(-7px); }
+  .grid > *:nth-child(4n+3) { transform: rotate(-0.8deg) translateY(9px); }
+  .grid > *:nth-child(4n+4) { transform: rotate(2deg) translateY(-4px); }
+  .wrap { display: flex; flex-wrap: wrap; gap: 14px; }
+  .wrap > *:nth-child(odd) { transform: rotate(-2deg); } .wrap > *:nth-child(even) { transform: rotate(1.6deg); }
+
+  .patch {
+    position: relative; background-color: #cec3ac; box-shadow: 2px 4px 16px #0000001e, 0 1px 5px #00000012;
+    background-image:
+      repeating-linear-gradient(0deg,   transparent 0px, transparent 1px, rgba(40,28,10,0.065) 1px, rgba(40,28,10,0.065) 2px),
+      repeating-linear-gradient(90deg,  transparent 0px, transparent 1px, rgba(40,28,10,0.055) 1px, rgba(40,28,10,0.055) 2px),
+      repeating-linear-gradient(94deg,  transparent 0px, transparent 3px, rgba(255,240,200,0.05) 3px, rgba(255,240,200,0.05) 4px),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85 0.02' numOctaves='2' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.2'/%3E%3C/svg%3E");
+    padding: 14px 18px 16px; --accent: #b09060;
+  }
+  .patch::after { content: ''; position: absolute; left: 12px; right: 12px; top: 8px; height: 2px; background: repeating-linear-gradient(90deg, var(--accent) 0 5px, transparent 5px 9px); opacity: 0.85; }
+  .patch.slate { --accent: #4a6272; } .patch.sage { --accent: #476055; } .patch.terracotta { --accent: #724038; } .patch.umber { --accent: #8a5a36; }
+  .patch-title { font-size: 0.98rem; font-weight: 700; color: var(--clr-ink); line-height: 1.2; margin-top: 7px; }
+  .patch-title a { color: inherit; text-decoration: none; }
+  .patch-line { font-size: 0.8rem; font-weight: 300; font-style: italic; color: var(--clr-ink3); line-height: 1.5; margin-top: 5px; }
+  .meta-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+  .stamp { font-size: 0.66rem; border: 1px solid #5a483066; color: var(--clr-ink2); padding: 2px 8px 3px; opacity: 0.8; }
+  .patch.idea .patch-title { font-size: 0.88rem; font-weight: 600; }
+
+  .spine { width: 64px; height: 94px; border-radius: 1px 3px 3px 1px; box-shadow: 2px 3px 8px #00000030, inset -3px 0 6px #00000018; display: flex; align-items: center; justify-content: center; padding: 7px; text-align: center; font-size: 0.52rem; font-weight: 600; color: rgba(255,255,255,0.92); text-shadow: 0 1px 2px rgba(0,0,0,0.4); line-height: 1.3; text-decoration: none; transition: transform 0.14s; }
+  .spine:hover { transform: scale(1.12) translateY(-4px) !important; }
+  .spine.slate { background: #4a6272; } .spine.sage { background: #476055; } .spine.terra { background: #724038; }
+
+  /* ── BREAKPOINT — panes stack ── */
+  @media (max-width: 959px) {
+    .layout { grid-template-columns: 1fr; }
+    .home-pane { position: static; width: auto; height: auto; overflow: visible; padding: 6vh 24px 24px; z-index: auto; }
+    .pocket-bg { display: none; }
+    .contact { margin-top: 1.6rem; }
+    .corner-pane { grid-column: 1; padding: 16px 24px 90px; }
+    /* phone = one long scroll: hide the switcher, show every corner stacked */
+    .corner-nav { display: none; }
+    .corner { display: block !important; margin-bottom: 34px; }
+    .corner-h {
+      display: inline-block; margin-bottom: 16px;
+      font-size: 0.95rem; font-weight: 700; font-style: italic; letter-spacing: 0.13em; color: var(--clr-ink2);
+      text-decoration: underline dotted var(--clr-tan); text-underline-offset: 4px; text-decoration-thickness: 1.5px;
+    }
+  }
+  @media (max-width: 519px) {
+    .home-desc { font-size: 0.86rem; }
+    .corner-tab { font-size: 0.9rem; }
+  }
+
+  /* ── LIVE TWEAK PANEL (prototype-only dev control) ── */
+  #tweak { position: fixed; top: 14px; right: 14px; z-index: 9999; width: 232px;
+    background: #fbf7ee; color: var(--clr-ink); font-family: var(--font); font-size: 12px;
+    border-radius: 9px; box-shadow: 0 8px 28px #00000040; padding: 11px 13px 13px; }
+  #tweak.min .tweak-body { display: none; }
+  .tweak-head { display: flex; justify-content: space-between; align-items: center; font-weight: 700; letter-spacing: 0.04em; }
+  .tweak-head button { border: none; background: #e6ddca; border-radius: 5px; width: 22px; height: 22px; cursor: pointer; font-family: var(--font); font-weight: 700; line-height: 1; }
+  #tweak label { display: block; margin-top: 11px; font-size: 11px; color: var(--clr-ink2); font-weight: 600; }
+  #tweak input[type=range] { width: 100%; margin-top: 4px; accent-color: #8a5a36; }
+  #tweak .val { float: right; font-weight: 700; color: var(--clr-ink); }
+  #tweak .copy { margin-top: 13px; width: 100%; padding: 7px; border: none; border-radius: 6px; background: #cdbf9f; color: #2a1208; font-family: var(--font); font-weight: 700; cursor: pointer; font-size: 11px; }
+  #tweak .read { margin-top: 9px; font-size: 10px; color: var(--clr-ink3); white-space: pre-wrap; word-break: break-all; line-height: 1.5; display: none; }
+  @media (max-width: 959px) { #tweak { display: none; } }
+</style>
+</head>
+<body>
+
+<!-- fabric-edge displacement: warps the pocket's edge so it's hand-cut, not laser-straight.
+     TWEAK: bigger scale = rougher/more torn edge. baseFrequency = wave size
+     (smaller numbers = longer, gentler waves; larger = tighter ripples). -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="cloth-edge" x="-15%" y="-10%" width="130%" height="120%">
+      <feTurbulence id="turb" type="turbulence" baseFrequency="0.010 0.03" numOctaves="4" seed="7" result="noise"/>
+      <feDisplacementMap id="disp" in="SourceGraphic" in2="noise" scale="18" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<div class="layout">
+
+  <!-- LEFT — static home base -->
+  <aside class="home-pane">
+    <div class="pocket-bg"></div>
+    <div class="hero">Aayush<span class="ln2">Kucheria</span></div>
+    <div class="coda">Based in Helsinki. Always up for a <a href="#">conversation</a>.</div>
+    <p class="home-desc">Researcher and interface thinker. I care about AI being good for the people it touches — especially where a human and a model actually meet.</p>
+
+    <div class="photo-row">
+      <div class="photo"><span class="img"></span><div class="cap">EAGx</div></div>
+      <div class="photo"><span class="img"></span><div class="cap">wappu</div></div>
+    </div>
+
+    <div class="contact">
+      <div class="chat-row">
+        <a class="btn-patch" href="#">let's chat</a>
+        <a class="btn-patch" href="#">buy me a coffee</a>
+      </div>
+      <a class="email" href="mailto:aayush.kucheria@gmail.com">aayush.kucheria@gmail.com</a>
+      <div class="sm-links">
+        <a href="#">GitHub</a><a href="#">LinkedIn</a><a href="#">X</a>
+      </div>
+      <div class="news">
+        <label for="bd">for occasional updates</label>
+        <div class="news-row">
+          <input id="bd" type="email" placeholder="you@email.com" />
+          <button type="submit">subscribe</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- RIGHT — scrolls -->
+  <main class="corner-pane">
+
+    <nav class="corner-nav">
+      <button class="corner-tab active" data-corner="work">work</button>
+      <button class="corner-tab" data-corner="ideas">steal these ideas</button>
+      <button class="corner-tab" data-corner="reading">reading</button>
+      <button class="corner-tab" data-corner="now">now</button>
+    </nav>
+
+    <section class="corner active" id="c-work">
+      <span class="corner-h">work</span>
+      <div class="grid">
+        <div class="patch slate">
+          <div class="patch-title"><a href="#">Groundless Alignment →</a></div>
+          <div class="patch-line">Design × alignment. Interfaces as alignment surfaces — making AI legible, contestable, humane. Fellowship to full-time over 1.5 years.</div>
+          <div class="meta-row"><span class="stamp">AISC 2026 team lead</span><span class="stamp">guest lecturer, AI &amp; Law '26</span></div>
+        </div>
+        <div class="patch sage">
+          <div class="patch-title">PracticeSpace — co-founder</div>
+          <div class="patch-line">LLM simulations of therapy patients for trainees. Founded with NHS CBT practitioners.</div>
+        </div>
+        <div class="patch umber">
+          <div class="patch-title">Machine Learning</div>
+          <div class="patch-line">BSc + MSc in machine learning at Aalto University, Finland.</div>
+          <div class="meta-row"><span class="stamp">Latent ethical landscape</span><span class="stamp">Gaussian Modelling</span></div>
+        </div>
+        <div class="patch terracotta">
+          <div class="patch-title">ACL Workshop 2025</div>
+          <div class="patch-line">adding soon</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="corner" id="c-ideas">
+      <span class="corner-h">steal these ideas</span>
+      <div class="corner-lead">Ideas I'd love to see exist but won't get to. Take any of them, no credit needed.</div>
+      <div class="grid">
+        <div class="patch idea umber"><div class="patch-title">A reader that shows the latent space of what you're reading</div></div>
+        <div class="patch idea umber"><div class="patch-title">Therapy-sim for hard conversations you're about to have</div></div>
+        <div class="patch idea umber"><div class="patch-title">An interface to "reach into" a model's reasoning and nudge it</div></div>
+        <div class="patch idea umber"><div class="patch-title">A personal site that's a place, not a poster</div></div>
+        <div class="patch idea umber"><div class="patch-title">Margin notes that argue back</div></div>
+        <div class="patch idea umber"><div class="patch-title">A bookshelf that remembers why you loved each book</div></div>
+      </div>
+    </section>
+
+    <section class="corner" id="c-reading">
+      <span class="corner-h">reading</span>
+      <span class="sub-label" style="margin-top:0">machines &amp; minds</span>
+      <div class="wrap">
+        <a class="spine slate">The Dream Machine</a>
+        <a class="spine slate">Philosopher of Palo Alto</a>
+        <a class="spine slate">Mindstorms</a>
+      </div>
+      <span class="sub-label">embodiment</span>
+      <div class="wrap">
+        <a class="spine sage">Spell of the Sensuous</a>
+        <a class="spine sage">Becoming Animal</a>
+        <a class="spine sage">Love &amp; Will</a>
+      </div>
+      <span class="sub-label">AI futures</span>
+      <div class="wrap">
+        <a class="spine terra">The Precipice</a>
+        <a class="spine terra">Otherness &amp; Control AGI</a>
+        <a class="spine terra">Live Theory Seq.</a>
+        <a class="spine terra">The Alignment Problem</a>
+      </div>
+    </section>
+
+    <section class="corner" id="c-now">
+      <span class="corner-h">now</span>
+      <div class="corner-lead">Updated June 2026, from Helsinki.</div>
+      <div class="grid">
+        <div class="patch sage"><div class="patch-title">Reading</div><div class="patch-line">Joe Carlsmith's "Otherness and Control in the Age of AGI."</div></div>
+        <div class="patch umber"><div class="patch-title">Building</div><div class="patch-line">Rethinking this very site — from a single-screen poster into a place with corners.</div></div>
+        <div class="patch slate"><div class="patch-title">Leading</div><div class="patch-line">The AISC 2026 team.</div></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- LIVE TWEAK PANEL — drag the sliders, hit "copy" when happy -->
+<div id="tweak">
+  <div class="tweak-head"><span>tweak the pocket</span><button id="tweak-min" title="collapse">–</button></div>
+  <div class="tweak-body">
+    <label>width <span class="val" id="v-width">40vw</span>
+      <input type="range" id="t-width" min="30" max="55" step="1" value="40"></label>
+    <label>darkness <span class="val" id="v-dark">15</span>
+      <input type="range" id="t-dark" min="0" max="40" step="1" value="15"></label>
+    <label>lift / shadow <span class="val" id="v-lift">30</span>
+      <input type="range" id="t-lift" min="0" max="60" step="1" value="30"></label>
+    <label>edge roughness <span class="val" id="v-scale">18</span>
+      <input type="range" id="t-scale" min="0" max="45" step="1" value="18"></label>
+    <label>edge wave size <span class="val" id="v-wave">30</span>
+      <input type="range" id="t-wave" min="5" max="80" step="1" value="30"></label>
+    <button class="copy" id="t-copy">copy these values</button>
+    <div class="read" id="t-read"></div>
+  </div>
+</div>
+
+<script>
+  /* ── live tweak panel ── */
+  const rootS = document.documentElement.style;
+  const disp = document.getElementById('disp');
+  const turb = document.getElementById('turb');
+  const cur = {};
+  const lerpColor = t => {
+    const a = [221,213,190], b = [176,162,128];
+    return '#' + a.map((v,i) => Math.round(v + (b[i]-v)*t).toString(16).padStart(2,'0')).join('');
+  };
+  const setWidth = v => { cur.width = v; document.getElementById('v-width').textContent = v+'vw'; rootS.setProperty('--pocket-width', `clamp(320px, ${v}vw, 640px)`); };
+  const setDark  = v => { cur.dark = v; document.getElementById('v-dark').textContent = v; cur.color = lerpColor(v/40); rootS.setProperty('--pocket-color', cur.color); };
+  const setLift  = v => { cur.lift = v; document.getElementById('v-lift').textContent = v; cur.liftCss = `8px 0 ${v}px rgba(28,18,6,${(v/300+0.08).toFixed(2)})`; rootS.setProperty('--pocket-lift', cur.liftCss); };
+  const setScale = v => { cur.scale = v; document.getElementById('v-scale').textContent = v; disp.setAttribute('scale', v); };
+  const setWave  = v => { cur.wave = v; document.getElementById('v-wave').textContent = v; cur.bf = `${(v/3000).toFixed(3)} ${(v/1000).toFixed(3)}`; turb.setAttribute('baseFrequency', cur.bf); };
+  [['t-width',setWidth],['t-dark',setDark],['t-lift',setLift],['t-scale',setScale],['t-wave',setWave]].forEach(([id,fn]) => {
+    const el = document.getElementById(id); el.addEventListener('input', () => fn(+el.value)); fn(+el.value);
+  });
+  document.getElementById('tweak-min').addEventListener('click', () => document.getElementById('tweak').classList.toggle('min'));
+  document.getElementById('t-copy').addEventListener('click', () => {
+    const txt = `--pocket-width: clamp(320px, ${cur.width}vw, 640px);\n--pocket-color: ${cur.color};\n--pocket-lift: ${cur.liftCss};\n#cloth-edge  scale="${cur.scale}"  baseFrequency="${cur.bf}"`;
+    const r = document.getElementById('t-read'); r.style.display = 'block'; r.textContent = txt;
+    if (navigator.clipboard) navigator.clipboard.writeText(txt);
+  });
+
+  const tabs = document.querySelectorAll('.corner-tab');
+  const corners = document.querySelectorAll('.corner');
+  tabs.forEach(tab => tab.addEventListener('click', () => {
+    tabs.forEach(t => t.classList.remove('active'));
+    corners.forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('c-' + tab.dataset.corner).classList.add('active');
+  }));
+</script>
+</body>
+</html>

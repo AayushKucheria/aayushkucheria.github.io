@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<!--
+  PROTOTYPE — Primitive Taxonomy (the "set of pieces")
+
+  Purpose: make the vocabulary OBVIOUS. This is a reference sheet, not a page.
+  It shows the complete, cohesive set of primitives the site is built from, so
+  that authoring becomes "this goes here, use that" instead of a placement puzzle.
+
+  The proposal: personality lives in (1) the vibe layer [decided once: cloth,
+  weave, palette, font], (2) this small set of pieces, and (3) your content.
+  It NEVER lives in hand-tuned coordinates again.
+
+  THE FIVE PIECES
+    1. Mark    — bare ink on the cloth (your voice). variants: heading / body / stitch-label
+    2. Patch   — a piece of cloth on the cloth (any discrete item). variants: tint, size, spine
+    3. Photo   — a paper polaroid (faces, places, moments)
+    4. Tag     — a paper tag on a thread (tiny meta: a status, a link)
+    5. Thread  — a line (hangs a list; atmosphere)
+
+  + two containers (the "where", which is decision-free):
+    Corner     — one cloth = one section
+    Label-list — a stitch-label + a flow of pieces beneath it
+
+  Key cohesion fix: today a book, a project, and a work-card are three
+  different-looking things that are secretly the same thing. Here they are ONE
+  Patch with variants. Learn the piece once, use it everywhere.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Primitive Taxonomy — the set of pieces</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --font: 'Shantell Sans', cursive;
+    --clr-board: #ddd5be;
+    --clr-paper: #ede8dc;
+    --clr-ink:   #2a2218;
+    --clr-ink2:  #5a4830;
+    --clr-ink3:  #7a6a50;
+    --clr-tan:   #b09060;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--clr-board);
+    font-family: var(--font);
+    color: var(--clr-ink);
+    min-height: 100%;
+  }
+
+  /* THE VIBE LAYER — canvas weave, decided once, never touched again */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      repeating-linear-gradient(0deg,   transparent 0px, transparent 1px, rgba(40,28,10,0.055) 1px, rgba(40,28,10,0.055) 2px),
+      repeating-linear-gradient(90deg,  transparent 0px, transparent 1px, rgba(40,28,10,0.045) 1px, rgba(40,28,10,0.045) 2px),
+      repeating-linear-gradient(92deg,  transparent 0px, transparent 3px, rgba(255,240,200,0.05) 3px, rgba(255,240,200,0.05) 4px),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85 0.02' numOctaves='2' seed='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.22'/%3E%3C/svg%3E");
+    mix-blend-mode: multiply;
+  }
+
+  .sheet { position: relative; z-index: 1; max-width: 880px; margin: 0 auto; padding: 64px 40px 120px; }
+
+  .sheet-title { font-size: 2rem; font-weight: 800; letter-spacing: -0.02em; }
+  .sheet-sub { font-size: 0.95rem; font-weight: 300; font-style: italic; color: var(--clr-ink3); margin-top: 6px; line-height: 1.5; max-width: 620px; }
+
+  .row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 28px;
+    padding: 34px 0;
+    border-top: 1px dotted #b0906066;
+    align-items: start;
+  }
+  .row:first-of-type { border-top: none; }
+
+  .meta .n { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.16em; color: var(--clr-tan); text-transform: uppercase; }
+  .meta .name { font-size: 1.4rem; font-weight: 800; color: var(--clr-ink); margin-top: 2px; }
+  .meta .use { font-size: 0.82rem; font-weight: 300; font-style: italic; color: var(--clr-ink3); margin-top: 8px; line-height: 1.5; }
+  .meta .variants { font-size: 0.72rem; font-weight: 400; color: var(--clr-ink2); margin-top: 10px; line-height: 1.7; }
+  .meta .variants b { font-weight: 700; }
+
+  .demo { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start; }
+
+  /* ── 1. MARK ─────────────────────────────────────────── */
+  .mark-h { font-size: 1.5rem; font-weight: 800; color: var(--clr-ink); line-height: 1.05; letter-spacing: -0.02em; }
+  .mark-b { font-size: 0.9rem; font-weight: 400; color: var(--clr-ink2); line-height: 1.5; max-width: 380px; }
+  .stitch-label {
+    font-size: 0.8rem; font-weight: 700; font-style: italic; letter-spacing: 0.12em;
+    color: var(--clr-ink3);
+    text-decoration: underline dotted var(--clr-tan);
+    text-underline-offset: 4px; text-decoration-thickness: 1.5px;
+  }
+
+  /* ── 2. PATCH — cloth on cloth (the workhorse) ───────── */
+  .patch {
+    position: relative;
+    background-color: #cec3ac;
+    box-shadow: 2px 4px 16px #0000001e, 0 1px 5px #00000012;
+    background-image:
+      repeating-linear-gradient(0deg,   transparent 0px, transparent 1px, rgba(40,28,10,0.065) 1px, rgba(40,28,10,0.065) 2px),
+      repeating-linear-gradient(90deg,  transparent 0px, transparent 1px, rgba(40,28,10,0.055) 1px, rgba(40,28,10,0.055) 2px),
+      repeating-linear-gradient(94deg,  transparent 0px, transparent 3px, rgba(255,240,200,0.05) 3px, rgba(255,240,200,0.05) 4px),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85 0.02' numOctaves='2' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.2'/%3E%3C/svg%3E");
+    padding: 13px 16px 15px;
+    width: 200px;
+  }
+  /* colour = a thin stitched top-edge accent, not a fill — keeps it airy + readable */
+  .patch::after {
+    content: ''; position: absolute; left: 10px; right: 10px; top: 7px; height: 2px;
+    background: repeating-linear-gradient(90deg, var(--accent) 0 5px, transparent 5px 9px);
+    opacity: 0.85;
+  }
+  .patch { --accent: #b09060; }
+  .patch.slate      { --accent: #4a6272; }
+  .patch.sage       { --accent: #476055; }
+  .patch.terracotta { --accent: #724038; }
+  .patch.umber      { --accent: #8a5a36; }
+  .patch-title { font-size: 0.92rem; font-weight: 700; color: var(--clr-ink); line-height: 1.2; margin-top: 6px; }
+  .patch-line  { font-size: 0.72rem; font-weight: 300; font-style: italic; color: var(--clr-ink3); line-height: 1.45; margin-top: 4px; }
+  .patch.sm { width: 150px; padding: 10px 13px 12px; }
+  .patch.sm .patch-title { font-size: 0.82rem; }
+
+  /* PATCH · spine variant — deep-dyed tall cloth, light text (books) */
+  .spine {
+    width: 58px; height: 84px; border-radius: 1px 3px 3px 1px;
+    box-shadow: 2px 3px 8px #00000030, inset -3px 0 6px #00000018;
+    display: flex; align-items: center; justify-content: center;
+    padding: 6px; text-align: center;
+    font-size: 0.5rem; font-weight: 600; color: rgba(255,255,255,0.92);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.4); line-height: 1.3;
+  }
+  .spine.slate { background: #4a6272; }
+  .spine.sage  { background: #476055; }
+  .spine.terra { background: #724038; }
+
+  /* ── 3. PHOTO — paper polaroid ───────────────────────── */
+  .photo { background: #f2ede4; padding: 5px 5px 18px; box-shadow: 2px 4px 14px #00000030; width: 110px; }
+  .photo .img { width: 100px; height: 112px; background: #c8bca0; display: block;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='112'%3E%3Crect width='100' height='112' fill='%23bcae90'/%3E%3Ccircle cx='50' cy='44' r='20' fill='%23a8986f'/%3E%3Crect x='24' y='70' width='52' height='34' fill='%23a8986f'/%3E%3C/svg%3E"); }
+  .photo .cap { font-size: 0.62rem; font-style: italic; color: var(--clr-ink3); text-align: center; margin-top: 6px; }
+
+  /* ── 4. TAG — paper tag on a thread ──────────────────── */
+  .tag { display: inline-flex; flex-direction: column; align-items: center; }
+  .tag .string { width: 1.5px; height: 26px; background: linear-gradient(to bottom, #9a7248, #c0a878); opacity: 0.7; }
+  .tag .card {
+    position: relative; background: #f0e8d4; border-radius: 3px;
+    padding: 13px 13px 11px; box-shadow: 1px 3px 10px #00000022;
+    font-size: 0.72rem; font-weight: 600; color: var(--clr-ink2); white-space: nowrap;
+  }
+  .tag .card::before { content: ''; position: absolute; top: 5px; left: 50%; transform: translateX(-50%);
+    width: 7px; height: 7px; border-radius: 50%; background: var(--clr-board); border: 1px solid #c0a070; }
+  .tag .card span { display: block; margin-top: 7px; }
+
+  /* ── 5. THREAD — a line ──────────────────────────────── */
+  .thread-demo { width: 260px; height: 40px; }
+
+  /* container demo */
+  .container-note { font-size: 0.78rem; color: var(--clr-ink2); line-height: 1.6; max-width: 420px; }
+  .container-note code { background: #0000000d; padding: 1px 5px; border-radius: 3px; font-family: var(--font); font-weight: 600; }
+
+  /* auto-tilt demonstration */
+  .tilt > *:nth-child(4n+1) { transform: rotate(-2deg); }
+  .tilt > *:nth-child(4n+2) { transform: rotate(1.5deg); }
+  .tilt > *:nth-child(4n+3) { transform: rotate(-0.8deg); }
+  .tilt > *:nth-child(4n+4) { transform: rotate(2deg); }
+
+  .footnote { margin-top: 56px; padding: 22px 24px; background: #00000008; border-left: 3px solid var(--clr-tan); font-size: 0.82rem; color: var(--clr-ink2); line-height: 1.65; }
+  .footnote b { color: var(--clr-ink); }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="sheet-title">The set of pieces</div>
+  <div class="sheet-sub">A complete, cohesive vocabulary. Personality lives here and in your content — never in coordinates. Learn each piece once, then drop it into any corner. Tilts below are applied automatically by position, so you never choose them.</div>
+
+  <!-- 1. MARK -->
+  <div class="row">
+    <div class="meta">
+      <div class="n">piece 01</div>
+      <div class="name">Mark</div>
+      <div class="use">Bare ink, written straight on the cloth. Your voice.</div>
+      <div class="variants"><b>heading</b> · <b>body</b> · <b>stitch-label</b></div>
+    </div>
+    <div class="demo" style="flex-direction:column; gap:14px;">
+      <div class="mark-h">Aayush Kucheria</div>
+      <div class="mark-b">I care about AI being good for the people it touches. The interface is where a human and a model actually meet.</div>
+      <div class="stitch-label">work</div>
+    </div>
+  </div>
+
+  <!-- 2. PATCH -->
+  <div class="row">
+    <div class="meta">
+      <div class="n">piece 02</div>
+      <div class="name">Patch</div>
+      <div class="use">A piece of cloth laid on the cloth. The workhorse — any discrete item: a project, an idea, a role, a book.</div>
+      <div class="variants"><b>tint:</b> slate · sage · terracotta · umber<br><b>size:</b> medium · small<br><b>spine:</b> deep-dyed, for books</div>
+    </div>
+    <div class="demo tilt">
+      <div class="patch slate">
+        <div class="patch-title">Groundless Alignment</div>
+        <div class="patch-line">interfaces as alignment surfaces</div>
+      </div>
+      <div class="patch sage sm">
+        <div class="patch-title">PracticeSpace</div>
+        <div class="patch-line">therapy-patient simulations</div>
+      </div>
+      <div class="patch umber sm">
+        <div class="patch-title">steal: legible latent space</div>
+      </div>
+      <div class="spine slate">Dream Machine</div>
+      <div class="spine sage">Spell of the Sensuous</div>
+      <div class="spine terra">The Precipice</div>
+    </div>
+  </div>
+
+  <!-- 3. PHOTO -->
+  <div class="row">
+    <div class="meta">
+      <div class="n">piece 03</div>
+      <div class="name">Photo</div>
+      <div class="use">A paper polaroid. Faces, places, moments. Optional handwritten caption.</div>
+    </div>
+    <div class="demo tilt">
+      <div class="photo"><span class="img"></span><div class="cap">EAGx, Berlin</div></div>
+      <div class="photo"><span class="img"></span><div class="cap">wappu</div></div>
+    </div>
+  </div>
+
+  <!-- 4. TAG -->
+  <div class="row">
+    <div class="meta">
+      <div class="n">piece 04</div>
+      <div class="name">Tag</div>
+      <div class="use">A small paper tag on a thread. Tiny meta — a status, a link, an accent.</div>
+    </div>
+    <div class="demo">
+      <div class="tag"><span class="string"></span><div class="card">based in Helsinki</div></div>
+      <div class="tag"><span class="string" style="height:40px"></span><div class="card">let's chat <span>cal.com/aayushk</span></div></div>
+    </div>
+  </div>
+
+  <!-- 5. THREAD -->
+  <div class="row">
+    <div class="meta">
+      <div class="n">piece 05</div>
+      <div class="name">Thread</div>
+      <div class="use">A line. Hangs a list, ties two pieces together, or drifts as atmosphere. Connective, not content.</div>
+    </div>
+    <div class="demo">
+      <svg class="thread-demo" viewBox="0 0 260 40">
+        <path d="M 6 12 Q 130 4 254 14" stroke="#9a7a45" stroke-width="1.2" fill="none" opacity="0.7" stroke-linecap="round"/>
+        <line x1="60" y1="11" x2="60" y2="30" stroke="#9a7a45" stroke-width="1" opacity="0.5"/>
+        <line x1="140" y1="8" x2="140" y2="30" stroke="#9a7a45" stroke-width="1" opacity="0.5"/>
+        <line x1="210" y1="11" x2="210" y2="30" stroke="#9a7a45" stroke-width="1" opacity="0.5"/>
+        <path d="M 20 34 q 14 -6 26 2" stroke="#9a7a45" stroke-width="0.8" fill="none" opacity="0.25"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- CONTAINERS -->
+  <div class="row">
+    <div class="meta">
+      <div class="n">container</div>
+      <div class="name">Corner + Label-list</div>
+      <div class="use">The "where" — decision-free. A corner is one cloth (one tab). A label-list is a stitch-label with a flow of pieces beneath it.</div>
+    </div>
+    <div class="demo" style="flex-direction:column; gap:12px;">
+      <div class="container-note">
+        Authoring a corner reads like this — no coordinates anywhere:
+        <br><br>
+        <code>corner "work"</code> → <code>stitch-label</code> → drop <code>patch</code>, <code>patch</code>, <code>patch</code>…
+        <br>
+        <code>corner "reading"</code> → <code>stitch-label "machines &amp; minds"</code> → <code>spine</code>, <code>spine</code>, <code>spine</code>
+      </div>
+    </div>
+  </div>
+
+  <div class="footnote">
+    <b>The whole idea in one line:</b> you decide <i>what exists</i> (a patch, a photo, a mark) and <i>which corner it lives in</i>. The flow and the tilt are automatic. The look stays handmade because the pieces and the weave carry it — not because you hand-placed anything.
+  </div>
+
+</div>
+</body>
+</html>
