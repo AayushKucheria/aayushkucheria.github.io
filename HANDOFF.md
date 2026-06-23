@@ -1,26 +1,30 @@
 # Handoff — 2026-06-23
 
-## Done this session
-- Added a "buy me a coffee" patch to `#links-block`, next to the "let's chat"
-  cal.com patch. Reuses `.cal-patch` styling on `sunshine.jpg` cloth with a
-  `+1.5°` tilt so it reads as its own placed piece. Links to
-  https://buymeacoffee.com/aayushkucheria. Chose the BMC link over their JS
-  widget — the floating widget would break the fixed, no-chrome cloth surface.
+## In progress
+- Major design exploration: reworking the site from a single-screen "cloth
+  poster" into a **place with "corners"**. Full write-up in
+  [`DESIGN-DIRECTION.md`](DESIGN-DIRECTION.md). The chosen direction is the
+  two-pane "pocket" layout: [`prototypes/corners-two-pane.html`](prototypes/corners-two-pane.html).
+  Nothing is in production yet — `src/pages/index.astro` is untouched.
 
 ## Decided but not built
-- The Buttondown newsletter form in `#links-block` is intentionally **unstyled**
-  (raw embeddable form, only the "Powered by Buttondown" line is muted/right-aligned).
-  User explicitly asked not to aesthetically modify it yet. A future pass could
-  style it to match the cloth system (bare-on-cloth input, stitch-style label).
-- Optional later: add `?embed=1` + a few lines of `fetch` so subscribing shows an
-  inline success message instead of opening Buttondown's hosted confirmation.
+- The whole "Place, not Poster" direction (corners, primitive taxonomy, two-pane
+  pocket, auto-fit responsive, phone long-scroll). See DESIGN-DIRECTION.md §2–§6.
+- New corners wanted: steal these ideas, now, about (the two research questions
+  belong here), maybe uses / colophon.
+- Personality moves off hand-placed coordinates onto the vibe layer + a fixed
+  primitive set + content; placement (flow + tilt) becomes automatic.
 
 ## Known issues / loose ends
-- Free Buttondown plans require keeping the "Powered by Buttondown" referral link —
-  it's currently present but de-emphasized. Fine to remove only on a paid plan.
-- Untracked `prototypes/` HTML explorations and `.vscode/` editor config remain
-  uncommitted by choice — design scratch + local config, not shipped.
+- **Pocket darkness** value not finalized — default is the baseline and is good,
+  but user was still tuning. Use the on-page tweak panel to settle it.
+- Not built: seam-spill (pieces crossing the pocket edge); patch colour
+  treatment (accent edge vs bolder block) undecided; final corner list/content.
+- The tweak panel in `corners-two-pane.html` is dev-only — strip on port.
+- Older `prototypes/` studies and `.vscode/` remain untracked by choice (scratch
+  + local config).
 
 ## Next logical step
-Confirm the GitHub Pages deploy went live, then decide whether to style the
-Buttondown form to match the site or leave it plain.
+Write an implementation plan to port `corners-two-pane.html` into
+`src/pages/index.astro` (substantial restructure — plan before coding), folding
+back the splash interaction and SVG threads.

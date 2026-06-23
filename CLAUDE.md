@@ -1,5 +1,12 @@
 # Personal Website — CLAUDE.md
 
+> **Design direction in progress (2026-06-23):** a reworking from the current
+> single-screen "cloth poster" into a *place with "corners"* is being explored.
+> The current production site (described below) is unchanged. For the next
+> direction — primitive taxonomy, the two-pane "pocket" layout, responsive
+> approach — see `DESIGN-DIRECTION.md` and `prototypes/corners-two-pane.html`.
+> Write an implementation plan before porting it into `index.astro`.
+
 ## Stack
 - Astro (static output) → deploys to GitHub Pages at aayushkucheria.github.io
 - `npm run dev` — dev server on **localhost:4321** (port pinned)
