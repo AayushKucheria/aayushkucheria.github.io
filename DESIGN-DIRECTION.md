@@ -1,9 +1,12 @@
 # Design Direction — "Place, not Poster"
 
 A working design direction for the next iteration of the site, captured from a
-long design conversation + prototyping session (2026-06-23). Nothing here is
-built into production yet — `src/pages/index.astro` is unchanged. This is the
-brief for a future implementation plan.
+long design conversation + prototyping session (2026-06-23).
+
+> **Status (2026-06-23): SHIPPED.** This direction is now live in
+> `src/pages/index.astro` (two-pane pocket layout, six corners, primitive
+> taxonomy, splash/thread atmosphere). See `CLAUDE.md` for the as-built
+> architecture. The notes below are the original brief, kept for rationale.
 
 **The winning prototype: [`prototypes/corners-two-pane.html`](prototypes/corners-two-pane.html).**
 Open it, resize the window, and use the on-page "tweak the pocket" panel. Its
