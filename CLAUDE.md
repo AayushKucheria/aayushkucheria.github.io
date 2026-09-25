@@ -15,6 +15,9 @@
   tests + corners tests (`scripts/run-splash-tests.mjs`)
 - Single page: `src/pages/index.astro`
 - Push to `main` → auto-deploy via GitHub Actions
+- `public/archive/2026-09-25/` holds a frozen built copy of the site, also
+  published at `aayush.world/archive/2026-09-25/`. Its source is the
+  `archive/site-2026-09-25` branch; keep this copy intact as the live site evolves.
 
 ## The big idea
 A **place you move through**, not a poster. The personality lives in three places

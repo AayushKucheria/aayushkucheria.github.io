@@ -1,15 +1,15 @@
 # Personal Website — Plan
 
-M1 shipped. See CLAUDE.md for current state of the site.
+The two-pane "place with corners" site is live at aayush.world. See CLAUDE.md
+for its current structure and README.md for the saved version's URL.
 
 ## What's live
-- Whiteboard design, single viewport, no scroll
-- Paint splash click interaction
-- Book covers with tooltips
-- roughjs arcs + annotations
+- Static Astro page with a home pane and six switchable content corners
+- Responsive layouts, photos, book links with tooltips, and paint splash interaction
+- GitHub Pages deployment from `main` through GitHub Actions
+- Frozen 25 September 2026 version at `/archive/2026-09-25/`
 
 ## Potential next directions
-- Swap photo placeholder divs for real photos (`#photo-1/2/3` in `index.astro`)
-- Flesh out work section content (5 confirmed highlights in SPEC.md)
-- Add content to the decorative research/thinking skeleton cards
-- Mobile/tablet layout consideration (currently desktop-only)
+- Move substantive section copy into separate Markdown files, using Astro's built-in Markdown support
+- Use content collections if repeated work, idea, or book entries need one file each
+- Flesh out work and other section content as needed

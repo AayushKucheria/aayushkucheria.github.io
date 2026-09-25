@@ -1,14 +1,19 @@
-# Handoff — 2026-06-23
+# Handoff — 2026-09-25
+
+## Decided but not built
+- Move substantive page copy from `src/pages/index.astro` into separate Markdown
+  files. Astro already supports Markdown; use content collections when repeated
+  work, idea, or book entries warrant one file each. Keep small UI labels in the
+  template. The user asked for this direction, but the migration has not started.
+- A permanent `dev` branch is unnecessary for now. Use short-lived branches for
+  larger changes. Automatic live previews for each branch can be revisited if
+  the archived comparison URL is insufficient.
 
 ## Known issues / loose ends
-- **Tag hover handoff:** `.tag` pendulum swing can hitch slightly when the
-  pointer enters or leaves — animation vs transition on `transform`. A
-  `@property --tag-angle` approach was tried in-session; worth revisiting if it
-  still feels sticky.
-- **Pocket / cloth-CTA edge fringe (open):** `#cloth-edge` `feTurbulence` may
-  produce a faint colored fringe at filtered edges on GPU (not reproducible
-  headless). Try desaturating the turbulence on the user's machine.
+- Earlier handoff notes mentioned a possible hitch when hovering the Helsinki
+  tag and a faint cloth-edge fringe on some GPUs. Neither was rechecked this
+  session.
 
 ## Next logical step
-If the Helsinki tag hover still feels sticky on enter/exit, finish the
-`@property --tag-angle` settle animation.
+Agree which sections and repeated items should move first, then implement the
+Markdown content migration without changing the site's appearance.
