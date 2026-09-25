@@ -14,5 +14,4 @@ Built with [Astro](https://astro.build). The custom domain is managed through Ra
 npm install
 npm run dev      # localhost:4321
 npm run build    # builds to ./dist
-npm test         # splash regression tests (build + preview on 4322)
 ```

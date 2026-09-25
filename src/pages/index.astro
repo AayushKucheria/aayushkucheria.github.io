@@ -12,657 +12,183 @@
   <link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --font: 'Shantell Sans', cursive;
-      --clr-board: #ddd5be;
-      --clr-ink: #2a2218;
-      --clr-ink2: #5a4830;
-      --clr-ink3: #7a6a50;
-      --clr-tan: #b09060;
-      --pocket-width: clamp(360px, 40vw, 560px);
-      --pocket-color: #ccc2a6;
-      --pocket-lift: 8px 0 30px rgba(28,18,6,0.18);
+      font-family: 'Shantell Sans', cursive;
+      color: #2a2218;
+      background: #ddd5be;
     }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      background: var(--clr-board);
-      font-family: var(--font);
-      color: var(--clr-ink);
-      min-height: 100%;
-    }
-
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; min-width: 0; }
     body::before {
       content: '';
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      background-image:
-        repeating-linear-gradient(0deg,   transparent 0px, transparent 1px, rgba(40,28,10,0.055) 1px, rgba(40,28,10,0.055) 2px),
-        repeating-linear-gradient(90deg,  transparent 0px, transparent 1px, rgba(40,28,10,0.045) 1px, rgba(40,28,10,0.045) 2px),
-        repeating-linear-gradient(92deg,  transparent 0px, transparent 3px, rgba(255,240,200,0.05) 3px, rgba(255,240,200,0.05) 4px),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85 0.02' numOctaves='2' seed='6' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.22'/%3E%3C/svg%3E");
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(0deg, transparent 0 2px, #281c0a0c 2px 3px),
+                  repeating-linear-gradient(90deg, transparent 0 2px, #281c0a0a 2px 3px);
       mix-blend-mode: multiply;
     }
-
-    /* ── atmosphere layers (right pane on desktop) ── */
-    #canvas { position: fixed; left: var(--pocket-width); right: 0; top: 0; bottom: 0; pointer-events: none; z-index: 1; }
-    #threads { position: fixed; left: var(--pocket-width); right: 0; top: 0; bottom: 0; pointer-events: none; z-index: 1; width: auto; height: auto; }
-    /* geometry only — sizes the canvas/threads to the right pane. Never blocks
-       clicks (painting is handled by a guarded document-level listener). */
-    #dot-layer { position: fixed; left: var(--pocket-width); right: 0; top: 0; bottom: 0; pointer-events: none; z-index: 3; }
-    :global(.splash-wrap) { position: fixed; pointer-events: none; z-index: 5; }
-
-    #cover-tip {
-      position: fixed; background: #faf7f0; border-radius: 3px;
-      padding: 5px 9px; font-size: 0.84rem; color: #4a3820;
-      box-shadow: 1px 2px 6px #00000020; pointer-events: none; display: none; z-index: 30;
-      max-width: 220px; line-height: 1.4;
-    }
-
-    /* ── LAYOUT ── */
-    .layout { position: relative; z-index: 2; display: grid; grid-template-columns: var(--pocket-width) 1fr; }
-
-    .home-pane {
-      position: fixed; top: 0; left: 0; width: var(--pocket-width); height: 100vh;
-      overflow: visible; padding: 3.2vh 46px 4vh; display: flex; flex-direction: column; z-index: 5;
-    }
-    .pocket-bg {
-      position: absolute; top: -12px; bottom: -12px; left: -80px; right: 0; z-index: 0;
-      background-color: var(--pocket-color);
-      background-image:
-        repeating-linear-gradient(0deg,  transparent 0 1px, rgba(40,28,10,0.085) 1px 2px),
-        repeating-linear-gradient(90deg, transparent 0 1px, rgba(40,28,10,0.07) 1px 2px),
-        repeating-linear-gradient(94deg, transparent 0 3px, rgba(255,240,200,0.05) 3px 4px),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85 0.02' numOctaves='2' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.2'/%3E%3C/svg%3E");
-      box-shadow: var(--pocket-lift);
-      filter: url(#cloth-edge);
-    }
-    .home-pane > *:not(.pocket-bg) { position: relative; z-index: 1; }
-
-    .corner-pane { grid-column: 2; position: relative; z-index: 2; min-height: 100vh; padding: 0 48px 100px; }
-
-    /* ── MARK ── */
-    .hero { font-size: clamp(2.3rem, 3.4vw, 3.6rem); font-weight: 800; line-height: 0.9; letter-spacing: -0.03em; color: var(--clr-ink); transform: rotate(-2deg); transform-origin: left; margin-top: -0.2rem; }
-    .hero .ln2 { display: block; font-size: 0.78em; }
-    .home-desc { font-size: 0.9rem; font-weight: 400; color: var(--clr-ink2); line-height: 1.5; margin-top: 1.2rem; }
-    .about-body { font-size: 0.92rem; font-weight: 400; color: var(--clr-ink2); line-height: 1.55; max-width: 560px; }
-    .about-q { font-size: 0.92rem; font-weight: 400; font-style: italic; color: var(--clr-ink); line-height: 1.55; margin-top: 0.5rem; padding-left: 1.4em; text-indent: -1.4em; }
-    .about-n { color: var(--clr-ink3); font-weight: 300; font-style: normal; margin-right: 0.4em; }
-    .about-coda { font-size: 0.88rem; font-weight: 300; color: var(--clr-ink3); line-height: 1.55; margin-top: 1.2rem; max-width: 560px; }
-    .stitch-label { display: inline-block; margin-bottom: 20px; font-size: 0.9rem; font-weight: 700; font-style: italic; letter-spacing: 0.13em; color: var(--clr-ink3); text-decoration: underline dotted var(--clr-tan); text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
-    .sub-label { display: block; margin: 24px 0 12px; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; color: var(--clr-ink2); transform: rotate(-0.8deg); }
-    .corner-lead { font-size: 0.92rem; color: var(--clr-ink2); line-height: 1.5; max-width: 520px; margin-bottom: 20px; }
-    .comm-line { font-size: 0.88rem; font-weight: 400; color: var(--clr-ink2); line-height: 1.55; max-width: 280px; }
-
-    /* ── TAG — paper tag on a thread; swings from the pin on hover ── */
-    .tag {
-      --tag-tilt: 2.5deg;
-      --tag-swing: 4deg;
-      display: inline-flex; flex-direction: column; align-items: center;
-      margin-top: calc(0.15rem - 6px); margin-left: 2.4rem;
-      transform: rotate(var(--tag-tilt)); transform-origin: top center;
-      cursor: default; transition: transform 0.45s ease-out;
-    }
-    .tag:hover { animation: tag-swing 1.75s ease-in-out infinite; transition: none; }
-    @keyframes tag-swing {
-      0%, 100% { transform: rotate(calc(var(--tag-tilt) - var(--tag-swing))); }
-      50%      { transform: rotate(calc(var(--tag-tilt) + var(--tag-swing))); }
-    }
-    .tag .string { width: 1.5px; height: 26px; background: linear-gradient(to bottom, #9a7248, #c0a878); opacity: 0.7; }
-    .tag .string.tall { height: 40px; }
-    .tag .card {
-      position: relative; background: #f0e8d4; border-radius: 3px;
-      padding: 13px 13px 11px; box-shadow: 1px 3px 10px #00000022;
-      font-size: 0.72rem; font-weight: 600; color: var(--clr-ink2); white-space: nowrap;
-    }
-    .tag .card::before { content: ''; position: absolute; top: 5px; left: 50%; transform: translateX(-50%);
-      width: 7px; height: 7px; border-radius: 50%; background: var(--clr-board); border: 1px solid #c0a070; }
-    .tag .card span { display: block; margin-top: 7px; font-weight: 400; font-size: 0.68rem; color: var(--clr-ink3); }
-    .tag .card a { color: var(--clr-ink2); text-decoration: underline dotted var(--clr-tan); text-underline-offset: 3px; }
-
-    /* ── PHOTO — polaroid-style prints (original cloth-poster behavior) ── */
-    .photo-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin-top: 0.2rem; }
-    .photo-ph {
-      position: relative; background: #f2ede4; padding: 5px 5px 20px;
-      box-shadow: 2px 4px 14px #00000030;
-      transition: transform 0.15s, box-shadow 0.15s; cursor: pointer;
-    }
-    .photo-ph img { display: block; width: 76px; height: 86px; object-fit: cover; background: #bcae90; }
-    .photo-ph:hover { transform: scale(1.35) translateY(8px) !important; box-shadow: 4px 8px 24px #00000050; z-index: 20; }
-    #photo-1 { transform: rotate(7deg); z-index: 6; }
-    #photo-2 { transform: rotate(-5deg) translateY(10px); z-index: 5; }
-    #photo-3 { transform: rotate(2.5deg); }
-    #photo-4 { transform: rotate(-6deg) translateY(6px); }
-
-    /* ── CONTACT ── */
-    .contact { margin-top: auto; padding-top: 1.4rem; }
-
-    /* cloth CTAs — fabric patches with a hand-cut edge (let's chat / coffee) */
-    .cta-row { display: flex; gap: 18px; flex-wrap: wrap; }
-    .cal-patch { position: relative; display: inline-block; padding: 9px 15px 10px; transform: rotate(-1.5deg); cursor: pointer; transition: transform 0.15s; }
-    .cal-patch:hover,
-    .coffee-patch:hover { transform: translateY(-2px) rotate(0deg); }
-    .cal-patch:hover .cal-patch-bg { box-shadow: 3px 7px 22px #00000030, 0 2px 7px #0000001a; }
-    .cal-patch-bg {
-      position: absolute; inset: -3px; z-index: 0;
-      background-image: url('/fabrics/pink_cotton.jpeg'); background-size: 480px; background-position: 20px -40px;
-      box-shadow: 1px 2px 10px #00000020, 0 1px 4px #00000012;
-      filter: url(#cloth-edge);
-    }
-    .cal-lnk { position: relative; z-index: 1; display: block; font-size: 1.02rem; font-weight: 700; color: #2a1208; text-decoration: none; }
-    .coffee-patch { transform: rotate(1.5deg); }
-    .coffee-patch .cal-patch-bg { background-image: url('/fabrics/sunshine.jpg'); background-size: 420px; background-position: -30px -20px; }
-    .email { display: inline-block; margin-top: 0.9rem; font-size: 0.82rem; font-style: italic; color: var(--clr-ink2); text-decoration: none; }
-    .email:hover { color: var(--clr-ink); }
-    .sm-links { display: flex; gap: 0.9rem; flex-wrap: wrap; margin-top: 0.5rem; }
-    .sm-links a { font-size: 0.8rem; font-weight: 300; font-style: italic; color: var(--clr-ink2); text-decoration: none; }
-    .sm-links a:hover { color: var(--clr-ink); }
-    .news { margin-top: 0.9rem; }
-    .news label { display: block; font-size: 0.72rem; font-style: italic; color: var(--clr-ink3); margin-bottom: 5px; }
-    .news .news-row { display: flex; gap: 6px; }
-    .news input { flex: 1; font-family: var(--font); font-size: 0.78rem; padding: 5px 9px; border: 1px dotted #b0906088; background: #00000008; color: var(--clr-ink); border-radius: 2px; }
-    .news input::placeholder { color: var(--clr-ink3); }
-    .news button { font-family: var(--font); font-size: 0.76rem; font-weight: 700; padding: 5px 11px; border: none; background: #cdbf9f; color: #2a1208; cursor: pointer; border-radius: 2px; }
-    .embeddable-buttondown-form p { margin-top: 4px; }
-    .embeddable-buttondown-form p a { font-size: 0.68rem; color: var(--clr-ink3); opacity: 0.6; text-decoration: none; }
-
-    /* ── CORNER NAV + CORNERS ── */
-    /* Transparent so the single fixed body::before cloth shows through —
-       no separate fill/weave/mask, otherwise the nav reads as a distinct
-       lighter, differently-woven band (confirmed via runtime measurement). */
-    .corner-nav {
-      position: sticky; top: 0; z-index: 20; display: flex; flex-wrap: wrap; gap: 14px 26px; align-items: baseline;
-      padding: 4.4vh 0 28px;
-    }
-    .corner-tab {
-      font-size: 0.96rem; font-weight: 600; font-style: italic; color: var(--clr-ink3); letter-spacing: 0.03em;
-      cursor: pointer; background: none; border: none; font-family: var(--font); padding: 1px 0; transition: color 0.12s;
-    }
-    .corner-tab:nth-child(odd) { transform: rotate(-1.4deg); }
-    .corner-tab:nth-child(even) { transform: rotate(1deg); }
-    .corner-tab:hover { color: var(--clr-ink2); }
-    .corner-tab.active { color: var(--clr-ink); font-weight: 700; text-decoration: underline dotted var(--clr-tan); text-underline-offset: 5px; text-decoration-thickness: 2px; }
-
-    .corner { display: none; }
-    .corner.active { display: block; }
-    .corner-h { display: none; }
-
-    /* ── CONTAINERS ── */
-    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; align-items: start; }
-    .grid > *:nth-child(4n+1) { transform: rotate(-1.8deg) translateY(3px); }
-    .grid > *:nth-child(4n+2) { transform: rotate(1.4deg) translateY(-7px); }
-    .grid > *:nth-child(4n+3) { transform: rotate(-0.8deg) translateY(9px); }
-    .grid > *:nth-child(4n+4) { transform: rotate(2deg) translateY(-4px); }
-    .wrap { display: flex; flex-wrap: wrap; gap: 14px; }
-    .wrap > *:nth-child(odd) { transform: rotate(-2deg); }
-    .wrap > *:nth-child(even) { transform: rotate(1.6deg); }
-
-    /* ── PATCH ── */
-    .patch {
-      position: relative; background-color: #cec3ac; box-shadow: 2px 4px 16px #0000001e, 0 1px 5px #00000012;
-      background-image:
-        repeating-linear-gradient(0deg,   transparent 0px, transparent 1px, rgba(40,28,10,0.065) 1px, rgba(40,28,10,0.065) 2px),
-        repeating-linear-gradient(90deg,  transparent 0px, transparent 1px, rgba(40,28,10,0.055) 1px, rgba(40,28,10,0.055) 2px),
-        repeating-linear-gradient(94deg,  transparent 0px, transparent 3px, rgba(255,240,200,0.05) 3px, rgba(255,240,200,0.05) 4px),
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.85 0.02' numOctaves='2' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.2'/%3E%3C/svg%3E");
-      padding: 14px 18px 16px; --accent: #b09060;
-    }
-    .patch::after { content: ''; position: absolute; left: 12px; right: 12px; top: 8px; height: 2px; background: repeating-linear-gradient(90deg, var(--accent) 0 5px, transparent 5px 9px); opacity: 0.85; }
-    .patch.slate { --accent: #4a6272; }
-    .patch.sage { --accent: #476055; }
-    .patch.terracotta { --accent: #724038; }
-    .patch.umber { --accent: #8a5a36; }
-    .patch.sm { padding: 10px 13px 12px; }
-    .patch.sm .patch-title { font-size: 0.82rem; }
-    .patch-title { font-size: 0.98rem; font-weight: 700; color: var(--clr-ink); line-height: 1.2; margin-top: 7px; }
-    .patch-title a { color: inherit; text-decoration: none; }
-    .patch-title a:hover { color: var(--clr-ink2); }
-    .patch-line { font-size: 0.8rem; font-weight: 300; font-style: italic; color: var(--clr-ink3); line-height: 1.5; margin-top: 5px; }
-    .meta-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
-    .stamp { font-size: 0.66rem; border: 1px solid #5a483066; color: var(--clr-ink2); padding: 2px 8px 3px; opacity: 0.8; }
-    .patch.idea .patch-title { font-size: 0.88rem; font-weight: 600; }
-
-    /* ── SPINE ── */
-    .spine {
-      width: 64px; height: 94px; border-radius: 1px 3px 3px 1px;
-      box-shadow: 2px 3px 8px #00000030, inset -3px 0 6px #00000018;
-      display: flex; align-items: center; justify-content: center;
-      padding: 7px; text-align: center;
-      font-size: 0.52rem; font-weight: 600; color: rgba(255,255,255,0.92);
-      text-shadow: 0 1px 2px rgba(0,0,0,0.4); line-height: 1.3;
-      text-decoration: none; transition: transform 0.14s;
-    }
-    .spine:hover { transform: scale(1.12) translateY(-4px) !important; }
-    .spine.slate { background: #4a6272; }
-    .spine.sage { background: #476055; }
-    .spine.terra { background: #724038; }
-
-    /* ── BREAKPOINT — panes stack at 960px ── */
-    @media (max-width: 959px) {
-      #canvas, #threads, #dot-layer { left: 0; }
-
-      .layout { grid-template-columns: 1fr; }
-      .home-pane { position: static; width: auto; height: auto; overflow: visible; padding: 6vh 24px 24px; z-index: auto; }
-      .pocket-bg { display: none; }
-      .contact { margin-top: 1.6rem; }
-      .photo-row .photo-ph img { width: 13vw; max-width: 80px; height: 17vw; max-height: 104px; }
-      .corner-pane { grid-column: 1; padding: 16px 24px 90px; }
-      .corner-nav { display: none; }
-      .corner { display: block !important; margin-bottom: 34px; }
-      .corner-h {
-        display: inline-block; margin-bottom: 16px;
-        font-size: 0.95rem; font-weight: 700; font-style: italic; letter-spacing: 0.13em; color: var(--clr-ink2);
-        text-decoration: underline dotted var(--clr-tan); text-underline-offset: 4px; text-decoration-thickness: 1.5px;
-      }
-    }
-
-    @media (max-width: 519px) {
-      .home-desc { font-size: 0.86rem; }
-      .corner-tab { font-size: 0.9rem; }
-    }
+    main { width: min(100% - 2.5rem, 680px); margin: 0 auto; padding: 48px 0 96px; }
+    header, section, footer { position: relative; }
+    header { padding-bottom: 48px; }
+    h1 { font-size: clamp(2.6rem, 7vw, 4rem); line-height: 1; letter-spacing: -0.04em; margin: 24px 0 12px; transform: rotate(-1deg); }
+    h2 { font-size: 1.35rem; font-style: italic; margin: 0 0 22px; text-decoration: underline dotted #b09060; text-underline-offset: 7px; }
+    h3 { font-size: 1rem; margin: 0 0 6px; line-height: 1.35; }
+    p { line-height: 1.65; margin: 0 0 12px; color: #5a4830; }
+    a { color: inherit; text-decoration-color: #b09060; text-underline-offset: 3px; overflow-wrap: anywhere; }
+    a:hover { color: #724038; }
+    section, footer { padding: 38px 0; }
+    .photos { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; }
+    .photos img { width: 80px; height: 98px; object-fit: cover; background: #f2ede4; padding: 5px 5px 15px; box-shadow: 2px 4px 12px #0002; }
+    .photos img:nth-child(odd) { transform: rotate(-3deg); }
+    .photos img:nth-child(even) { transform: rotate(3deg); }
+    .location { display: inline-block; padding: 6px 10px; margin: 0 0 16px; background: #f0e8d4; box-shadow: 1px 2px 7px #0002; font-size: .78rem; transform: rotate(2deg); }
+    .intro { font-size: 1rem; max-width: 60ch; }
+    article { background: #cec3ac; padding: 16px 20px; margin: 0 0 14px; box-shadow: 2px 3px 12px #00000016; }
+    article:nth-of-type(odd) { transform: rotate(-.3deg); }
+    article:nth-of-type(even) { transform: rotate(.3deg); }
+    article p:last-child { margin-bottom: 0; }
+    .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .meta span { border: 1px solid #5a483066; padding: 2px 8px; font-size: .7rem; color: #5a4830; }
+    .question { padding-left: 1.5em; text-indent: -1.5em; }
+    .question span { color: #7a6a50; margin-right: .5em; }
+    .coda { font-style: italic; }
+    .plain-list { list-style: none; padding: 0; margin: 0; }
+    .plain-list li { padding: 8px 0; line-height: 1.5; }
+    .book-group { margin: 0 0 26px; }
+    .book-group h3 { color: #5a4830; font-size: .85rem; letter-spacing: .04em; margin-bottom: 8px; }
+    .book-group li { padding: 5px 0; }
+    footer { padding-bottom: 0; }
+    .contact-link { display: block; width: fit-content; margin: 0 0 10px; }
+    .contact-link.featured { background: #e6bfad; padding: 9px 13px; box-shadow: 2px 3px 10px #0002; font-weight: 700; text-decoration: none; }
+    .contact-link.coffee { background: #e6d28b; }
+    .socials { display: flex; flex-wrap: wrap; gap: 16px; margin: 18px 0 24px; }
+    .newsletter label { display: block; font-size: .85rem; margin-bottom: 8px; }
+    .newsletter input, .newsletter button { font: inherit; padding: 8px 10px; border: 1px solid #b09060; }
+    .newsletter input { width: min(100%, 280px); background: #faf7f0; }
+    .newsletter button { background: #cdbf9f; cursor: pointer; }
+    .newsletter small { display: block; margin-top: 6px; color: #7a6a50; }
   </style>
 </head>
 <body>
-
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <defs>
-    <filter id="cloth-edge" x="-15%" y="-10%" width="130%" height="120%">
-      <feTurbulence type="turbulence" baseFrequency="0.010 0.03" numOctaves="4" seed="7" result="noise"/>
-      <feDisplacementMap in="SourceGraphic" in2="noise" scale="18" xChannelSelector="R" yChannelSelector="G"/>
-    </filter>
-  </defs>
-</svg>
-
-<canvas id="canvas"></canvas>
-<svg id="threads" xmlns="http://www.w3.org/2000/svg"></svg>
-<div id="dot-layer"></div>
-<div id="cover-tip"></div>
-
-<div class="layout">
-
-  <aside class="home-pane">
-    <div class="pocket-bg"></div>
-
-    <div class="photo-row">
-      <div class="photo-ph" id="photo-1"><img src="/pics/eagx_image.jpg" alt="" style="object-position: center 15%" /></div>
-      <div class="photo-ph" id="photo-2"><img src="/pics/wappu_image.JPG" alt="" style="object-position: center 20%" /></div>
-      <div class="photo-ph" id="photo-3"><img src="/pics/amazon.jpg" alt="" style="object-position: center 10%" /></div>
-      <div class="photo-ph" id="photo-4"><img src="/pics/stupid_image.jpg" alt="" style="object-position: center 15%" /></div>
-    </div>
-
-    <div class="hero">Aayush<span class="ln2">Kucheria</span></div>
-
-    <div class="tag">
-      <span class="string"></span>
-      <div class="card">Based in Helsinki</div>
-    </div>
-
-    <p class="home-desc">Researcher and interface thinker. I care about AI being good for the people it touches — especially where a human and a model actually meet.</p>
-
-    <div class="contact">
-      <div class="cta-row">
-        <div class="cal-patch">
-          <div class="cal-patch-bg"></div>
-          <a class="cal-lnk" href="https://cal.com/aayushk/chat" target="_blank" rel="noopener">let's chat</a>
-        </div>
-        <div class="cal-patch coffee-patch">
-          <div class="cal-patch-bg"></div>
-          <a class="cal-lnk" href="https://buymeacoffee.com/aayushkucheria" target="_blank" rel="noopener">buy me a coffee</a>
-        </div>
+  <main>
+    <header>
+      <div class="photos" aria-label="Photos of Aayush and his work">
+        <img src="/pics/eagx_image.jpg" alt="" style="object-position: center 15%" />
+        <img src="/pics/wappu_image.JPG" alt="" style="object-position: center 20%" />
+        <img src="/pics/amazon.jpg" alt="" style="object-position: center 10%" />
+        <img src="/pics/stupid_image.jpg" alt="" style="object-position: center 15%" />
       </div>
-      <a class="email" href="mailto:aayush.kucheria@gmail.com">aayush.kucheria@gmail.com</a>
-      <div class="sm-links">
+      <h1>Aayush Kucheria</h1>
+      <span class="location">Based in Helsinki</span>
+      <p class="intro">Researcher and interface thinker. I care about AI being good for the people it touches — especially where a human and a model actually meet.</p>
+    </header>
+
+    <section id="work" aria-labelledby="work-heading">
+      <h2 id="work-heading">work</h2>
+      <article>
+        <h3><a href="https://groundless.ai" target="_blank" rel="noopener">Groundless Alignment →</a></h3>
+        <p>Design × alignment. Interfaces as alignment surfaces — making AI legible, contestable, humane. Fellowship to full-time over 1.5 years.</p>
+        <div class="meta"><span>AISC 2026 team lead</span><span>guest lecturer, Gabriel Weil's AI &amp; Law '26</span></div>
+      </article>
+      <article>
+        <h3>PracticeSpace — co-founder</h3>
+        <p>LLM simulations of therapy patients for trainees. Founded with NHS CBT practitioners.</p>
+      </article>
+      <article>
+        <h3>Machine Learning</h3>
+        <p>BSc + MSc in machine learning at Aalto University, Finland.</p>
+        <div class="meta"><span>Latent ethical landscape of LLMs</span><span>Gaussian Modelling, University of Helsinki</span><span>talk: transformers</span></div>
+      </article>
+      <article>
+        <h3>ACL Workshop 2025</h3>
+        <p>adding soon</p>
+      </article>
+    </section>
+
+    <section id="about" aria-labelledby="about-heading">
+      <h2 id="about-heading">about</h2>
+      <p>I care about AI being good for the people it touches. Two questions hold most of my attention:</p>
+      <p class="question"><span>1</span> What's in the latent space, and can we learn to read it and reach in?</p>
+      <p class="question"><span>2</span> What happens where a human and an AI meet, and how do we design that interface?</p>
+      <p class="coda">Both questions point to something far more complex, subtle, and fertile than first appears, rewarding a kind of close attention I'm drawn towards.</p>
+    </section>
+
+    <section id="ideas" aria-labelledby="ideas-heading">
+      <h2 id="ideas-heading">steal these ideas</h2>
+      <p>Ideas I'd love to see exist but won't get to. Take any of them, no credit needed.</p>
+      <ul class="plain-list">
+        <li>A reader that shows the latent space of what you're reading</li>
+        <li>Therapy-sim for hard conversations you're about to have</li>
+        <li>An interface to "reach into" a model's reasoning and nudge it</li>
+        <li>A personal site that's a place, not a poster</li>
+        <li>Margin notes that argue back</li>
+        <li>A bookshelf that remembers why you loved each book</li>
+      </ul>
+    </section>
+
+    <section id="reading" aria-labelledby="reading-heading">
+      <h2 id="reading-heading">reading</h2>
+      <div class="book-group">
+        <h3>machines &amp; minds</h3>
+        <ul class="plain-list">
+          <li><a href="https://www.goodreads.com/book/show/722412.The_Dream_Machine" target="_blank" rel="noopener">The Dream Machine — M. Mitchell Waldrop</a></li>
+          <li><a href="https://www.goodreads.com/book/show/62707933-the-philosopher-of-palo-alto" target="_blank" rel="noopener">The Philosopher of Palo Alto — John Tinnell</a></li>
+          <li><a href="https://www.goodreads.com/book/show/703532.Mindstorms" target="_blank" rel="noopener">Mindstorms — Seymour Papert</a></li>
+        </ul>
+      </div>
+      <div class="book-group">
+        <h3>embodiment</h3>
+        <ul class="plain-list">
+          <li><a href="https://www.goodreads.com/book/show/48582.The_Spell_of_the_Sensuous" target="_blank" rel="noopener">The Spell of the Sensuous — David Abram</a></li>
+          <li><a href="https://www.goodreads.com/book/show/7822953-becoming-animal" target="_blank" rel="noopener">Becoming Animal — David Abram</a></li>
+          <li><a href="https://www.goodreads.com/book/show/1373530.Love_and_Will" target="_blank" rel="noopener">Love and Will — Rollo May</a></li>
+        </ul>
+      </div>
+      <div class="book-group">
+        <h3>AI futures</h3>
+        <ul class="plain-list">
+          <li><a href="https://www.goodreads.com/book/show/50485582-the-precipice" target="_blank" rel="noopener">The Precipice — Toby Ord</a></li>
+          <li><a href="https://www.lesswrong.com/s/BbAvHtorCZqp97X9W" target="_blank" rel="noopener">Otherness and Control in the Age of AGI — Joe Carlsmith</a></li>
+          <li><a href="https://www.lesswrong.com/s/aMz2JMvgXrLBkq4h3" target="_blank" rel="noopener">Live Theory Sequence — Sahil</a></li>
+          <li><a href="https://www.goodreads.com/book/show/50489349-the-alignment-problem" target="_blank" rel="noopener">The Alignment Problem — Brian Christian</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="now" aria-labelledby="now-heading">
+      <h2 id="now-heading">now</h2>
+      <p>Updated June 2026, from Helsinki.</p>
+      <article><h3>Reading</h3><p>Joe Carlsmith's "Otherness and Control in the Age of AGI."</p></article>
+      <article><h3>Building</h3><p>Rethinking this very site — from a single-screen poster into a place with corners.</p></article>
+      <article><h3>Leading</h3><p>The AISC 2026 team.</p></article>
+    </section>
+
+    <section id="community" aria-labelledby="community-heading">
+      <h2 id="community-heading">community</h2>
+      <ul class="plain-list">
+        <li>co-founded the EA chapter at Aalto</li>
+        <li>mentored EA + AI safety groups via CEA</li>
+      </ul>
+    </section>
+
+    <footer id="contact">
+      <h2>contact</h2>
+      <a class="contact-link featured" href="https://cal.com/aayushk/chat" target="_blank" rel="noopener">let's chat</a>
+      <a class="contact-link featured coffee" href="https://buymeacoffee.com/aayushkucheria" target="_blank" rel="noopener">buy me a coffee</a>
+      <a class="contact-link" href="mailto:aayush.kucheria@gmail.com">aayush.kucheria@gmail.com</a>
+      <div class="socials">
         <a href="https://github.com/AayushKucheria" target="_blank" rel="noopener">GitHub</a>
         <a href="https://linkedin.com/in/aayushkucheria" target="_blank" rel="noopener">LinkedIn</a>
         <a href="https://twitter.com/aay17ush" target="_blank" rel="noopener">X</a>
       </div>
-      <form action="https://buttondown.com/api/emails/embed-subscribe/aayushk" method="post" class="news embeddable-buttondown-form">
+      <form action="https://buttondown.com/api/emails/embed-subscribe/aayushk" method="post" class="newsletter">
         <label for="bd-email">for occasional updates</label>
-        <div class="news-row">
-          <input type="email" name="email" id="bd-email" placeholder="you@email.com" />
-          <button type="submit">subscribe</button>
-        </div>
-        <p><a href="https://buttondown.com/refer/aayushk" target="_blank" rel="noopener">Powered by Buttondown.</a></p>
+        <input type="email" name="email" id="bd-email" placeholder="you@email.com" required />
+        <button type="submit">subscribe</button>
+        <small><a href="https://buttondown.com/refer/aayushk" target="_blank" rel="noopener">Powered by Buttondown.</a></small>
       </form>
-    </div>
-  </aside>
-
-  <main class="corner-pane">
-
-    <nav class="corner-nav">
-      <button class="corner-tab active" data-corner="work">work</button>
-      <button class="corner-tab" data-corner="about">about</button>
-      <button class="corner-tab" data-corner="ideas">steal these ideas</button>
-      <button class="corner-tab" data-corner="reading">reading</button>
-      <button class="corner-tab" data-corner="now">now</button>
-      <button class="corner-tab" data-corner="community">community</button>
-    </nav>
-
-    <section class="corner active" id="c-work">
-      <span class="corner-h">work</span>
-      <div class="grid">
-        <div class="patch slate">
-          <div class="patch-title"><a href="https://groundless.ai" target="_blank" rel="noopener">Groundless Alignment →</a></div>
-          <div class="patch-line">Design × alignment. Interfaces as alignment surfaces — making AI legible, contestable, humane. Fellowship to full-time over 1.5 years.</div>
-          <div class="meta-row">
-            <span class="stamp">AISC 2026 team lead</span>
-            <span class="stamp">guest lecturer, Gabriel Weil's AI &amp; Law '26</span>
-          </div>
-        </div>
-        <div class="patch sage">
-          <div class="patch-title">PracticeSpace — co-founder</div>
-          <div class="patch-line">LLM simulations of therapy patients for trainees. Founded with NHS CBT practitioners.</div>
-        </div>
-        <div class="patch umber">
-          <div class="patch-title">Machine Learning</div>
-          <div class="patch-line">BSc + MSc in machine learning at Aalto University, Finland.</div>
-          <div class="meta-row">
-            <span class="stamp">Latent ethical landscape of LLMs</span>
-            <span class="stamp">Gaussian Modelling, University of Helsinki</span>
-            <span class="stamp">talk: transformers</span>
-          </div>
-        </div>
-        <div class="patch terracotta">
-          <div class="patch-title">ACL Workshop 2025</div>
-          <div class="patch-line">adding soon</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="corner" id="c-about">
-      <span class="corner-h">about</span>
-      <p class="about-body">I care about AI being good for the people it touches. Two questions hold most of my attention:</p>
-      <p class="about-q"><span class="about-n">1</span> What's in the latent space, and can we learn to read it and reach in?</p>
-      <p class="about-q"><span class="about-n">2</span> What happens where a human and an AI meet, and how do we design that interface?</p>
-      <p class="about-coda">Both questions point to something far more complex, subtle, and fertile than first appears, rewarding a kind of close attention I'm drawn towards.</p>
-    </section>
-
-    <section class="corner" id="c-ideas">
-      <span class="corner-h">steal these ideas</span>
-      <div class="corner-lead">Ideas I'd love to see exist but won't get to. Take any of them, no credit needed.</div>
-      <div class="grid">
-        <div class="patch idea umber"><div class="patch-title">A reader that shows the latent space of what you're reading</div></div>
-        <div class="patch idea umber"><div class="patch-title">Therapy-sim for hard conversations you're about to have</div></div>
-        <div class="patch idea umber"><div class="patch-title">An interface to "reach into" a model's reasoning and nudge it</div></div>
-        <div class="patch idea umber"><div class="patch-title">A personal site that's a place, not a poster</div></div>
-        <div class="patch idea umber"><div class="patch-title">Margin notes that argue back</div></div>
-        <div class="patch idea umber"><div class="patch-title">A bookshelf that remembers why you loved each book</div></div>
-      </div>
-    </section>
-
-    <section class="corner" id="c-reading">
-      <span class="corner-h">reading</span>
-      <span class="sub-label" style="margin-top:0">machines &amp; minds</span>
-      <div class="wrap" id="book-group-1">
-        <a class="spine slate" href="https://www.goodreads.com/book/show/722412.The_Dream_Machine" target="_blank" rel="noopener" data-tip="The Dream Machine — M. Mitchell Waldrop">Dream Machine</a>
-        <a class="spine slate" href="https://www.goodreads.com/book/show/62707933-the-philosopher-of-palo-alto" target="_blank" rel="noopener" data-tip="The Philosopher of Palo Alto — John Tinnell">Philosopher of Palo Alto</a>
-        <a class="spine slate" href="https://www.goodreads.com/book/show/703532.Mindstorms" target="_blank" rel="noopener" data-tip="Mindstorms — Seymour Papert">Mindstorms</a>
-      </div>
-      <span class="sub-label">embodiment</span>
-      <div class="wrap">
-        <a class="spine sage" href="https://www.goodreads.com/book/show/48582.The_Spell_of_the_Sensuous" target="_blank" rel="noopener" data-tip="The Spell of the Sensuous — David Abram">Spell of the Sensuous</a>
-        <a class="spine sage" href="https://www.goodreads.com/book/show/7822953-becoming-animal" target="_blank" rel="noopener" data-tip="Becoming Animal — David Abram">Becoming Animal</a>
-        <a class="spine sage" href="https://www.goodreads.com/book/show/1373530.Love_and_Will" target="_blank" rel="noopener" data-tip="Love and Will — Rollo May">Love &amp; Will</a>
-      </div>
-      <span class="sub-label">AI futures</span>
-      <div class="wrap">
-        <a class="spine terra" href="https://www.goodreads.com/book/show/50485582-the-precipice" target="_blank" rel="noopener" data-tip="The Precipice — Toby Ord">The Precipice</a>
-        <a class="spine terra" href="https://www.lesswrong.com/s/BbAvHtorCZqp97X9W" target="_blank" rel="noopener" data-tip="Otherness and Control in the Age of AGI — Joe Carlsmith">Otherness &amp; Control AGI</a>
-        <a class="spine terra" href="https://www.lesswrong.com/s/aMz2JMvgXrLBkq4h3" target="_blank" rel="noopener" data-tip="Live Theory Sequence — Sahil">Live Theory Seq.</a>
-        <a class="spine terra" href="https://www.goodreads.com/book/show/50489349-the-alignment-problem" target="_blank" rel="noopener" data-tip="The Alignment Problem — Brian Christian">The Alignment Problem</a>
-      </div>
-    </section>
-
-    <section class="corner" id="c-now">
-      <span class="corner-h">now</span>
-      <div class="corner-lead">Updated June 2026, from Helsinki.</div>
-      <div class="grid">
-        <div class="patch sage"><div class="patch-title">Reading</div><div class="patch-line">Joe Carlsmith's "Otherness and Control in the Age of AGI."</div></div>
-        <div class="patch umber"><div class="patch-title">Building</div><div class="patch-line">Rethinking this very site — from a single-screen poster into a place with corners.</div></div>
-        <div class="patch slate"><div class="patch-title">Leading</div><div class="patch-line">The AISC 2026 team.</div></div>
-      </div>
-    </section>
-
-    <section class="corner" id="c-community">
-      <span class="corner-h">community</span>
-      <div class="grid">
-        <div class="patch sage sm">
-          <div class="patch-line">co-founded the EA chapter at Aalto</div>
-        </div>
-        <div class="patch sage sm">
-          <div class="patch-line">mentored EA + AI safety groups via CEA</div>
-        </div>
-      </div>
-    </section>
-
+    </footer>
   </main>
-</div>
-
-<script>
-  import rough from 'roughjs';
-  import { annotate } from 'rough-notation';
-
-  const dotLayer = document.getElementById('dot-layer');
-  let stored = JSON.parse(localStorage.getItem('wb-v1') || '[]');
-  const MAX = 100;
-  const FADE_MS = 30_000;
-  const NS = 'http://www.w3.org/2000/svg';
-
-  /* splashes only live on the right pane — drop legacy marks from the old full-board layout */
-  const inRightPane = (x, clientX) =>
-    (clientX != null ? clientX : x * window.innerWidth) >= dotLayer.getBoundingClientRect().left - 1;
-
-  const now = Date.now();
-  stored = stored
-    .filter(e => e.length >= 3 && now - e[2] < FADE_MS)
-    .filter(([x]) => inRightPane(x));
-  localStorage.setItem('wb-v1', JSON.stringify(stored));
-
-  function removeFromStored(createdAt) {
-    const i = stored.findIndex(([, , t]) => t === createdAt);
-    if (i === -1) return;
-    stored.splice(i, 1);
-    localStorage.setItem('wb-v1', JSON.stringify(stored));
-  }
-
-  function scheduleFade(wrap, createdAt) {
-    const remaining = FADE_MS - (Date.now() - createdAt);
-    if (remaining <= 0) {
-      wrap.remove();
-      removeFromStored(createdAt);
-      return;
-    }
-    wrap.style.opacity = String(remaining / FADE_MS);
-    wrap.style.transition = `opacity ${remaining}ms linear`;
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      wrap.style.opacity = '0';
-    }));
-    wrap.addEventListener('transitionend', e => {
-      if (e.propertyName !== 'opacity') return;
-      wrap.remove();
-      removeFromStored(createdAt);
-    }, { once: true });
-  }
-
-  /* three paint colors — equal weight, contrast against --clr-board (#ddd5be) */
-  const PAINT = ['#d4a828', '#3d6658', '#3a5570'];
-  const pickPaint = () => PAINT[Math.floor(Math.random() * PAINT.length)];
-
-  function blob(cx, cy, r) {
-    const n = 9;
-    const pts = Array.from({length: n}, (_, i) => {
-      const a = (i / n) * Math.PI * 2 - Math.PI / 2;
-      const noise = 0.45 + Math.random() * 1.05;
-      return [cx + Math.cos(a) * r * noise, cy + Math.sin(a) * r * noise];
-    });
-    let d = `M ${pts[0][0].toFixed(1)} ${pts[0][1].toFixed(1)}`;
-    for (let i = 0; i < n; i++) {
-      const p0 = pts[(i - 1 + n) % n], p1 = pts[i];
-      const p2 = pts[(i + 1) % n],     p3 = pts[(i + 2) % n];
-      const f = 1/6;
-      const cp1x = p1[0] + (p2[0] - p0[0]) * f, cp1y = p1[1] + (p2[1] - p0[1]) * f;
-      const cp2x = p2[0] - (p3[0] - p1[0]) * f, cp2y = p2[1] - (p3[1] - p1[1]) * f;
-      d += ` C ${cp1x.toFixed(1)} ${cp1y.toFixed(1)}, ${cp2x.toFixed(1)} ${cp2y.toFixed(1)}, ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
-    }
-    return d + ' Z';
-  }
-
-  function renderSplash(x, y, { createdAt, fresh } = {}) {
-    createdAt = createdAt ?? Date.now();
-    if (FADE_MS - (Date.now() - createdAt) <= 0) return;
-
-    const wrap = document.createElement('div');
-    wrap.className = 'splash-wrap';
-    wrap.style.left = (x * window.innerWidth) + 'px';
-    wrap.style.top  = (y * window.innerHeight) + 'px';
-
-    const sz   = 40 + Math.random() * 10;
-    const rot  = Math.random() * 360;
-    const col  = pickPaint();
-    const base = 0.68 + Math.random() * 0.18;
-
-    const svg = document.createElementNS(NS, 'svg');
-    svg.setAttribute('viewBox', '0 0 100 100');
-    svg.style.cssText = [
-      `display:block`,
-      `width:${sz}px`, `height:${sz}px`,
-      `overflow:visible`,
-      `transform:translate(-50%,-50%) rotate(${rot}deg) scale(${fresh ? 0 : 1})`,
-      fresh ? `transition:transform 0.38s cubic-bezier(0.34,1.56,0.64,1)` : '',
-    ].join(';');
-
-    const bR = 20 + Math.random() * 6;
-    const blobPath = document.createElementNS(NS, 'path');
-    blobPath.setAttribute('d', blob(50, 50, bR));
-    blobPath.setAttribute('fill', col);
-    blobPath.setAttribute('opacity', base.toFixed(2));
-    svg.appendChild(blobPath);
-
-    const drops = 4 + Math.floor(Math.random() * 5);
-    for (let i = 0; i < drops; i++) {
-      const a    = Math.random() * Math.PI * 2;
-      const dist = bR * (1.3 + Math.random() * 2.0);
-      const dr   = bR * (0.05 + Math.random() * 0.18);
-      const ecx  = (50 + Math.cos(a) * dist).toFixed(1);
-      const ecy  = (50 + Math.sin(a) * dist).toFixed(1);
-      const el = document.createElementNS(NS, 'ellipse');
-      el.setAttribute('cx', ecx); el.setAttribute('cy', ecy);
-      el.setAttribute('rx', dr.toFixed(1));
-      el.setAttribute('ry', (dr * (0.45 + Math.random() * 0.9)).toFixed(1));
-      el.setAttribute('fill', Math.random() < 0.3 ? pickPaint() : col);
-      el.setAttribute('opacity', (base * (0.35 + Math.random() * 0.65)).toFixed(2));
-      el.setAttribute('transform', `rotate(${(Math.random()*120-60).toFixed(0)} ${ecx} ${ecy})`);
-      svg.appendChild(el);
-    }
-
-    wrap.appendChild(svg);
-    document.body.appendChild(wrap);
-
-    if (fresh) {
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        svg.style.transform = `translate(-50%,-50%) rotate(${rot}deg) scale(1)`;
-      }));
-    }
-
-    scheduleFade(wrap, createdAt);
-  }
-
-  stored.forEach(([x, y, t]) => renderSplash(x, y, { createdAt: t, fresh: false }));
-
-  /* Paint on empty right-pane clicks. Ignore interactive pieces, content
-     patches, and the static left pane so they stay clickable. */
-  const PAINT_IGNORE = 'a, button, input, textarea, select, label, form, .corner-tab, .patch, .spine, .tag, .photo-ph, .home-pane';
-  document.addEventListener('click', e => {
-    if (e.target.closest(PAINT_IGNORE)) return;
-    if (!inRightPane(null, e.clientX)) return;
-    const x = e.clientX / window.innerWidth;
-    const y = e.clientY / window.innerHeight;
-    const createdAt = Date.now();
-    renderSplash(x, y, { createdAt, fresh: true });
-    stored.push([x, y, createdAt]);
-    if (stored.length > MAX) stored.splice(0, stored.length - MAX);
-    localStorage.setItem('wb-v1', JSON.stringify(stored));
-  });
-
-  /* tab switching — instant */
-  const tabs = document.querySelectorAll('.corner-tab');
-  const corners = document.querySelectorAll('.corner');
-  tabs.forEach(tab => tab.addEventListener('click', () => {
-    tabs.forEach(t => t.classList.remove('active'));
-    corners.forEach(c => c.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById('c-' + tab.dataset.corner).classList.add('active');
-  }));
-
-  function drawAll() {
-    const canvas = document.getElementById('canvas');
-    const pane = dotLayer.getBoundingClientRect();
-    canvas.width = pane.width;
-    canvas.height = pane.height;
-  }
-
-  function drawThreads() {
-    const svg = document.getElementById('threads');
-    const pane = dotLayer.getBoundingClientRect();
-    svg.setAttribute('viewBox', `0 0 ${pane.width} ${pane.height}`);
-    svg.innerHTML = '';
-    const THREAD = '#9a7a45';
-
-    function thread(x1, y1, x2, y2, cx, cy, op) {
-      const p = document.createElementNS(NS, 'path');
-      p.setAttribute('d', `M ${x1},${y1} Q ${cx},${cy} ${x2},${y2}`);
-      p.setAttribute('stroke', THREAD);
-      p.setAttribute('stroke-width', '0.7');
-      p.setAttribute('fill', 'none');
-      p.setAttribute('opacity', op ?? '0.25');
-      p.setAttribute('stroke-linecap', 'round');
-      svg.appendChild(p);
-    }
-
-    const w = pane.width, h = pane.height;
-    const filaments = [
-      [0.08,0.20,38,18],[0.22,0.47,112,20],[0.42,0.09,160,16],[0.60,0.33,55,19],
-      [0.76,0.20,200,14],[0.92,0.47,80,18],[0.14,0.71,140,17],[0.32,0.82,20,20],
-      [0.50,0.74,165,15],[0.68,0.90,95,22],[0.80,0.66,130,17],[0.96,0.80,45,19],
-      [0.06,0.52,75,16],[0.28,0.30,190,21],[0.46,0.54,30,18],[0.62,0.74,155,16],
-      [0.84,0.34,85,20],[0.98,0.19,175,14],[0.18,0.61,60,22],[0.54,0.22,130,17],
-    ];
-    filaments.forEach(([fx, fy, ang, len]) => {
-      const x = fx * w, y = fy * h;
-      const rad = ang * Math.PI / 180;
-      const perp = (ang + 90) * Math.PI / 180;
-      const bow = (Math.sin(x * 0.1 + y * 0.07) - 0.5) * 5;
-      const mx = x + Math.cos(rad) * len * 0.5 + Math.cos(perp) * bow;
-      const my = y + Math.sin(rad) * len * 0.5 + Math.sin(perp) * bow;
-      thread(x, y, x + Math.cos(rad) * len, y + Math.sin(rad) * len, mx, my,
-        String(0.15 + (Math.sin(x * 0.3 + y * 0.2) * 0.5 + 0.5) * 0.18));
-    });
-  }
-
-  function runAnnotations() {
-    const target = document.getElementById('book-group-1');
-    if (!target) return;
-    setTimeout(() => annotate(target, {
-      type: 'bracket', color: '#b09060',
-      roughness: 3.8, strokeWidth: 2.5, padding: [18, 6, 12, 6], brackets: ['left'], animationDuration: 700,
-    }).show(), 400);
-  }
-
-  const tip = document.getElementById('cover-tip');
-  document.querySelectorAll('.spine[data-tip]').forEach(c => {
-    c.addEventListener('mouseenter', () => { tip.style.display = 'block'; tip.textContent = c.dataset.tip; });
-    c.addEventListener('mousemove', e => { tip.style.left = (e.clientX + 12) + 'px'; tip.style.top = (e.clientY - 30) + 'px'; });
-    c.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
-  });
-
-  window.addEventListener('load', () => {
-    drawAll();
-    drawThreads();
-    runAnnotations();
-  });
-  window.addEventListener('resize', () => {
-    drawAll();
-    drawThreads();
-  });
-</script>
-
 </body>
 </html>

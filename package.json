@@ -9,16 +9,9 @@
     "dev": "astro dev --port 4321",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro",
-    "test:splashes": "node scripts/run-splash-tests.mjs",
-    "test": "npm run test:splashes"
-  },
-  "devDependencies": {
-    "playwright": "^1.61.0"
+    "astro": "astro"
   },
   "dependencies": {
-    "astro": "^6.3.6",
-    "rough-notation": "^0.5.1",
-    "roughjs": "^4.6.6"
+    "astro": "^6.3.6"
   }
 }
