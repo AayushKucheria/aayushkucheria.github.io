@@ -8,7 +8,7 @@
 > single Astro page `src/pages/index.astro`.
 
 ## Stack
-- Astro (static output) → deploys to GitHub Pages at aayushkucheria.github.io
+- Astro (static output) → deploys to GitHub Pages at aayush.world (custom domain via Railway)
 - `npm run dev` — dev server on **localhost:4321** (port pinned)
 - `npm run build` — static build to `dist/`
 - `npm test` — Playwright regression suite (`build` + preview on **4322**): splash
