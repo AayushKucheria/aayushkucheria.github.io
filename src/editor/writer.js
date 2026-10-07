@@ -60,7 +60,15 @@ async function api(path, state, data) {
 }
 function readElement(state) {
   const el = element(state);
-  return state.plain ? el.textContent : converter.turndown(el.innerHTML);
+  if (state.plain) return el.textContent;
+  // Browser indent creates sibling lists inside lists. Markdown needs each
+  // nested list inside its parent item. Normalize a copy to preserve the caret.
+  const copy = el.cloneNode(true);
+  copy.querySelectorAll("ul > ul, ul > ol, ol > ul, ol > ol").forEach(list => {
+    const previous = list.previousElementSibling;
+    if (previous?.tagName === "LI") previous.append(list);
+  });
+  return converter.turndown(copy.innerHTML);
 }
 function prepareFrame() {
   const doc = frame.contentDocument;

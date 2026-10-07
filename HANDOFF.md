@@ -1,19 +1,18 @@
 # Handoff — 2026-10-08
 
-## Completed
+## Decided but not built
 
-The approved colored stitches design is implemented. The heading renderer is
-shared with `/write`; nested headings and direct edits preserve Markdown.
-All five starter section bodies contain only `abcd` / `efgh`. Contact title,
-links, name, location, and social destinations remain editable. The fixed
-newsletter is inside the contact toggle; social/coffee icons remain visible.
+Typography exploration is deferred. See PLAN.md for candidate fonts; Source
+Serif 4 is the current first choice to compare against actual site text.
 
 ## Known issues / loose ends
 
-Previously recorded dependency advisories affecting `http-cache-semantics`,
-`sharp`, and `source-map-js` remain outside this design change.
+Previously recorded dependency advisories for http-cache-semantics, sharp, and
+source-map-js have not been reassessed in this session.
 
 ## Next logical step
 
-Replace dummy section content using `/write` when ready; `##` and `###` headings
-receive the toggle styling automatically.
+Resume typography exploration when requested; run `npm run dev` to reopen the
+local writing room. Publish and the nested-bullet fix are implemented and tested.
+The user published the corrected reading groups. Autosave remains local, and
+Publish uses local Git/GitHub CLI credentials; `/write` is absent from production.

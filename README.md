@@ -43,6 +43,7 @@ npm run build    # builds to ./dist
 3. Click the introduction, contact text, name, or location label to edit it.
    You can also choose a section from the selector above the page.
    Enter adds bullets; Tab nests them and Shift+Tab moves them out.
+   Nested bullets keep their indentation when saved and published.
 4. Select text and use **Add link** or **Bold**. To change an existing link,
    click its text and use **Add link**; the prompt shows its current URL.
 5. Choose **Social profiles** to edit the icon labels and links. Labels are

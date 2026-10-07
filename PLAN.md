@@ -62,3 +62,11 @@ requested turning it into a permanent source editor; this authorizes proceeding.
 2. Passed browser: local autosave never publishes; Publish flushes all regions, locks
    editing during publishing, reports moving progress, error/retry, reload status.
 3. Passed build: no editor/publish API in production. Update writing instructions.
+
+## Nested bullet save fix
+
+- Confirmed in Chromium: native indent creates sibling lists whose Markdown
+  conversion loses nesting. Normalize a copy before conversion; leave the
+  editing DOM and selection intact.
+- Passed browser regression: toolbar Nest, Tab, Shift+Tab, source save, reopening,
+  and public rendering. Restored reading groups; the user published the repair.

@@ -314,6 +314,46 @@ try {
   assert.match(await readFile(join(root, "src/content/home.md"), "utf8"), /-\s+second dummy/);
   await frame.locator(".intro summary h2").filter({ hasText: "bullet heading dummy" }).waitFor();
   await page.getByRole("button", { name: "Markdown view", exact: true }).click();
+  // Native browser indentation must survive conversion, saving, and reopening.
+  await page.locator("#markdown").fill("## reading\n\n- Favorite books\n- Book one\n- Book two\n- Sequences\n- Sequence one\n- Follow me");
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
+  await frame.locator(".intro li").filter({ hasText: /^Book one$/ }).waitFor();
+  await page.getByRole("button", { name: "Write on the page", exact: true }).click();
+  async function selectItems(first, last = first) {
+    await frame.locator(".intro").evaluate((el, [first, last]) => {
+      el.focus();
+      const items = [...el.querySelectorAll("li")];
+      const start = items.find(item => item.textContent === first);
+      const end = items.find(item => item.textContent === last);
+      const range = document.createRange();
+      range.setStart(start.firstChild, 0);
+      range.setEnd(end.firstChild, end.firstChild.length);
+      const selection = window.getSelection();
+      selection.removeAllRanges(); selection.addRange(range);
+    }, [first, last]);
+  }
+  await selectItems("Book one", "Book two");
+  await page.getByRole("button", { name: "Nest →", exact: true }).click();
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
+  const nestedSource = await readFile(join(root, "src/content/home.md"), "utf8");
+  assert.match(nestedSource, /^ {4}-\s+Book one/m, "Indented books remain nested in saved Markdown");
+  await selectItems("Sequence one");
+  await page.keyboard.press("Tab");
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
+  await page.reload();
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
+  assert.equal(await frame.locator(".intro li > ul > li").count(), 3);
+  const nestedSite = await browser.newPage();
+  await nestedSite.goto(base);
+  assert.equal(await nestedSite.locator(".intro li > ul > li").count(), 3, "Public rendering preserves both groups of nested bullets");
+  await nestedSite.close();
+  await selectItems("Book two");
+  await page.keyboard.press("Shift+Tab");
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
+  await page.reload();
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
+  assert.equal(await frame.locator(".intro li > ul > li").count(), 2, "Outdent still persists after reopening");
+  await page.getByRole("button", { name: "Markdown view", exact: true }).click();
   const denied = await fetch(base + "/__writer/content", {
     method: "POST",
     headers: {
