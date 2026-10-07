@@ -1,0 +1,395 @@
+<!-- Prototype: A large comfortable text box beside the existing website; select any text and see changes in context, with shared draft storage.
+Uses current site copy and photos. Drafts stay local; download exports plain text. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Aayush Kucheria — AI researcher and interface thinker." />
+  <title>Writing room — big text box</title>
+  <style>
+@font-face {
+  font-family: 'Shantell Sans';
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/shantellsans/v13/FeUcS0pCoLIo-lcdY7kjvNoQg2xkycTqsuA6bi9pTt8YiT-NXidjb_ee-maigL6R8nKVh8BbE1mv4wwmM0WUkSqmTpG0CN71wvg.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Shantell Sans';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/shantellsans/v13/FeUcS0pCoLIo-lcdY7kjvNoQg2xkycTqsuA6bi9pTt8YiT-NXidjb_ee-maigL6R8nKVh8BbE1mv4wwmM0WUkSqmTpG0CID1wvg.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Shantell Sans';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/shantellsans/v13/FeUaS0pCoLIo-lcdY7kjvNoQqWVWB0qWpl29ajppTuUTu_kJKmHesPOL-maYi4xZeHCNQ09eBlmv2QcUzJ39-rAISYQiS2i2.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Shantell Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/shantellsans/v13/FeUaS0pCoLIo-lcdY7kjvNoQqWVWB0qWpl29ajppTuUTu_kJKmHesPOL-maYi4xZeHCNQ09eBlmv2QcUzJ39-rAISYR8S2i2.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Shantell Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/shantellsans/v13/FeUaS0pCoLIo-lcdY7kjvNoQqWVWB0qWpl29ajppTuUTu_kJKmHesPOL-maYi4xZeHCNQ09eBlmv2QcUzJ39-rAISYROS2i2.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Shantell Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/shantellsans/v13/FeUaS0pCoLIo-lcdY7kjvNoQqWVWB0qWpl29ajppTuUTu_kJKmHesPOL-maYi4xZeHCNQ09eBlmv2QcUzJ39-rAISYSiTGi2.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Shantell Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/shantellsans/v13/FeUaS0pCoLIo-lcdY7kjvNoQqWVWB0qWpl29ajppTuUTu_kJKmHesPOL-maYi4xZeHCNQ09eBlmv2QcUzJ39-rAISYSbTGi2.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Shantell Sans';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/shantellsans/v13/FeUaS0pCoLIo-lcdY7kjvNoQqWVWB0qWpl29ajppTuUTu_kJKmHesPOL-maYi4xZeHCNQ09eBlmv2QcUzJ39-rAISYT8TGi2.ttf) format('truetype');
+}
+
+    .writing-tools, .writing-panel { font-family: system-ui, sans-serif; color: #352d22; }
+    .writing-tools { position: sticky; top: 0; z-index: 10; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 12px 20px; background: #f8f4e9f5; border-bottom: 1px solid #b7a98b; }
+    .writing-tools strong { font-size: 14px; }
+    .writing-tools small { font-size: 12px; margin-right: auto; }
+    .writing-tools button, .writing-tools a { font: inherit; font-size: 13px; border: 1px solid #b7a98b; border-radius: 6px; background: transparent; color: inherit; padding: 7px 10px; cursor: pointer; text-decoration: none; }
+    .writing-tools button[aria-pressed="true"] { background: #ded3ba; }
+    [data-copy] { white-space: pre-wrap; overflow-wrap: anywhere; border-radius: 3px; }
+    body:not(.reading) [data-copy]:hover { outline: 1px dashed #8c7655; outline-offset: 6px; }
+    [data-copy]:focus { outline: 2px solid #8c7655; outline-offset: 6px; }
+    [data-copy]:empty::before { content: 'Write here…'; color: #81745f; }
+    #page { min-width: 0; }
+    body.mobile #page { width: min(390px, 100%); margin: 24px auto; box-shadow: 0 0 0 1px #b7a98b, 0 8px 30px #40352220; }
+    body.mobile main { width: calc(100% - 2.5rem); }
+    body.mobile h1 { font-size: 2.6rem; }
+    body.mobile main { padding-top: 32px; }
+    .writing-panel { display: none; }
+    body.panel .workspace { display: grid; grid-template-columns: minmax(300px, 380px) minmax(0, 1fr); }
+    body.panel .writing-panel { display: block; position: sticky; top: 66px; align-self: start; height: calc(100dvh - 66px); padding: 28px 24px; background: #f8f4e9; border-right: 1px solid #b7a98b; overflow: auto; }
+    .writing-panel h2 { font: 600 22px system-ui; text-decoration: none; margin: 0 0 10px; }
+    .writing-panel p { font: 14px/1.5 system-ui; }
+    .writing-panel label { display: block; font-size: 13px; margin: 24px 0 8px; }
+    .writing-panel select { width: 100%; padding: 10px; font: 14px system-ui; border: 1px solid #b7a98b; border-radius: 6px; background: #fffdf7; }
+    .writing-panel textarea { width: 100%; min-height: 360px; resize: vertical; padding: 16px; font: 18px/1.65 system-ui; color: #352d22; border: 1px solid #b7a98b; border-radius: 6px; background: #fffdf7; }
+    .writing-panel textarea:focus { outline: 2px solid #8c7655; outline-offset: 2px; }
+    .writing-panel small { display: block; font-size: 12px; line-height: 1.5; margin-top: 10px; }
+    body.panel:not(.reading) [data-copy].selected { outline: 1px dashed #8c7655; outline-offset: 6px; }
+    body.reading .writing-panel { display: none; }
+    body.panel.reading .workspace { display: block; }
+    @media (max-width: 800px) {
+      body.panel .workspace { display: block; }
+      body.panel .writing-panel { position: relative; top: auto; height: auto; border-right: 0; border-bottom: 1px solid #b7a98b; }
+      .writing-panel textarea { min-height: 180px; }
+      .writing-tools { gap: 8px; padding: 10px 12px; }
+      .writing-tools small { flex-basis: 100%; order: 2; }
+    }
+
+    :root {
+      font-family: 'Shantell Sans', cursive;
+      color: #2a2218;
+      background: #ddd5be;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; min-width: 0; }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(0deg, transparent 0 2px, #281c0a0c 2px 3px),
+                  repeating-linear-gradient(90deg, transparent 0 2px, #281c0a0a 2px 3px);
+      mix-blend-mode: multiply;
+    }
+    main { width: min(100% - 2.5rem, 680px); margin: 0 auto; padding: 48px 0 96px; }
+    header, section, footer { position: relative; }
+    header { padding-bottom: 48px; }
+    h1 { font-size: clamp(2.6rem, 7vw, 4rem); line-height: 1; letter-spacing: -0.04em; margin: 24px 0 12px; transform: rotate(-1deg); }
+    h2 { font-size: 1.35rem; font-style: italic; margin: 0 0 22px; text-decoration: underline dotted #b09060; text-underline-offset: 7px; }
+    h3 { font-size: 1rem; margin: 0 0 6px; line-height: 1.35; }
+    p { line-height: 1.65; margin: 0 0 12px; color: #5a4830; }
+    a { color: inherit; text-decoration-color: #b09060; text-underline-offset: 3px; overflow-wrap: anywhere; }
+    a:hover { color: #724038; }
+    section, footer { padding: 38px 0; }
+    .photos { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; }
+    .photos img { width: 80px; height: 98px; object-fit: cover; background: #f2ede4; padding: 5px 5px 15px; box-shadow: 2px 4px 12px #0002; }
+    .photos img:nth-child(odd) { transform: rotate(-3deg); }
+    .photos img:nth-child(even) { transform: rotate(3deg); }
+    .location { display: inline-block; padding: 6px 10px; margin: 0 0 16px; background: #f0e8d4; box-shadow: 1px 2px 7px #0002; font-size: .78rem; transform: rotate(2deg); }
+    .intro { font-size: 1rem; max-width: 60ch; }
+    article { background: #cec3ac; padding: 16px 20px; margin: 0 0 14px; box-shadow: 2px 3px 12px #00000016; }
+    article:nth-of-type(odd) { transform: rotate(-.3deg); }
+    article:nth-of-type(even) { transform: rotate(.3deg); }
+    article p:last-child { margin-bottom: 0; }
+    .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+    .meta span { border: 1px solid #5a483066; padding: 2px 8px; font-size: .7rem; color: #5a4830; }
+    .question { padding-left: 1.5em; text-indent: -1.5em; }
+    .question span { color: #7a6a50; margin-right: .5em; }
+    .coda { font-style: italic; }
+    .plain-list { list-style: none; padding: 0; margin: 0; }
+    .plain-list li { padding: 8px 0; line-height: 1.5; }
+    .book-group { margin: 0 0 26px; }
+    .book-group h3 { color: #5a4830; font-size: .85rem; letter-spacing: .04em; margin-bottom: 8px; }
+    .book-group li { padding: 5px 0; }
+    footer { padding-bottom: 0; }
+    .contact-link { display: block; width: fit-content; margin: 0 0 10px; }
+    .contact-link.featured { background: #e6bfad; padding: 9px 13px; box-shadow: 2px 3px 10px #0002; font-weight: 700; text-decoration: none; }
+    .contact-link.coffee { background: #e6d28b; }
+    .socials { display: flex; flex-wrap: wrap; gap: 16px; margin: 18px 0 24px; }
+    .newsletter label { display: block; font-size: .85rem; margin-bottom: 8px; }
+    .newsletter input, .newsletter button { font: inherit; padding: 8px 10px; border: 1px solid #b09060; }
+    .newsletter input { width: min(100%, 280px); background: #faf7f0; }
+    .newsletter button { background: #cdbf9f; cursor: pointer; }
+    .newsletter small { display: block; margin-top: 6px; color: #7a6a50; }
+  </style>
+</head>
+<body class="panel">
+
+<div class="writing-tools" aria-label="Writing controls">
+  <strong>Website writing room</strong><small id="save-status" role="status">Click any text to start writing.</small>
+  <button id="preview" aria-pressed="false">Read the page</button>
+  <button id="mobile" aria-pressed="false">Phone width</button>
+  <button id="download">Download text</button>
+  <a href="write-on-the-page.html">Write on the page</a>
+</div>
+<div class="workspace">
+<aside class="writing-panel" aria-label="Copy editor">
+  <h2>Room to write.</h2>
+  <p>Choose a piece of text, or click it on the page. Your words appear in the layout as you type.</p>
+  <label for="piece">Text to work on</label><select id="piece"></select>
+  <label for="draft">Your words</label><textarea id="draft" spellcheck="true"></textarea>
+  <small id="word-count"></small>
+  <small>Drafts save in this browser when available. Download text to keep a copy. These edits only affect this preview.</small>
+</aside>
+<div id="page">
+
+  <main>
+    <header>
+      <div class="photos" aria-label="Photos of Aayush and his work">
+        <img src="../public/pics/eagx_image.jpg" alt="" style="object-position: center 15%" />
+        <img src="../public/pics/wappu_image.JPG" alt="" style="object-position: center 20%" />
+        <img src="../public/pics/amazon.jpg" alt="" style="object-position: center 10%" />
+        <img src="../public/pics/stupid_image.jpg" alt="" style="object-position: center 15%" />
+      </div>
+      <h1>Aayush Kucheria</h1>
+      <span class="location">Based in Helsinki</span>
+      <p class="intro">Researcher and interface thinker. I care about AI being good for the people it touches — especially where a human and a model actually meet.</p>
+    </header>
+
+    <section id="work" aria-labelledby="work-heading">
+      <h2 id="work-heading">work</h2>
+      <article>
+        <h3><a href="https://groundless.ai" target="_blank" rel="noopener">Groundless Alignment →</a></h3>
+        <p>Design × alignment. Interfaces as alignment surfaces — making AI legible, contestable, humane. Fellowship to full-time over 1.5 years.</p>
+        <div class="meta"><span>AISC 2026 team lead</span><span>guest lecturer, Gabriel Weil's AI &amp; Law '26</span></div>
+      </article>
+      <article>
+        <h3>PracticeSpace — co-founder</h3>
+        <p>LLM simulations of therapy patients for trainees. Founded with NHS CBT practitioners.</p>
+      </article>
+      <article>
+        <h3>Machine Learning</h3>
+        <p>BSc + MSc in machine learning at Aalto University, Finland.</p>
+        <div class="meta"><span>Latent ethical landscape of LLMs</span><span>Gaussian Modelling, University of Helsinki</span><span>talk: transformers</span></div>
+      </article>
+      <article>
+        <h3>ACL Workshop 2025</h3>
+        <p>adding soon</p>
+      </article>
+    </section>
+
+    <section id="about" aria-labelledby="about-heading">
+      <h2 id="about-heading">about</h2>
+      <p>I care about AI being good for the people it touches. Two questions hold most of my attention:</p>
+      <p class="question"><span>1</span> What's in the latent space, and can we learn to read it and reach in?</p>
+      <p class="question"><span>2</span> What happens where a human and an AI meet, and how do we design that interface?</p>
+      <p class="coda">Both questions point to something far more complex, subtle, and fertile than first appears, rewarding a kind of close attention I'm drawn towards.</p>
+    </section>
+
+    <section id="ideas" aria-labelledby="ideas-heading">
+      <h2 id="ideas-heading">steal these ideas</h2>
+      <p>Ideas I'd love to see exist but won't get to. Take any of them, no credit needed.</p>
+      <ul class="plain-list">
+        <li>A reader that shows the latent space of what you're reading</li>
+        <li>Therapy-sim for hard conversations you're about to have</li>
+        <li>An interface to "reach into" a model's reasoning and nudge it</li>
+        <li>A personal site that's a place, not a poster</li>
+        <li>Margin notes that argue back</li>
+        <li>A bookshelf that remembers why you loved each book</li>
+      </ul>
+    </section>
+
+    <section id="reading" aria-labelledby="reading-heading">
+      <h2 id="reading-heading">reading</h2>
+      <div class="book-group">
+        <h3>machines &amp; minds</h3>
+        <ul class="plain-list">
+          <li><a href="https://www.goodreads.com/book/show/722412.The_Dream_Machine" target="_blank" rel="noopener">The Dream Machine — M. Mitchell Waldrop</a></li>
+          <li><a href="https://www.goodreads.com/book/show/62707933-the-philosopher-of-palo-alto" target="_blank" rel="noopener">The Philosopher of Palo Alto — John Tinnell</a></li>
+          <li><a href="https://www.goodreads.com/book/show/703532.Mindstorms" target="_blank" rel="noopener">Mindstorms — Seymour Papert</a></li>
+        </ul>
+      </div>
+      <div class="book-group">
+        <h3>embodiment</h3>
+        <ul class="plain-list">
+          <li><a href="https://www.goodreads.com/book/show/48582.The_Spell_of_the_Sensuous" target="_blank" rel="noopener">The Spell of the Sensuous — David Abram</a></li>
+          <li><a href="https://www.goodreads.com/book/show/7822953-becoming-animal" target="_blank" rel="noopener">Becoming Animal — David Abram</a></li>
+          <li><a href="https://www.goodreads.com/book/show/1373530.Love_and_Will" target="_blank" rel="noopener">Love and Will — Rollo May</a></li>
+        </ul>
+      </div>
+      <div class="book-group">
+        <h3>AI futures</h3>
+        <ul class="plain-list">
+          <li><a href="https://www.goodreads.com/book/show/50485582-the-precipice" target="_blank" rel="noopener">The Precipice — Toby Ord</a></li>
+          <li><a href="https://www.lesswrong.com/s/BbAvHtorCZqp97X9W" target="_blank" rel="noopener">Otherness and Control in the Age of AGI — Joe Carlsmith</a></li>
+          <li><a href="https://www.lesswrong.com/s/aMz2JMvgXrLBkq4h3" target="_blank" rel="noopener">Live Theory Sequence — Sahil</a></li>
+          <li><a href="https://www.goodreads.com/book/show/50489349-the-alignment-problem" target="_blank" rel="noopener">The Alignment Problem — Brian Christian</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="now" aria-labelledby="now-heading">
+      <h2 id="now-heading">now</h2>
+      <p>Updated June 2026, from Helsinki.</p>
+      <article><h3>Reading</h3><p>Joe Carlsmith's "Otherness and Control in the Age of AGI."</p></article>
+      <article><h3>Building</h3><p>Rethinking this very site — from a single-screen poster into a place with corners.</p></article>
+      <article><h3>Leading</h3><p>The AISC 2026 team.</p></article>
+    </section>
+
+    <section id="community" aria-labelledby="community-heading">
+      <h2 id="community-heading">community</h2>
+      <ul class="plain-list">
+        <li>co-founded the EA chapter at Aalto</li>
+        <li>mentored EA + AI safety groups via CEA</li>
+      </ul>
+    </section>
+
+    <footer id="contact">
+      <h2>contact</h2>
+      <a class="contact-link featured" href="https://cal.com/aayushk/chat" target="_blank" rel="noopener">let's chat</a>
+      <a class="contact-link featured coffee" href="https://buymeacoffee.com/aayushkucheria" target="_blank" rel="noopener">buy me a coffee</a>
+      <a class="contact-link" href="mailto:aayush.kucheria@gmail.com">aayush.kucheria@gmail.com</a>
+      <div class="socials">
+        <a href="https://github.com/AayushKucheria" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://linkedin.com/in/aayushkucheria" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://twitter.com/aay17ush" target="_blank" rel="noopener">X</a>
+      </div>
+      <form action="https://buttondown.com/api/emails/embed-subscribe/aayushk" method="post" class="newsletter">
+        <label for="bd-email">for occasional updates</label>
+        <input type="email" name="email" id="bd-email" placeholder="you@email.com" required />
+        <button type="submit">subscribe</button>
+        <small><a href="https://buttondown.com/refer/aayushk" target="_blank" rel="noopener">Powered by Buttondown.</a></small>
+      </form>
+    </footer>
+  </main>
+</div></div>
+<script>
+
+const fields = [];
+// Keep existing link destinations and numbered question markers intact.
+document.querySelectorAll('main h1, main h2, main h3, main p, main li, .location, .meta span, .contact-link, .socials a, .newsletter label, .newsletter small a, .newsletter button').forEach((container, index) => {
+  let field = container;
+  if (container.matches('.question')) {
+    field = document.createElement('span');
+    [...container.childNodes].filter(node => node.nodeType === Node.TEXT_NODE).forEach(node => field.append(node));
+    container.append(field);
+  } else if (container.childElementCount === 1 && container.firstElementChild.matches('a')) {
+    field = container.firstElementChild;
+  }
+  field.dataset.copy = String(index);
+  field.setAttribute('contenteditable', 'plaintext-only');
+  field.spellcheck = true;
+  fields.push(field);
+});
+const storageKey = 'aayush-website-writing-room-v1';
+const status = document.getElementById('save-status');
+let stored;
+try { stored = JSON.parse(localStorage.getItem(storageKey) || 'null'); } catch {}
+if (stored && typeof stored === 'object') fields.forEach(field => {
+  if (typeof stored[field.dataset.copy] === 'string') field.textContent = stored[field.dataset.copy];
+});
+if (stored) status.textContent = 'Saved draft restored from this browser.';
+const select = document.getElementById('piece');
+const draft = document.getElementById('draft');
+let current = fields.find(field => field.matches('.intro')) || fields[0];
+fields.forEach(field => {
+  const option = document.createElement('option');
+  option.value = field.dataset.copy;
+  const group = field.closest('section, header, footer');
+  const groupName = group?.id || (group?.tagName === 'HEADER' ? 'intro' : 'contact');
+  option.textContent = groupName + ' · ' + field.textContent.trim().slice(0, 55);
+  select.append(option);
+  field.addEventListener('focus', () => choose(field));
+  field.addEventListener('input', () => {
+    if (field === current) draft.value = field.innerText;
+    save(); count();
+  });
+});
+function choose(field) {
+  current.classList.remove('selected');
+  current = field;
+  field.classList.add('selected');
+  select.value = field.dataset.copy;
+  draft.value = field.innerText;
+  count();
+}
+function count() {
+  const n = draft.value.trim().split(/\s+/).filter(Boolean).length;
+  document.getElementById('word-count').textContent = n + (n === 1 ? ' word' : ' words');
+}
+function save() {
+  const copy = Object.fromEntries(fields.map(field => [field.dataset.copy, field.innerText]));
+  try {
+    localStorage.setItem(storageKey, JSON.stringify(copy));
+    status.textContent = 'Draft saved in this browser.';
+  } catch { status.textContent = 'Browser storage unavailable — download text to keep your draft.'; }
+}
+select.addEventListener('change', () => {
+  choose(fields.find(field => field.dataset.copy === select.value));
+  current.scrollIntoView({behavior: 'smooth', block: 'center'});
+});
+draft.addEventListener('input', () => { current.textContent = draft.value; save(); count(); });
+document.getElementById('preview').addEventListener('click', event => {
+  const reading = document.body.classList.toggle('reading');
+  fields.forEach(field => field.setAttribute('contenteditable', reading ? 'false' : 'plaintext-only'));
+  event.currentTarget.setAttribute('aria-pressed', String(reading));
+  event.currentTarget.textContent = reading ? 'Keep writing' : 'Read the page';
+});
+document.getElementById('mobile').addEventListener('click', event => {
+  const mobile = document.body.classList.toggle('mobile');
+  event.currentTarget.setAttribute('aria-pressed', String(mobile));
+  event.currentTarget.textContent = mobile ? 'Full width' : 'Phone width';
+});
+document.getElementById('download').addEventListener('click', () => {
+  const text = fields.map(field => field.innerText).join('\n\n');
+  const url = URL.createObjectURL(new Blob([text], {type: 'text/plain;charset=utf-8'}));
+  const link = document.createElement('a'); link.href = url; link.download = 'website-copy.txt'; link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+// All page links and the newsletter are inert in the writing room.
+document.querySelector('main').addEventListener('click', event => {
+  if (event.target.closest('a, button')) event.preventDefault();
+});
+document.querySelector('form').addEventListener('submit', event => event.preventDefault());
+choose(current);
+
+</script>
+</body>
+</html>
