@@ -1,0 +1,54 @@
+---
+import { readFile } from 'node:fs/promises';
+import { renderSection } from '../editor/rendering.mjs';
+import contactCopy from '../content/contact.md?raw';
+import socialCopy from '../content/socials.md?raw';
+const contact = import.meta.env.DEV
+  ? await readFile(new URL('../content/contact.md', import.meta.url), 'utf8')
+  : contactCopy;
+const socials = import.meta.env.DEV
+  ? await readFile(new URL('../content/socials.md', import.meta.url), 'utf8')
+  : socialCopy;
+---
+<footer id="contact" aria-label="Contact">
+  <div class="contact-copy" data-content-section="contact" set:html={renderSection('contact', contact)} />
+  <ul class="newsletter-list">
+    <li>
+      <form action="https://buttondown.com/api/emails/embed-subscribe/aayushk" method="post" class="newsletter">
+            <label for="bd-email">for occasional updates</label>
+            <div class="newsletter-controls">
+              <input type="email" name="email" id="bd-email" placeholder="you@email.com" autocomplete="email" required />
+              <button type="submit">subscribe</button>
+            </div>
+            <small><a href="https://buttondown.com/refer/aayushk" target="_blank" rel="noopener noreferrer">Powered by Buttondown.</a></small>
+          </form>
+      <nav class="socials" aria-label="Social profiles" data-content-section="socials" set:html={renderSection('socials', socials)} />
+    </li>
+  </ul>
+</footer>
+
+<style is:global>
+  #contact { position: relative; font-size: 1rem; color: #5a4830; }
+  #contact ul { padding-left: 1.4em; margin: 0; }
+  #contact li { line-height: 1.65; padding: 4px 0; overflow-wrap: anywhere; }
+  #contact li > ul { margin-top: 4px; }
+  #contact strong { color: #2a2218; }
+  #contact p { margin: 0; }
+  #contact a { color: inherit; text-decoration-color: #b09060; text-underline-offset: 3px; }
+  #contact a:hover { color: #724038; }
+  #contact a:focus-visible, #contact input:focus-visible, #contact button:focus-visible { outline: 2px solid #724038; outline-offset: 4px; }
+  #contact .newsletter-list { padding-left: 2.8em; list-style-type: circle; }
+  #contact .newsletter label { display: block; margin-bottom: 8px; }
+  #contact .newsletter-controls { display: flex; flex-wrap: wrap; gap: 8px; }
+  #contact input, #contact button { font: inherit; padding: 8px 10px; border: 1px solid #b09060; border-radius: 0; }
+  #contact input { flex: 1 1 180px; min-width: 0; max-width: 280px; background: #faf7f0; color: #2a2218; }
+  #contact button { background: #cdbf9f; color: #2a2218; cursor: pointer; }
+  #contact button:hover { background: #c3b18f; }
+  #contact small { display: block; margin-top: 6px; font-size: .72rem; color: #7a6a50; }
+  #contact .socials { margin-top: 16px; }
+  #contact .socials ul { display: flex; gap: 12px; list-style: none; padding: 0; }
+  #contact .socials li { padding: 0; }
+  #contact .socials a { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; }
+  #contact .socials svg { width: 22px; height: 22px; flex-shrink: 0; }
+  #contact .social-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+</style>

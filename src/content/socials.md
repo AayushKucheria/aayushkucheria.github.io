@@ -1,0 +1,4 @@
+- [GitHub](https://github.com/AayushKucheria)
+- [LinkedIn](https://linkedin.com/in/aayushkucheria)
+- [X](https://twitter.com/aay17ush)
+- [buy me a coffee](https://buymeacoffee.com/aayushkucheria)

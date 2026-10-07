@@ -10,6 +10,11 @@ Built with [Astro](https://astro.build). The custom domain is managed through Ra
   Photos enlarge on hover; the Helsinki tag hangs from a string and swings on
   hover. Both effects respect reduced motion preferences.
 - `src/content/home.md` is the introduction's Markdown source, shared with the writing room.
+- `src/content/contact.md` holds the contact bullets and hyperlinks;
+  `socials.md` holds the icon labels and destinations. `name.txt` and
+  `location.txt` hold the name and location label.
+- `src/components/Contact.astro` keeps the Buttondown widget fixed while
+  rendering the editable contact and social sources.
 - `src/editor/` contains the permanent local writing room and its save API.
 - `public/pics/` holds the photos used by the current page.
 - `public/archive/2026-09-25/` is a self-contained snapshot of the older site, including its own images, styles, and script. Keep those files together so the archived URL continues to work.
@@ -32,14 +37,22 @@ npm run build    # builds to ./dist
 
 1. Run `npm run dev`.
 2. Open [the writing room](http://localhost:4321/write).
-3. Click the introduction and write. Enter adds bullets; Tab nests them and
-   Shift+Tab moves them out. Select text and use **Add link** or **Bold**.
-4. Use **Markdown view** for links, formatting and source text beside the page.
+3. Click the introduction, contact text, name, or location label to edit it.
+   You can also choose a section from the selector above the page.
+   Enter adds bullets; Tab nests them and Shift+Tab moves them out.
+4. Select text and use **Add link** or **Bold**. To change an existing link,
+   click its text and use **Add link**; the prompt shows its current URL.
+5. Choose **Social profiles** to edit the icon labels and links. Labels are
+   visible while writing; the normal website shows icons. New destinations
+   without a matching brand icon use a generic link icon.
+6. Use **Markdown view** for links, formatting and source text beside the page.
+   The name and location use plain text.
 
-Edits save automatically to `src/content/home.md` after a short pause.
+Edits save automatically to the selected section's file in `src/content/`
+after a short pause. The Buttondown form and credit remain fixed.
 **Saved to website** means the file has been written. The preview uses the
 actual website in an iframe, so its photos, font and layout stay in sync.
-The next static build renders that same Markdown. Publishing uses the existing
+The next static build renders the saved content. Publishing uses the existing
 GitHub Pages workflow when changes are pushed to `main`.
 
 The writing room and save API run only in the local dev server. They are absent
@@ -55,6 +68,11 @@ An unsaved draft from a previous session can be restored when reopening `/write`
 The self-contained HTML files in `prototypes/` are earlier experiments. Use
 `/write` for edits that save into the project.
 
+Every future website content addition must include `/write` editing support
+in the same change. New text and links use shared sources in `src/content/`;
+fixed widgets such as Buttondown remain separate. This rule is recorded in
+`AGENTS.md`.
+
 ## Checks
 
 - `npm test` — Markdown rendering and source save behavior.
@@ -62,5 +80,7 @@ The self-contained HTML files in `prototypes/` are earlier experiments. Use
   including saving, retry, conflicts and links. Install the test browser once
   with `npx playwright install chromium` if it is missing.
 - `npm run test:build` — static output renders the source and excludes the editor.
+- `npm run test:contact` — contact links, newsletter validation, and icon layout
+  on desktop and small phones.
 - `node tests/header-browser.mjs` — with the dev server running, checks photo
   hover and reset, the hanging tag, reduced motion, and mobile widths.

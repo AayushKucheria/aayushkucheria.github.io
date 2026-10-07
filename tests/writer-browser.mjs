@@ -61,6 +61,73 @@ try {
     .filter({ hasText: "Saved to website" })
     .waitFor({ timeout: 10000 });
   const frame = page.frameLocator("#site");
+  const originalIntro = await readFile(join(root, "src/content/home.md"), "utf8");
+  assert.equal(
+    await frame.locator(".contact-copy[contenteditable=true]").count(),
+    1,
+    "Contact bullets are editable in the writing room",
+  );
+  const originalWidget = await frame.locator(".newsletter").evaluate(el => el.outerHTML);
+  assert.equal(await frame.locator(".newsletter").evaluate(el => el.isContentEditable), false);
+  await frame.locator(".contact-copy").fill("Direct contact edit");
+  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  assert.match(await readFile(join(root, "src/content/contact.md"), "utf8"), /Direct contact edit/);
+  assert.equal(await readFile(join(root, "src/content/home.md"), "utf8"), originalIntro);
+  await page.getByRole("button", { name: "Markdown view", exact: true }).click();
+  await page.locator("#markdown").fill("- **say hello**\n  - [book a call](https://example.com/call)\n  - [email me](mailto:hello@example.com)");
+  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await frame.locator(".contact-copy a").first().filter({ hasText: "book a call" }).waitFor();
+  await page.getByRole("button", { name: "Write on the page", exact: true }).click();
+  await frame.locator(".contact-copy a").first().evaluate(link => {
+    link.closest('[contenteditable=true]').focus();
+    const range = document.createRange();
+    range.selectNodeContents(link);
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  });
+  page.once("dialog", dialog => dialog.accept("https://example.com/updated-call"));
+  await page.getByRole("button", { name: "Add link", exact: true }).click();
+  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  assert.match(await readFile(join(root, "src/content/contact.md"), "utf8"), /\[book a call\]\(https:\/\/example.com\/updated-call\)/);
+  assert.equal(await frame.locator(".newsletter").evaluate(el => el.outerHTML), originalWidget);
+  await page.locator("#section").selectOption("socials");
+  await page.getByRole("button", { name: "Markdown view", exact: true }).click();
+  await page.locator("#markdown").fill("- [GitHub](https://github.com/updated-profile)\n- [LinkedIn](https://linkedin.com/in/updated-profile)\n- [Twitter / X](https://x.com/updated-profile)");
+  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await page.getByRole("button", { name: "Write on the page", exact: true }).click();
+  await frame.locator(".socials a").first().evaluate(link => {
+    link.closest('[contenteditable=true]').focus();
+    const range = document.createRange();
+    range.selectNodeContents(link.querySelector('span'));
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  });
+  page.once("dialog", dialog => dialog.accept("https://github.com/direct-profile"));
+  await page.getByRole("button", { name: "Add link", exact: true }).click();
+  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  const savedSocials = await readFile(join(root, "src/content/socials.md"), "utf8");
+  assert.match(savedSocials, /\[GitHub\]\(https:\/\/github.com\/direct-profile\)/);
+  assert.doesNotMatch(savedSocials, /svg|path d=/);
+  await frame.locator(".site-name").fill("Test Website Name");
+  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await frame.locator(".location").fill("Based somewhere new");
+  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  const contactSite = await browser.newPage();
+  await contactSite.goto(base);
+  assert.equal(await contactSite.locator(".site-name").innerText(), "Test Website Name");
+  assert.equal(await contactSite.locator(".location").innerText(), "Based somewhere new");
+  assert.equal(await contactSite.locator(".contact-copy strong").innerText(), "say hello");
+  assert.equal(await contactSite.getByRole("link", { name: "book a call" }).getAttribute("href"), "https://example.com/updated-call");
+  assert.equal(await contactSite.getByRole("link", { name: "GitHub", exact: true }).getAttribute("href"), "https://github.com/direct-profile");
+  assert.equal(await contactSite.getByRole("link", { name: "Twitter / X", exact: true }).getAttribute("href"), "https://x.com/updated-profile");
+  assert.equal(await contactSite.locator(".socials svg").count(), 3, savedSocials);
+  assert.equal(await contactSite.locator(".newsletter").evaluate(el => el.outerHTML), originalWidget);
+  await contactSite.close();
+  await page.reload();
+  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  assert.equal(await frame.locator(".contact-copy strong").innerText(), "say hello");
   assert.equal(
     await frame
       .locator(".intro li")
@@ -192,6 +259,18 @@ try {
     body: JSON.stringify({ markdown: "wrong origin", revision: "no" }),
   });
   assert.equal(denied.status, 403);
+  const unknown = await fetch(base + "/__writer/content?section=../other-file");
+  assert.equal(unknown.status, 400);
+  await page.locator("#markdown").fill("- Introduction pending");
+  await page.locator("#section").selectOption("contact");
+  await page.locator("#markdown").fill("- Contact pending");
+  await page.locator("#section").selectOption("intro");
+  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  assert.equal(await page.locator("#markdown").inputValue(), "- Introduction pending");
+  await page.locator("#section").selectOption("contact");
+  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  assert.equal(await readFile(join(root, "src/content/home.md"), "utf8"), "- Introduction pending");
+  assert.equal(await readFile(join(root, "src/content/contact.md"), "utf8"), "- Contact pending");
   await page.setViewportSize({ width: 390, height: 844 });
   assert.equal(
     await page.evaluate(
@@ -201,7 +280,7 @@ try {
   );
   assert.deepEqual(errors, []);
   console.log(
-    "Passed: direct and Markdown edits write source, website renders saved copy, reload, failures and retry, conflict recovery, rapid edits, origin checks, mobile layout.",
+    "Passed: introduction, contact, social links, name and location edits; fixed newsletter; reload; independent section saves; failures and retry; conflict recovery; rapid edits; origin checks; mobile layout.",
   );
 } finally {
   await browser?.close();

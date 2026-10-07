@@ -12,7 +12,8 @@
     "astro": "astro",
     "test": "node --test tests/content.test.mjs",
     "test:browser": "node tests/writer-browser.mjs",
-    "test:build": "npm run build && node --test tests/build.test.mjs"
+    "test:build": "npm run build && node --test tests/build.test.mjs",
+    "test:contact": "npm run build && node tests/contact-browser.mjs"
   },
   "dependencies": {
     "astro": "^7.3.5",

@@ -4,6 +4,19 @@ import { mkdtemp, readFile, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createContentStore, renderMarkdown } from "../src/editor/content.mjs";
+import { renderSection } from "../src/editor/rendering.mjs";
+test("social profile rendering preserves editable labels and safe links", () => {
+  const html = renderSection("socials", "- [My GitHub](https://github.com/example)\n- [Other site](https://example.com)\n- [Unsafe](javascript:alert(1))\n<script>alert(1)</script>");
+  assert.match(html, /href="https:\/\/github.com\/example"/);
+  assert.match(html, /<span class="social-label">My GitHub<\/span>/);
+  assert.match(html, /<svg[^>]*aria-hidden="true"/);
+  assert.doesNotMatch(html, /href="javascript:|<script/);
+});
+test("name and location render as literal text", () => {
+  for (const section of ["name", "location"]) {
+    assert.equal(renderSection(section, " <img src=x onerror=alert(1)> & name "), "&lt;img src=x onerror=alert(1)&gt; &amp; name");
+  }
+});
 test("source saves atomically and rejects outdated or concurrent revisions", async () => {
   const dir = await mkdtemp(join(tmpdir(), "site-content-"));
   const path = join(dir, "home.md");

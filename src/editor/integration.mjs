@@ -1,7 +1,11 @@
 import { fileURLToPath } from "node:url";
 import { randomUUID } from "node:crypto";
-import { createContentStore, renderMarkdown } from "./content.mjs";
-const source = fileURLToPath(new URL("../content/home.md", import.meta.url));
+import { createContentStore } from "./content.mjs";
+import { renderSection } from "./rendering.mjs";
+import { sections } from "./sections.mjs";
+const sources = Object.fromEntries(Object.entries(sections).map(([id, section]) => [
+  id, fileURLToPath(new URL(`../content/${section.file}`, import.meta.url)),
+]));
 export default function writingRoom() {
   return {
     name: "local-writing-room",
@@ -12,12 +16,13 @@ export default function writingRoom() {
           pattern: "/write",
           entrypoint: fileURLToPath(new URL("./Write.astro", import.meta.url)),
         });
-        updateConfig({ vite: { server: { watch: { ignored: [source] } } } });
+        updateConfig({ vite: { server: { watch: { ignored: Object.values(sources) } } } });
       },
       "astro:server:setup"({ server }) {
-        const store = createContentStore(source);
+        const stores = Object.fromEntries(Object.entries(sources).map(([id, source]) => [id, createContentStore(source)]));
         server.middlewares.use(async (req, res, next) => {
-          const path = req.url?.split("?")[0];
+          const requestUrl = new URL(req.url, "http://localhost");
+          const path = requestUrl.pathname;
           if (!["/__writer/content", "/__writer/render"].includes(path))
             return next();
           const started = performance.now(),
@@ -32,8 +37,11 @@ export default function writingRoom() {
             const host = req.headers.host || "";
             if (!/^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$/.test(host))
               return respond(403, { error: "Use the local writing room." });
-            if (req.method === "GET" && path === "/__writer/content")
-              return respond(200, await store.read());
+            if (req.method === "GET" && path === "/__writer/content") {
+              const section = requestUrl.searchParams.get("section") || "intro";
+              if (!Object.hasOwn(stores, section)) return respond(400, { error: "Unknown website section." });
+              return respond(200, await stores[section].read());
+            }
             if (req.method !== "POST")
               return respond(405, { error: "Method not allowed" });
             if (req.headers.origin !== `http://${host}`)
@@ -56,22 +64,26 @@ export default function writingRoom() {
             }
             if (typeof data.markdown !== "string")
               return respond(400, { error: "Markdown text is required." });
+            const section = data.section ?? "intro";
+            if (!Object.hasOwn(stores, section)) return respond(400, { error: "Unknown website section." });
             if (path === "/__writer/render")
-              return respond(200, { html: renderMarkdown(data.markdown) });
+              return respond(200, { html: renderSection(section, data.markdown) });
             if (typeof data.revision !== "string")
               return respond(400, { error: "Source revision is required." });
             console.info(
               JSON.stringify({
                 event: "writer-save",
+                section,
                 id,
                 phase: "start",
                 elapsedMs: 0,
               }),
             );
-            const saved = await store.save(data.markdown, data.revision);
+            const saved = await stores[section].save(data.markdown, data.revision);
             console.info(
               JSON.stringify({
                 event: "writer-save",
+                section,
                 id,
                 phase: "saved",
                 elapsedMs: Math.round(performance.now() - started),

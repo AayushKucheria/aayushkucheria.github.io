@@ -2,8 +2,10 @@
 
 ## Known issues / loose ends
 
-- Contact footer work is being edited separately in this workspace; it is
-  outside the photo hover and hanging tag commit.
+- The contact footer and `/write` support are complete. New content must
+  always include editor support; this standing rule is in `AGENTS.md`.
+- Separate design work remains in the working tree: nameplate positioning
+  and `prototypes/toggle-*.html`. Preserve those edits for that design session.
 - The existing Astro dependency tree has three npm audit advisories affecting
   `http-cache-semantics`, `sharp`, and `source-map-js`. They were observed during
   dependency installation; dependency upgrades were outside the writing editor
@@ -11,5 +13,5 @@
 
 ## Next logical step
 
-Review the dependency updates separately. The website copy and permanent local
-writing room are complete; reopen the room with `npm run dev` and visit `/write`.
+Continue the separate design review; reopen the writing room with
+`npm run dev` and visit `/write` when editing copy.
