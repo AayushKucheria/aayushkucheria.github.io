@@ -58,7 +58,7 @@ try {
   await page.goto(base + "/write");
   await page
     .locator("#status")
-    .filter({ hasText: "Saved to website" })
+    .filter({ hasText: "Saved locally" })
     .waitFor({ timeout: 10000 });
   const frame = page.frameLocator("#site");
   const originalIntro = await readFile(join(root, "src/content/home.md"), "utf8");
@@ -70,12 +70,12 @@ try {
   const originalWidget = await frame.locator(".newsletter").evaluate(el => el.outerHTML);
   assert.equal(await frame.locator(".newsletter").evaluate(el => el.isContentEditable), false);
   await frame.locator(".contact-copy").fill("Direct contact edit");
-  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
   assert.match(await readFile(join(root, "src/content/contact.md"), "utf8"), /Direct contact edit/);
   assert.equal(await readFile(join(root, "src/content/home.md"), "utf8"), originalIntro);
   await page.getByRole("button", { name: "Markdown view", exact: true }).click();
   await page.locator("#markdown").fill("- **say hello**\n  - [book a call](https://example.com/call)\n  - [email me](mailto:hello@example.com)");
-  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
   await frame.locator(".contact-copy a").first().filter({ hasText: "book a call" }).waitFor();
   await page.getByRole("button", { name: "Write on the page", exact: true }).click();
   await frame.locator(".contact-copy a").first().evaluate(link => {
@@ -88,13 +88,13 @@ try {
   });
   page.once("dialog", dialog => dialog.accept("https://example.com/updated-call"));
   await page.getByRole("button", { name: "Add link", exact: true }).click();
-  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
   assert.match(await readFile(join(root, "src/content/contact.md"), "utf8"), /\[book a call\]\(https:\/\/example.com\/updated-call\)/);
   assert.equal(await frame.locator(".newsletter").evaluate(el => el.outerHTML), originalWidget);
   await page.locator("#section").selectOption("socials");
   await page.getByRole("button", { name: "Markdown view", exact: true }).click();
   await page.locator("#markdown").fill("- [GitHub](https://github.com/updated-profile)\n- [LinkedIn](https://linkedin.com/in/updated-profile)\n- [Twitter / X](https://x.com/updated-profile)");
-  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
   await page.getByRole("button", { name: "Write on the page", exact: true }).click();
   await frame.locator(".socials a").first().evaluate(link => {
     link.closest('[contenteditable=true]').focus();
@@ -106,17 +106,17 @@ try {
   });
   page.once("dialog", dialog => dialog.accept("https://github.com/direct-profile"));
   await page.getByRole("button", { name: "Add link", exact: true }).click();
-  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
   const savedSocials = await readFile(join(root, "src/content/socials.md"), "utf8");
   assert.match(savedSocials, /\[GitHub\]\(https:\/\/github.com\/direct-profile\)/);
   assert.doesNotMatch(savedSocials, /svg|path d=/);
   await frame.locator(".site-name").fill("Test Website Name");
-  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
   await frame.locator(".contact-heading").fill("Contact dummy title");
-  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
   assert.equal(await readFile(join(root, "src/content/contact-heading.txt"), "utf8"), "Contact dummy title");
   await frame.locator(".location").fill("Based somewhere new");
-  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
   const contactSite = await browser.newPage();
   await contactSite.goto(base);
   await contactSite.locator(".contact-fold > summary").click();
@@ -131,7 +131,7 @@ try {
   assert.equal(await contactSite.locator(".newsletter").evaluate(el => el.outerHTML), originalWidget);
   await contactSite.close();
   await page.reload();
-  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
   assert.equal(await frame.locator(".contact-copy strong").innerText(), "say hello");
   assert.equal(
     await frame
@@ -143,7 +143,7 @@ try {
   await frame.locator(".intro").fill("Directly edited text");
   await page
     .locator("#status")
-    .filter({ hasText: "Saved to website" })
+    .filter({ hasText: "Saved locally" })
     .waitFor();
   assert.match(
     await readFile(join(root, "src/content/home.md"), "utf8"),
@@ -155,7 +155,7 @@ try {
   await page.getByRole("button", { name: "Add link", exact: true }).click();
   await page
     .locator("#status")
-    .filter({ hasText: "Saved to website" })
+    .filter({ hasText: "Saved locally" })
     .waitFor();
   assert.equal(
     await frame.locator(".intro a").getAttribute("href"),
@@ -166,13 +166,13 @@ try {
   await frame.locator(".intro").press("Space");
   await page
     .locator("#status")
-    .filter({ hasText: "Saved to website" })
+    .filter({ hasText: "Saved locally" })
     .waitFor();
   await frame.locator(".intro").press("End");
   await frame.locator(".intro").press("A");
   await page
     .locator("#status")
-    .filter({ hasText: "Saved to website" })
+    .filter({ hasText: "Saved locally" })
     .waitFor();
   assert.match(await readFile(join(root, "src/content/home.md"), "utf8"), /A/);
   await page
@@ -183,7 +183,7 @@ try {
     .fill("- A [real link](https://example.com)\n  - **Nested**");
   await page
     .locator("#status")
-    .filter({ hasText: "Saved to website" })
+    .filter({ hasText: "Saved locally" })
     .waitFor();
   assert.equal(
     await frame.locator(".intro a").getAttribute("href"),
@@ -199,7 +199,7 @@ try {
   await page.reload();
   await page
     .locator("#status")
-    .filter({ hasText: "Saved to website" })
+    .filter({ hasText: "Saved locally" })
     .waitFor();
   await page
     .getByRole("button", { name: "Markdown view", exact: true })
@@ -223,7 +223,7 @@ try {
   await page.getByRole("button", { name: "Retry save" }).click();
   await page
     .locator("#status")
-    .filter({ hasText: "Saved to website" })
+    .filter({ hasText: "Saved locally" })
     .waitFor();
   await writeFile(join(root, "src/content/home.md"), "An external edit");
   await page.locator("#markdown").fill("Keep my conflicting draft");
@@ -238,7 +238,7 @@ try {
   await page.getByRole("button", { name: "Reload source" }).click();
   await page
     .locator("#status")
-    .filter({ hasText: "Saved to website" })
+    .filter({ hasText: "Saved locally" })
     .waitFor();
   assert.equal(
     await page.locator("#markdown").inputValue(),
@@ -249,7 +249,7 @@ try {
   await page.locator("#markdown").fill("rapid final");
   await page
     .locator("#status")
-    .filter({ hasText: "Saved to website" })
+    .filter({ hasText: "Saved locally" })
     .waitFor();
   assert.equal(
     await readFile(join(root, "src/content/home.md"), "utf8"),
@@ -257,12 +257,12 @@ try {
   );
   // Headings must survive the actual Markdown → page → direct-edit → source path.
   await page.locator("#markdown").fill("- visible intro\n\n## abcd\n- efgh\n\n### ijkl\n- mnop\n\n## qrst\n- uvwx");
-  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
   await frame.locator("summary h2").first().filter({ hasText: "abcd" }).waitFor();
   assert.equal(await frame.locator(".intro .fold").count(), 3);
   assert.equal(await frame.locator(".intro .fold[open]").count(), 3, "Writing keeps nested content available");
   await frame.locator(".intro .fold-body > ul > li").first().fill("edited dummy");
-  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
   const headingSource = await readFile(join(root, "src/content/home.md"), "utf8");
   assert.match(headingSource, /## abcd/);
   assert.match(headingSource, /### ijkl/);
@@ -279,29 +279,29 @@ try {
   assert.notEqual(await firstFold.getAttribute("open"), null);
   await page.getByRole("button", { name: "Keep writing", exact: true }).click();
   await page.reload();
-  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
   assert.equal(await frame.locator(".intro .fold").count(), 3);
   await page.getByRole("button", { name: "Markdown view", exact: true }).click();
   await page.locator("#markdown").fill("button dummy\n\n- body dummy");
-  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
   await page.locator("#markdown").evaluate(el => { el.focus(); el.setSelectionRange(0, 12); });
   await page.getByRole("button", { name: "Heading", exact: true }).click();
-  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
   await frame.locator(".intro summary h2").filter({ hasText: "button dummy" }).waitFor();
   await page.getByRole("button", { name: "Write on the page", exact: true }).click();
   await frame.locator(".intro").fill("direct heading dummy");
-  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
   await frame.locator(".intro").evaluate(el => {
     el.focus(); const range = document.createRange(); range.selectNodeContents(el);
     const selection = window.getSelection(); selection.removeAllRanges(); selection.addRange(range);
   });
   await page.getByRole("button", { name: "Heading", exact: true }).click();
-  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
   await frame.locator(".intro summary h2").filter({ hasText: "direct heading dummy" }).waitFor();
   assert.match(await readFile(join(root, "src/content/home.md"), "utf8"), /## direct heading dummy/);
   await page.getByRole("button", { name: "Markdown view", exact: true }).click();
   await page.locator("#markdown").fill("- bullet heading dummy\n- second dummy");
-  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
   await frame.locator(".intro > ul > li").first().filter({ hasText: "bullet heading dummy" }).waitFor();
   await page.getByRole("button", { name: "Write on the page", exact: true }).click();
   await frame.locator(".intro > ul > li").first().evaluate(el => {
@@ -309,7 +309,7 @@ try {
     const selection = window.getSelection(); selection.removeAllRanges(); selection.addRange(range);
   });
   await page.getByRole("button", { name: "Heading", exact: true }).click();
-  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
   assert.match(await readFile(join(root, "src/content/home.md"), "utf8"), /^## bullet heading dummy/);
   assert.match(await readFile(join(root, "src/content/home.md"), "utf8"), /-\s+second dummy/);
   await frame.locator(".intro summary h2").filter({ hasText: "bullet heading dummy" }).waitFor();
@@ -329,10 +329,10 @@ try {
   await page.locator("#section").selectOption("contact");
   await page.locator("#markdown").fill("- Contact pending");
   await page.locator("#section").selectOption("intro");
-  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
   assert.equal(await page.locator("#markdown").inputValue(), "- Introduction pending");
   await page.locator("#section").selectOption("contact");
-  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await page.locator("#status").filter({ hasText: "Saved locally" }).waitFor();
   assert.equal(await readFile(join(root, "src/content/home.md"), "utf8"), "- Introduction pending");
   assert.equal(await readFile(join(root, "src/content/contact.md"), "utf8"), "- Contact pending");
   await page.setViewportSize({ width: 390, height: 844 });

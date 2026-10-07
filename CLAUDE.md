@@ -48,3 +48,14 @@ carry the handmade feel. Keep the structure and code simple when editing it.
 
 Pushing `main` deploys through GitHub Actions. The frozen 25 September 2026
 version lives in `public/archive/2026-09-25/`; leave it intact.
+
+## Local publishing
+
+`/write` autosaves locally; only Publish sends content online. `publish.mjs`
+commits registered content files with `git commit --only`, preserves staged code,
+refuses non-main branches and unrelated unpublished commits, and never force
+pushes or pulls. The local-only API uses the same host/origin checks as saving.
+The button flushes every region, locks editing, and shows phases with elapsed
+seconds. Reload resumes progress. GitHub CLI follows the matching Pages workflow;
+Live requires the public page to contain the committed content. Failed pushes
+retain the commit for retry. Content edits stay local until the button is pressed.

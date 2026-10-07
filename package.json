@@ -10,11 +10,12 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "test": "node --test tests/content.test.mjs",
+    "test": "node --test tests/content.test.mjs tests/publish.test.mjs",
     "test:browser": "node tests/writer-browser.mjs",
     "test:build": "npm run build && node --test tests/build.test.mjs",
     "test:contact": "npm run build && node tests/contact-browser.mjs",
-    "test:toggles": "npm run build && node tests/toggles-browser.mjs"
+    "test:toggles": "npm run build && node tests/toggles-browser.mjs",
+    "test:publish": "node tests/publish-browser.mjs"
   },
   "dependencies": {
     "astro": "^7.3.5",

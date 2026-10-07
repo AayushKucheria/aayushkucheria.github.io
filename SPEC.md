@@ -50,3 +50,16 @@ stays outside editable regions. Social and coffee icons remain visible.
 
 Starter sections are work, steal these ideas, reading, now, and community. Their
 bodies contain only `abcd` / `efgh`; previous prototype copy is not published.
+
+## Local Publish button — approved
+
+Autosave writes only local content. Publish is the sole editor action that sends
+changes online. Match `prototypes/publish-progress.html`: toolbar button, progress
+strip, elapsed seconds through saving/pushing/deployment, live result or retry.
+Flush all regions before publishing. Commit only registered content files;
+preserve unrelated working and staged edits. Require main, never force push or
+pull/reset automatically. Refuse to push unrelated unpublished commits.
+Use local Git and GitHub CLI authentication. Observe the matching Pages workflow
+and verify the live page contains the committed content before reporting Live.
+Log phase boundaries with elapsed milliseconds, without content or credentials.
+Publishing and saves remain loopback/same-origin only and absent from builds.

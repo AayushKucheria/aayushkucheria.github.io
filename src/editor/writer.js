@@ -9,7 +9,7 @@ const states = Object.fromEntries(Object.entries(sections).map(([id, section]) =
   stopped: false, ready: false, renderVersion: 0, status: "Opening your website…",
   draftKey: "aayush-permanent-writer-draft-v1" + (id === "intro" ? "" : "-" + id),
 }]));
-let active = states.intro, reading = false;
+let active = states.intro, reading = false, publishing = false, publishJob = null, publishPoll = 0;
 function element(state = active) {
   return frame.contentDocument?.querySelector(`[data-content-section="${state.id}"]`);
 }
@@ -32,8 +32,11 @@ function syncTools() {
     $("restore").hidden = !recovery.restore;
     $("retry").hidden = !recovery.retry;
   }
-  ["link", "bold", "heading", "nest", "outdent"].forEach(id => $(id).disabled = reading || !!active.plain);
-  editor.disabled = reading || !active.ready;
+  ["link", "bold", "heading", "nest", "outdent"].forEach(id => $(id).disabled = reading || publishing || !!active.plain);
+  editor.disabled = reading || publishing || !active.ready;
+  $("section").disabled = publishing;
+  $("read").disabled = publishing;
+  $("publish").disabled = publishing || Object.values(states).some(state => !state.ready);
   $("format-help").hidden = !!active.plain;
 }
 function selectSection(id) {
@@ -78,7 +81,7 @@ function prepareFrame() {
   Object.values(states).forEach(state => {
     const el = element(state);
     if (!el) return;
-    el.contentEditable = reading || !state.ready ? "false" : state.plain ? "plaintext-only" : "true";
+    el.contentEditable = reading || publishing || !state.ready ? "false" : state.plain ? "plaintext-only" : "true";
     el.spellcheck = true;
     el.setAttribute("aria-label", state.label === "Introduction" ? "Website introduction" : state.label);
     el.setAttribute("role", "textbox");
@@ -118,8 +121,9 @@ async function render(state) {
   }
 }
 function changed(text, shouldRender = true, state = active) {
-  if (!state.ready || reading) return;
+  if (!state.ready || reading || publishing) return;
   state.markdown = text;
+  if (publishJob?.phase === "live") { publishJob = null; $("publish-progress").hidden = true; }
   if (state === active) editor.value = text;
   stash(state);
   clearTimeout(state.saveTimer);
@@ -134,7 +138,7 @@ function changed(text, shouldRender = true, state = active) {
 async function save(state) {
   if (state.inFlight || state.stopped) return;
   if (state.markdown === state.lastSaved) {
-    setStatus("Saved to website", state);
+    setStatus("Saved locally", state);
     return;
   }
   state.inFlight = true;
@@ -148,7 +152,7 @@ async function save(state) {
     if (state.markdown === text) {
       try { localStorage.removeItem(state.draftKey); } catch {}
       state.recovery = null;
-      setStatus("Saved to website", state);
+      setStatus("Saved locally", state);
       syncTools();
     } else {
       stash(state);
@@ -311,7 +315,7 @@ $("reload").onclick = async () => {
     try { localStorage.removeItem(state.draftKey); } catch {}
     if (state === active) selectSection(state.id);
     await render(state);
-    setStatus("Saved to website", state);
+    setStatus("Saved locally", state);
   } catch (error) {
     setStatus("Could not reload source", state);
     showRecovery(error.message, {}, state);
@@ -327,7 +331,7 @@ $("download").onclick = () => {
 };
 window.addEventListener("beforeunload", e => {
   const unsaved = Object.values(states).filter(state => state.ready && state.markdown !== state.lastSaved);
-  if (unsaved.length) {
+  if (unsaved.length || publishing) {
     unsaved.forEach(stash);
     e.preventDefault();
     e.returnValue = "";
@@ -344,7 +348,7 @@ async function init(state) {
     if (state === active) selectSection(state.id);
     prepareFrame();
     await render(state);
-    if (state.markdown === state.lastSaved && !state.stopped) setStatus("Saved to website", state);
+    if (state.markdown === state.lastSaved && !state.stopped) setStatus("Saved locally", state);
     if (state.recoveryDraft && typeof state.recoveryDraft.markdown === "string" && state.recoveryDraft.markdown !== state.markdown) {
       state.stopped = true;
       showRecovery("An unsaved browser draft is available. Restore it or reload the source.", { restore: true }, state);
@@ -354,4 +358,64 @@ async function init(state) {
     showRecovery(error.message, {}, state);
   }
 }
-Object.values(states).forEach(state => init(state));
+Object.values(states).forEach(state => init(state).finally(syncTools));
+
+function showPublish(job) {
+  publishJob = job;
+  publishing = !!job.busy;
+  $("publish-progress").hidden = job.phase === "idle";
+  $("publish").textContent = job.phase === "failed" ? "Try publishing again" : "Publish";
+  $("live-link").hidden = job.phase !== "live";
+  $("publish-status").textContent = job.message || "";
+  syncTools();
+  prepareFrame();
+}
+setInterval(() => {
+  if (publishJob?.busy) {
+    const elapsed = Math.max(0, Math.floor((Date.now() - publishJob.startedAt) / 1000));
+    $("publish-status").textContent = `${publishJob.message} ${elapsed}s`;
+  }
+}, 1000);
+async function publishRequest(method = "GET", data) {
+  const response = await fetch("/__writer/publish", {
+    method, headers: data ? { "Content-Type": "application/json" } : {},
+    body: data ? JSON.stringify(data) : undefined, signal: AbortSignal.timeout(10000),
+  });
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error || "Could not publish. Your edits are saved locally.");
+  return result;
+}
+async function watchPublish(job, version) {
+  while (version === publishPoll) {
+    showPublish(job);
+    if (!job.busy) return;
+    await new Promise(resolve => setTimeout(resolve, 800));
+    try { job = await publishRequest(); }
+    catch {
+      if (version === publishPoll) showPublish({ phase: "failed", busy: false, message: "Lost connection to the writing room. Your edits are kept. Retry to check publishing." });
+      return;
+    }
+  }
+}
+$("publish").onclick = async () => {
+  if (publishing) return;
+  const version = ++publishPoll;
+  showPublish({ phase: "saving", busy: true, startedAt: Date.now(), message: "Saving your latest edits locally…" });
+  try {
+    for (const state of Object.values(states)) {
+      clearTimeout(state.saveTimer);
+      while (state.inFlight) await new Promise(resolve => setTimeout(resolve, 50));
+      if (!state.ready || state.stopped) throw new Error("Resolve the unsaved draft before publishing. Your edits are kept locally.");
+      await save(state);
+      if (state.stopped || state.markdown !== state.lastSaved) throw new Error("Could not save every section. Nothing was published; your draft is kept.");
+    }
+    const revisions = Object.fromEntries(Object.values(states).map(state => [state.id, state.revision]));
+    await watchPublish(await publishRequest("POST", { revisions }), version);
+  } catch (error) {
+    if (version === publishPoll) showPublish({ phase: "failed", busy: false, message: error.message });
+  }
+};
+const initialPublishVersion = publishPoll;
+publishRequest().then(job => {
+  if (initialPublishVersion === publishPoll) return watchPublish(job, initialPublishVersion);
+}).catch(() => {});

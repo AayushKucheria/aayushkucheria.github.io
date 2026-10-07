@@ -11,7 +11,7 @@ Built with [Astro](https://astro.build). The custom domain is managed through Ra
   hover. Both effects respect reduced motion preferences.
 - `src/content/home.md` holds the introduction and expandable sections, shared with the writing room.
   Any Markdown heading becomes a toggle; deeper headings nest inside their parent.
-  Starter section bodies contain only dummy text (`abcd` / `efgh`).
+  Sections began as dummy text (`abcd` / `efgh`); content is now edited through `/write`.
 - `src/content/contact.md` holds the contact bullets and hyperlinks;
   `contact-heading.txt` holds the contact toggle label; `socials.md` holds the
   icon labels and destinations. `name.txt` and
@@ -56,7 +56,12 @@ npm run build    # builds to ./dist
 
 Edits save automatically to the selected section's file in `src/content/`
 after a short pause. The Buttondown form and credit remain fixed.
-**Saved to website** means the file has been written. The preview uses the
+**Saved locally** means the file has been written on your laptop. Nothing is
+sent online by autosave. Press **Publish** to commit and push only the registered
+content files; the progress strip follows deployment and verifies the live page.
+Git and the GitHub CLI (`gh`) use your existing local login. Publishing requires
+`main` and refuses unrelated unpublished code commits. Other staged edits remain
+untouched. Failed pushes keep the local content commit for retry. The preview uses the
 actual website in an iframe, so its photos, font and layout stay in sync.
 The next static build renders the saved content. Publishing uses the existing
 GitHub Pages workflow when changes are pushed to `main`.
@@ -81,7 +86,8 @@ fixed widgets such as Buttondown remain separate. This rule is recorded in
 
 ## Checks
 
-- `npm test` — Markdown rendering and source save behavior.
+- `npm test` — Markdown rendering, source saves, and content-only publishing against temporary Git repositories.
+- `npm run test:publish` — real browser publishing to a temporary Git remote, with the external deployment boundary simulated.
 - `npm run test:browser` — real browser edits against an isolated project copy,
   including saving, retry, conflicts and links. Install the test browser once
   with `npx playwright install chromium` if it is missing.

@@ -1,5 +1,13 @@
 # Permanent writing room plan
 
+## TODO
+
+- [ ] Revisit website typography: consider replacing Shantell Sans with a calmer
+  font, since the writing already supplies an informal tone. Compare Source
+  Serif 4 (warm, thoughtful), Source Sans 3 (clear, understated), Literata
+  (literary), DM Sans (modern), and Georgia (classic). Current first choice:
+  Source Serif 4; decide later after seeing it with the site's actual text.
+
 1. Test first: a source store reads Markdown; rejects stale revisions; writes
    atomically; and serializes concurrent saves. Renderer preserves nested lists
    and safe links while excluding executable content.
@@ -45,3 +53,12 @@ requested turning it into a permanent source editor; this authorizes proceeding.
   and native behavior with JavaScript disabled.
 - Passed build: shared saved source, no writing room/API in static output.
 - Commit and push the approved design to main; verify the Pages deployment.
+
+## Local Publish
+
+1. Passed real temporary Git tests: content-only commit/push, preserve staged code,
+   retry failed push, reject wrong branch/unrelated ahead commits, double-click
+   protection, deployment failure and verified live content.
+2. Passed browser: local autosave never publishes; Publish flushes all regions, locks
+   editing during publishing, reports moving progress, error/retry, reload status.
+3. Passed build: no editor/publish API in production. Update writing instructions.
