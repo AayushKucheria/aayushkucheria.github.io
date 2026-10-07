@@ -7,6 +7,8 @@ Built with [Astro](https://astro.build). The custom domain is managed through Ra
 ## Project layout
 
 - `src/pages/index.astro` is the page template (photos, name, location, styling).
+  Photos enlarge on hover; the Helsinki tag hangs from a string and swings on
+  hover. Both effects respect reduced motion preferences.
 - `src/content/home.md` is the introduction's Markdown source, shared with the writing room.
 - `src/editor/` contains the permanent local writing room and its save API.
 - `public/pics/` holds the photos used by the current page.
@@ -60,3 +62,5 @@ The self-contained HTML files in `prototypes/` are earlier experiments. Use
   including saving, retry, conflicts and links. Install the test browser once
   with `npx playwright install chromium` if it is missing.
 - `npm run test:build` — static output renders the source and excludes the editor.
+- `node tests/header-browser.mjs` — with the dev server running, checks photo
+  hover and reset, the hanging tag, reduced motion, and mobile widths.

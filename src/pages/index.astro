@@ -40,10 +40,24 @@ const introHtml = renderMarkdown(markdown);
     header { padding-bottom: 48px; }
     h1 { font-size: clamp(2.6rem, 7vw, 4rem); line-height: 1; letter-spacing: -0.04em; margin: 24px 0 12px; transform: rotate(-1deg); }
     .photos { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; }
-    .photos img { width: 80px; height: 98px; object-fit: cover; background: #f2ede4; padding: 5px 5px 15px; box-shadow: 2px 4px 12px #0002; }
+    .photos img { position: relative; width: 80px; height: 98px; object-fit: cover; background: #f2ede4; padding: 5px 5px 15px; box-shadow: 2px 4px 12px #0002; transition: transform .15s, box-shadow .15s; }
     .photos img:nth-child(odd) { transform: rotate(-3deg); }
     .photos img:nth-child(even) { transform: rotate(3deg); }
-    .location { display: inline-block; padding: 6px 10px; margin: 0 0 16px; background: #f0e8d4; box-shadow: 1px 2px 7px #0002; font-size: .78rem; transform: rotate(2deg); }
+    .photos img:hover { transform: scale(1.35) translateY(8px); box-shadow: 4px 8px 24px #0005; z-index: 1; }
+    .location { position: relative; display: inline-block; padding: 12px 10px 6px; margin: 20px 0 16px; background: #f0e8d4; border-radius: 3px; box-shadow: 1px 2px 7px #0002; font-size: .78rem; transform: rotate(2deg); transform-origin: center -20px; transition: transform .45s ease-out; }
+    .location::before { content: ''; position: absolute; width: 1.5px; height: 26px; left: 50%; top: -20px; background: linear-gradient(to bottom, #9a7248, #c0a878); opacity: .7; }
+    .location::after { content: ''; position: absolute; top: 4px; left: 50%; transform: translateX(-50%); width: 7px; height: 7px; border-radius: 50%; background: #ddd5be; border: 1px solid #c0a070; }
+    .location:hover { animation: location-swing 1.75s ease-in-out infinite; }
+    @keyframes location-swing {
+      0%, 100% { transform: rotate(-2deg); }
+      50% { transform: rotate(6deg); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .photos img, .location { transition: none; }
+      .photos img:hover { transform: rotate(-3deg); }
+      .photos img:nth-child(even):hover { transform: rotate(3deg); }
+      .location:hover { animation: none; }
+    }
     .intro { font-size: 1rem; max-width: 60ch; color: #5a4830; }
     .intro ul { padding-left: 1.4em; margin: 0; }
     .intro li { line-height: 1.65; padding: 4px 0; overflow-wrap: anywhere; }

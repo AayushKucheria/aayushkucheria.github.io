@@ -2,6 +2,8 @@
 
 ## Known issues / loose ends
 
+- Contact footer work is being edited separately in this workspace; it is
+  outside the photo hover and hanging tag commit.
 - The existing Astro dependency tree has three npm audit advisories affecting
   `http-cache-semantics`, `sharp`, and `source-map-js`. They were observed during
   dependency installation; dependency upgrades were outside the writing editor
