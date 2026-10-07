@@ -1,3 +1,2 @@
-- **contact**
-  - [let's chat](https://cal.com/aayushk/chat)
-  - [aayush.kucheria@gmail.com](mailto:aayush.kucheria@gmail.com)
+- [let's chat](https://cal.com/aayushk/chat)
+- [aayush.kucheria@gmail.com](mailto:aayush.kucheria@gmail.com)

@@ -1,10 +1,15 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { chromium } from "playwright";
+import { createServer } from "node:net";
 
-const base = "http://127.0.0.1:4433";
+const portProbe = createServer();
+await new Promise(resolve => portProbe.listen(0, "127.0.0.1", resolve));
+const port = portProbe.address().port;
+await new Promise(resolve => portProbe.close(resolve));
+const base = `http://127.0.0.1:${port}`;
 const server = spawn(process.execPath, [
-  "node_modules/astro/bin/astro.mjs", "preview", "--host", "127.0.0.1", "--port", "4433",
+  "node_modules/astro/bin/astro.mjs", "preview", "--ignore-lock", "--host", "127.0.0.1", "--port", String(port),
 ], { stdio: ["ignore", "pipe", "pipe"] });
 let logs = "", browser;
 server.stdout.on("data", data => logs += data);
@@ -27,7 +32,9 @@ try {
     await page.goto(base);
     const contact = page.locator("footer#contact");
     assert.equal(await contact.count(), 1, "The website includes the contact bullet and its children");
-    assert.equal(await contact.locator(".contact-copy > ul > li > strong").innerText(), "contact");
+    assert.equal(await contact.locator(".contact-heading").innerText(), "contact");
+    await contact.locator(".contact-fold > summary").click();
+    await page.waitForTimeout(300);
     for (const [name, href] of [
       ["let's chat", "https://cal.com/aayushk/chat"],
       ["buy me a coffee", "https://buymeacoffee.com/aayushkucheria"],

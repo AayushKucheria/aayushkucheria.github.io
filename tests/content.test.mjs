@@ -48,3 +48,26 @@ test("shared Markdown renderer preserves nested formatting and safe links", () =
   assert.match(html, /<strong>Nested<\/strong>/);
   assert.doesNotMatch(html, /<script|href="javascript:/);
 });
+
+test("headings become nested expandable sections while introductory bullets stay visible", () => {
+  const html = renderMarkdown("- hello\n\n## work\n- abcd\n\n### small bit\n- efgh\n\n## reading\n- ijkl");
+  assert.match(html, /^<ul>[\s\S]*hello[\s\S]*<\/ul>\s*<details class="fold">/);
+  assert.equal((html.match(/<details class="fold">/g) || []).length, 3);
+  assert.match(html, /<summary><h2 class="toggle-label">work<\/h2><\/summary>/);
+  assert.match(html, /abcd[\s\S]*<details class="fold">[\s\S]*small bit[\s\S]*efgh/);
+  assert.doesNotMatch(html, /<details[^>]*\bopen\b/);
+});
+
+test("heading labels remain safe and formatted, including empty headings", () => {
+  const html = renderMarkdown("## **abcd** <script>bad()</script>\n\n##\n\n# efgh\n\n- [safe](https://example.com)");
+  assert.match(html, /<strong>abcd<\/strong>/);
+  assert.doesNotMatch(html, /<script/);
+  assert.equal((html.match(/<details class="fold">/g) || []).length, 3);
+  assert.match(html, /Untitled/);
+  assert.match(html, /href="https:\/\/example.com"/);
+});
+
+test("reference links inside heading labels use the document definitions", () => {
+  const html = renderMarkdown("## [abcd][site]\n- efgh\n\n[site]: https://example.com");
+  assert.match(html, /<h2 class="toggle-label"><a href="https:\/\/example.com"/);
+});

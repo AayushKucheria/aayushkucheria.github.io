@@ -3,6 +3,10 @@ import { readFile } from 'node:fs/promises';
 import { renderSection } from '../editor/rendering.mjs';
 import contactCopy from '../content/contact.md?raw';
 import socialCopy from '../content/socials.md?raw';
+import headingCopy from '../content/contact-heading.txt?raw';
+const heading = (import.meta.env.DEV
+  ? await readFile(new URL('../content/contact-heading.txt', import.meta.url), 'utf8')
+  : headingCopy).trim();
 const contact = import.meta.env.DEV
   ? await readFile(new URL('../content/contact.md', import.meta.url), 'utf8')
   : contactCopy;
@@ -11,6 +15,9 @@ const socials = import.meta.env.DEV
   : socialCopy;
 ---
 <footer id="contact" aria-label="Contact">
+  <details class="fold contact-fold">
+    <summary><h2 class="toggle-label contact-heading" data-content-section="contact-heading">{heading}</h2></summary>
+    <div class="fold-panel"><div class="fold-body">
   <div class="contact-copy" data-content-section="contact" set:html={renderSection('contact', contact)} />
   <ul class="newsletter-list">
     <li>
@@ -22,9 +29,11 @@ const socials = import.meta.env.DEV
             </div>
             <small><a href="https://buttondown.com/refer/aayushk" target="_blank" rel="noopener noreferrer">Powered by Buttondown.</a></small>
           </form>
-      <nav class="socials" aria-label="Social profiles" data-content-section="socials" set:html={renderSection('socials', socials)} />
     </li>
   </ul>
+    </div></div>
+  </details>
+  <nav class="socials" aria-label="Social profiles and support" data-content-section="socials" set:html={renderSection('socials', socials)} />
 </footer>
 
 <style is:global>
@@ -37,7 +46,7 @@ const socials = import.meta.env.DEV
   #contact a { color: inherit; text-decoration-color: #b09060; text-underline-offset: 3px; }
   #contact a:hover { color: #724038; }
   #contact a:focus-visible, #contact input:focus-visible, #contact button:focus-visible { outline: 2px solid #724038; outline-offset: 4px; }
-  #contact .newsletter-list { padding-left: 2.8em; list-style-type: circle; }
+  #contact .newsletter-list { padding-left: 1.4em; }
   #contact .newsletter label { display: block; margin-bottom: 8px; }
   #contact .newsletter-controls { display: flex; flex-wrap: wrap; gap: 8px; }
   #contact input, #contact button { font: inherit; padding: 8px 10px; border: 1px solid #b09060; border-radius: 0; }
@@ -45,7 +54,8 @@ const socials = import.meta.env.DEV
   #contact button { background: #cdbf9f; color: #2a2218; cursor: pointer; }
   #contact button:hover { background: #c3b18f; }
   #contact small { display: block; margin-top: 6px; font-size: .72rem; color: #7a6a50; }
-  #contact .socials { margin-top: 16px; }
+  #contact .socials { margin: 24px 0 0 24px; }
+  #contact .contact-fold { --ink: #54677a; --wash: #708da724; }
   #contact .socials ul { display: flex; gap: 12px; list-style: none; padding: 0; }
   #contact .socials li { padding: 0; }
   #contact .socials a { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; }

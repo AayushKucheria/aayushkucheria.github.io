@@ -9,9 +9,12 @@ Built with [Astro](https://astro.build). The custom domain is managed through Ra
 - `src/pages/index.astro` is the page template (photos, name, location, styling).
   Photos enlarge on hover; the Helsinki tag hangs from a string and swings on
   hover. Both effects respect reduced motion preferences.
-- `src/content/home.md` is the introduction's Markdown source, shared with the writing room.
+- `src/content/home.md` holds the introduction and expandable sections, shared with the writing room.
+  Any Markdown heading becomes a toggle; deeper headings nest inside their parent.
+  Starter section bodies contain only dummy text (`abcd` / `efgh`).
 - `src/content/contact.md` holds the contact bullets and hyperlinks;
-  `socials.md` holds the icon labels and destinations. `name.txt` and
+  `contact-heading.txt` holds the contact toggle label; `socials.md` holds the
+  icon labels and destinations. `name.txt` and
   `location.txt` hold the name and location label.
 - `src/components/Contact.astro` keeps the Buttondown widget fixed while
   rendering the editable contact and social sources.
@@ -45,8 +48,11 @@ npm run build    # builds to ./dist
 5. Choose **Social profiles** to edit the icon labels and links. Labels are
    visible while writing; the normal website shows icons. New destinations
    without a matching brand icon use a generic link icon.
-6. Use **Markdown view** for links, formatting and source text beside the page.
-   The name and location use plain text.
+6. Use **Heading** to create an expandable section, or write `## section` in
+   **Markdown view**. `### subsection` creates a nested toggle. Headings inherit
+   soft color, paper texture, and dashed margins automatically. Sections remain
+   open while writing; **Read the page** lets you try opening and closing them.
+   Name, location, and contact heading use plain text.
 
 Edits save automatically to the selected section's file in `src/content/`
 after a short pause. The Buttondown form and credit remain fixed.
@@ -82,5 +88,7 @@ fixed widgets such as Buttondown remain separate. This rule is recorded in
 - `npm run test:build` — static output renders the source and excludes the editor.
 - `npm run test:contact` — contact links, newsletter validation, and icon layout
   on desktop and small phones.
+- `npm run test:toggles` — styled toggles, independent expansion, keyboard,
+  rapid clicks, reduced motion, and operation without JavaScript.
 - `node tests/header-browser.mjs` — with the dev server running, checks photo
   hover and reset, the hanging tag, reduced motion, and mobile widths.

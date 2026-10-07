@@ -6,3 +6,29 @@
   - It's the wild west again!
   - A switch I care a lot about here is to honor human experience. Let everything else fall around it
     - We nerds forget this sometimes
+
+
+## work
+
+- abcd
+- efgh
+
+## steal these ideas
+
+- abcd
+- efgh
+
+## reading
+
+- abcd
+- efgh
+
+## now
+
+- abcd
+- efgh
+
+## community
+
+- abcd
+- efgh

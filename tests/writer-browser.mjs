@@ -112,12 +112,17 @@ try {
   assert.doesNotMatch(savedSocials, /svg|path d=/);
   await frame.locator(".site-name").fill("Test Website Name");
   await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await frame.locator(".contact-heading").fill("Contact dummy title");
+  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  assert.equal(await readFile(join(root, "src/content/contact-heading.txt"), "utf8"), "Contact dummy title");
   await frame.locator(".location").fill("Based somewhere new");
   await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
   const contactSite = await browser.newPage();
   await contactSite.goto(base);
+  await contactSite.locator(".contact-fold > summary").click();
   assert.equal(await contactSite.locator(".site-name").innerText(), "Test Website Name");
   assert.equal(await contactSite.locator(".location").innerText(), "Based somewhere new");
+  assert.equal(await contactSite.locator(".contact-heading").innerText(), "Contact dummy title");
   assert.equal(await contactSite.locator(".contact-copy strong").innerText(), "say hello");
   assert.equal(await contactSite.getByRole("link", { name: "book a call" }).getAttribute("href"), "https://example.com/updated-call");
   assert.equal(await contactSite.getByRole("link", { name: "GitHub", exact: true }).getAttribute("href"), "https://github.com/direct-profile");
@@ -250,6 +255,65 @@ try {
     await readFile(join(root, "src/content/home.md"), "utf8"),
     "rapid final",
   );
+  // Headings must survive the actual Markdown → page → direct-edit → source path.
+  await page.locator("#markdown").fill("- visible intro\n\n## abcd\n- efgh\n\n### ijkl\n- mnop\n\n## qrst\n- uvwx");
+  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await frame.locator("summary h2").first().filter({ hasText: "abcd" }).waitFor();
+  assert.equal(await frame.locator(".intro .fold").count(), 3);
+  assert.equal(await frame.locator(".intro .fold[open]").count(), 3, "Writing keeps nested content available");
+  await frame.locator(".intro .fold-body > ul > li").first().fill("edited dummy");
+  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  const headingSource = await readFile(join(root, "src/content/home.md"), "utf8");
+  assert.match(headingSource, /## abcd/);
+  assert.match(headingSource, /### ijkl/);
+  assert.match(headingSource, /edited dummy/);
+  assert.doesNotMatch(headingSource, /details|summary|fold-body/);
+  await page.getByRole("button", { name: "Read the page", exact: true }).click();
+  const firstFold = frame.locator(".intro > .fold").first();
+  await firstFold.locator(":scope > summary").click();
+  await page.waitForTimeout(350);
+  assert.equal(await firstFold.getAttribute("open"), null);
+  await firstFold.locator(":scope > summary").focus();
+  await page.keyboard.press("Enter");
+  await page.waitForTimeout(350);
+  assert.notEqual(await firstFold.getAttribute("open"), null);
+  await page.getByRole("button", { name: "Keep writing", exact: true }).click();
+  await page.reload();
+  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  assert.equal(await frame.locator(".intro .fold").count(), 3);
+  await page.getByRole("button", { name: "Markdown view", exact: true }).click();
+  await page.locator("#markdown").fill("button dummy\n\n- body dummy");
+  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await page.locator("#markdown").evaluate(el => { el.focus(); el.setSelectionRange(0, 12); });
+  await page.getByRole("button", { name: "Heading", exact: true }).click();
+  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await frame.locator(".intro summary h2").filter({ hasText: "button dummy" }).waitFor();
+  await page.getByRole("button", { name: "Write on the page", exact: true }).click();
+  await frame.locator(".intro").fill("direct heading dummy");
+  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await frame.locator(".intro").evaluate(el => {
+    el.focus(); const range = document.createRange(); range.selectNodeContents(el);
+    const selection = window.getSelection(); selection.removeAllRanges(); selection.addRange(range);
+  });
+  await page.getByRole("button", { name: "Heading", exact: true }).click();
+  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await frame.locator(".intro summary h2").filter({ hasText: "direct heading dummy" }).waitFor();
+  assert.match(await readFile(join(root, "src/content/home.md"), "utf8"), /## direct heading dummy/);
+  await page.getByRole("button", { name: "Markdown view", exact: true }).click();
+  await page.locator("#markdown").fill("- bullet heading dummy\n- second dummy");
+  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  await frame.locator(".intro > ul > li").first().filter({ hasText: "bullet heading dummy" }).waitFor();
+  await page.getByRole("button", { name: "Write on the page", exact: true }).click();
+  await frame.locator(".intro > ul > li").first().evaluate(el => {
+    el.closest('[contenteditable=true]').focus(); const range = document.createRange(); range.selectNodeContents(el);
+    const selection = window.getSelection(); selection.removeAllRanges(); selection.addRange(range);
+  });
+  await page.getByRole("button", { name: "Heading", exact: true }).click();
+  await page.locator("#status").filter({ hasText: "Saved to website" }).waitFor();
+  assert.match(await readFile(join(root, "src/content/home.md"), "utf8"), /^## bullet heading dummy/);
+  assert.match(await readFile(join(root, "src/content/home.md"), "utf8"), /-\s+second dummy/);
+  await frame.locator(".intro summary h2").filter({ hasText: "bullet heading dummy" }).waitFor();
+  await page.getByRole("button", { name: "Markdown view", exact: true }).click();
   const denied = await fetch(base + "/__writer/content", {
     method: "POST",
     headers: {

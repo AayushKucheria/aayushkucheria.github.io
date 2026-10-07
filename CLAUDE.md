@@ -16,14 +16,22 @@ are explicit exceptions. See `AGENTS.md`.
 
 ## Layout
 
-The page has one centered content column at every viewport width: photos,
-name, Helsinki location, and the nested introduction bullets from the downloaded
-outline. A contact footer follows as a parent bullet with nested chat,
-email, and Buttondown subscription items. GitHub, LinkedIn, X, and coffee icons sit in
-one horizontal row beneath the subscription form. The footer lives in
-`src/components/Contact.astro`.
-The published page has no client-side editor scripts. The local writing room
-has direct editing and a Markdown view.
+The page has one centered content column: photos, name, the Helsinki tag hanging
+beneath the end of the name, introductory bullets, and expandable sections.
+Markdown headings in `src/content/home.md` become native `details` toggles;
+deeper headings nest. Shared styling in `src/styles/toggles.css` supplies muted
+color, textured heading patches, and dashed margins. `src/toggles.js` adds smooth
+expansion; native toggles also work without JavaScript. The approved reference
+is `prototypes/toggle-colored-stitches.html`. Starter section bodies are dummy
+`abcd` / `efgh` text and make no claims about the owner's work or activity.
+
+Contact links and the fixed Buttondown form share a toggle in
+`src/components/Contact.astro`. Its label comes from `contact-heading.txt`.
+GitHub, LinkedIn, X, and coffee icons remain visible beneath it.
+The local writing room uses these same renderers and styles, keeps toggles open
+while writing, and provides a Heading button plus `##` / `###` Markdown support.
+Read mode enables toggles. Heading structure survives direct edits and autosave.
+The published page includes only the toggle interaction, with no editor route/API.
 
 The warm cloth colors, Shantell Sans, photo prints, small tilts, and patches
 carry the handmade feel. Keep the structure and code simple when editing it.
@@ -36,6 +44,7 @@ carry the handmade feel. Keep the structure and code simple when editing it.
 - `npm run test:browser` — isolated browser saving checks
 - `npm run test:build` — build and production output check
 - `npm run test:contact` — build and check contact links, form, and icon layout
+- `npm run test:toggles` — responsive toggle interactions and progressive enhancement
 
 Pushing `main` deploys through GitHub Actions. The frozen 25 September 2026
 version lives in `public/archive/2026-09-25/`; leave it intact.

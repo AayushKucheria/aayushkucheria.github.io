@@ -33,3 +33,15 @@ requested turning it into a permanent source editor; this authorizes proceeding.
 
 - Source, real browser, and static output checks pass. The README documents how
   to reopen the editor and recover drafts. The writing room is absent from builds.
+
+
+## Expandable sections
+
+- Passed renderer tests: leading prose, heading hierarchy, formatted/safe labels, empty headings.
+- Passed browser editing: Markdown headings, direct edits, save/reopen, nested headings,
+  and read-mode toggles; fixed newsletter remains intact.
+- Passed production browser: dummy starter sections, independent expansion, keyboard,
+  rapid clicks, dashed/color texture, contact form, reduced motion, small phones,
+  and native behavior with JavaScript disabled.
+- Passed build: shared saved source, no writing room/API in static output.
+- Commit and push the approved design to main; verify the Pages deployment.

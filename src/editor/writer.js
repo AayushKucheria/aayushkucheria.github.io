@@ -32,7 +32,7 @@ function syncTools() {
     $("restore").hidden = !recovery.restore;
     $("retry").hidden = !recovery.retry;
   }
-  ["link", "bold", "nest", "outdent"].forEach(id => $(id).disabled = reading || !!active.plain);
+  ["link", "bold", "heading", "nest", "outdent"].forEach(id => $(id).disabled = reading || !!active.plain);
   editor.disabled = reading || !active.ready;
   $("format-help").hidden = !!active.plain;
 }
@@ -62,6 +62,7 @@ function readElement(state) {
 function prepareFrame() {
   const doc = frame.contentDocument;
   if (!doc) return;
+  if (!reading) doc.querySelectorAll(".fold").forEach(fold => { fold.open = true; });
   if (!doc.getElementById("writer-style")) {
     const style = doc.createElement("style");
     style.id = "writer-style";
@@ -211,11 +212,17 @@ function richCommand(command, value) {
   doc.execCommand(command, false, value);
   changed(readElement(active), false);
 }
-["link", "bold", "nest", "outdent"].forEach(id => {
+["link", "bold", "heading", "nest", "outdent"].forEach(id => {
   $(id).addEventListener("mousedown", e => e.preventDefault());
   $(id).onclick = () => {
     if (workspace.classList.contains("markdown")) {
       if (id === "nest" || id === "outdent") return indentMarkdown(id === "outdent");
+      if (id === "heading") {
+        const start = editor.value.lastIndexOf("\n", editor.selectionStart - 1) + 1;
+        let end = editor.value.indexOf("\n", editor.selectionEnd);
+        if (end < 0) end = editor.value.length;
+        return markdownInsert("## " + editor.value.slice(start, end).replace(/^(?:#{1,6}\s+|[-*+]\s+)/, ""), start, end);
+      }
       const start = editor.selectionStart;
       const text = editor.value.slice(start, editor.selectionEnd) || (id === "link" ? "link text" : "bold text");
       if (id === "bold") {
@@ -225,6 +232,26 @@ function richCommand(command, value) {
         markdownInsert("[" + text + "](https://example.com)");
         editor.setSelectionRange(start + text.length + 3, start + text.length + 3 + "https://example.com".length);
       }
+    } else if (id === "heading") {
+      const doc = frame.contentDocument, selection = frame.contentWindow.getSelection();
+      const anchor = selection.anchorNode?.nodeType === 1 ? selection.anchorNode : selection.anchorNode?.parentElement;
+      const item = element()?.contains(anchor) ? anchor?.closest("li") : null;
+      if (item) {
+        // Promote this bullet out of its list, preserving items on either side.
+        const list = item.parentElement, after = list.cloneNode(false);
+        while (item.nextSibling) after.append(item.nextSibling);
+        const heading = doc.createElement("h2"), fragment = doc.createDocumentFragment();
+        const children = [...item.childNodes];
+        children.filter(node => !["UL", "OL"].includes(node.nodeName)).forEach(node => heading.append(node));
+        fragment.append(heading);
+        children.filter(node => ["UL", "OL"].includes(node.nodeName)).forEach(node => fragment.append(node));
+        if (after.children.length) fragment.append(after);
+        list.after(fragment);
+        item.remove();
+        if (!list.children.length) list.remove();
+        changed(readElement(active), false);
+      } else richCommand("formatBlock", "h2");
+      render(active);
     } else if (id === "link") {
       const selection = frame.contentWindow.getSelection();
       let range = selection.rangeCount ? selection.getRangeAt(0).cloneRange() : null;

@@ -1,0 +1,33 @@
+/* Shared by the website and every live /write render. */
+.fold { --ink: #566444; --wash: #80916624; margin: 3px 0; }
+.fold:nth-of-type(3n + 2) { --ink: #855648; --wash: #af756424; }
+.fold:nth-of-type(3n) { --ink: #54677a; --wash: #708da724; }
+.intro > .fold:first-of-type { margin-top: 32px; }
+.fold > summary { display: flex; align-items: center; gap: 11px; min-height: 48px; padding: 9px 8px 9px 0; cursor: pointer; list-style: none; border-radius: 3px; -webkit-tap-highlight-color: transparent; }
+.fold > summary::-webkit-details-marker { display: none; }
+.fold > summary::before { content: ''; width: 0; height: 0; border-top: 4px solid transparent; border-bottom: 4px solid transparent; border-left: 6px solid var(--ink); margin: 0 3px; flex-shrink: 0; transition: transform 240ms ease; }
+.fold[open] > summary::before { transform: rotate(90deg); }
+.fold > summary > .toggle-label {
+  font: 600 1.15rem/1.5 'Shantell Sans', cursive;
+  letter-spacing: normal; transform: none; margin: 0 0 0 -10px; padding: 3px 10px;
+  color: var(--ink); border-radius: 3px; overflow-wrap: anywhere; min-width: 0;
+  background: repeating-linear-gradient(0deg, transparent 0 3px, #66563a09 3px 4px), repeating-linear-gradient(90deg, transparent 0 4px, #66563a06 4px 5px), var(--wash);
+  box-shadow: 1px 2px 3px #00000009;
+  transition: background-color 180ms ease;
+}
+.fold > summary:hover > .toggle-label, .fold[open] > summary > .toggle-label {
+  background: repeating-linear-gradient(0deg, transparent 0 3px, #66563a09 3px 4px), repeating-linear-gradient(90deg, transparent 0 4px, #66563a06 4px 5px), color-mix(in srgb, var(--ink) 18%, transparent);
+}
+.fold > summary:focus-visible { outline: 2px solid #724038; outline-offset: 4px; }
+.fold-panel { overflow: hidden; }
+.fold-body { border-left: 1px dashed color-mix(in srgb, var(--ink) 50%, transparent); margin-left: 5px; padding: 4px 4px 20px 18px; color: #5a4830; line-height: 1.65; }
+.fold-body > .fold { margin-left: 0; }
+.fold-body img { max-width: 100%; }
+@media (max-width: 480px) {
+  .fold > summary { min-height: 52px; }
+  .fold .fold > summary > .toggle-label { font-size: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .fold > summary::before, .fold > summary > .toggle-label { transition: none; }
+}

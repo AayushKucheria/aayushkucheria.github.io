@@ -32,3 +32,21 @@ same-origin write requests. Render Markdown through one shared renderer.
   route injection and the `astro:server:setup` middleware hook.
 
 No unverified deployment or server assumptions are required.
+
+
+## Expandable sections — approved 8 October 2026
+
+Use the colored stitches prototype: muted textured heading washes, rotating
+triangles, matching dashed margins, whole-heading tap targets, smooth expansion,
+and reduced motion. Keep the introduction visible. Sections open independently;
+use native details as the fallback when JavaScript is disabled.
+
+Markdown headings in any editable prose region receive this treatment from the
+shared renderer. Deeper headings nest under the preceding shallower heading.
+The writing room keeps all sections open while writing, preserves headings when
+converting direct edits back to Markdown, offers a Heading button, and enables
+toggles in read mode. The contact title is also editable; its fixed newsletter
+stays outside editable regions. Social and coffee icons remain visible.
+
+Starter sections are work, steal these ideas, reading, now, and community. Their
+bodies contain only `abcd` / `efgh`; previous prototype copy is not published.

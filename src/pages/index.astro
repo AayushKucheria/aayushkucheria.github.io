@@ -1,5 +1,6 @@
 ---
 import { readFile } from 'node:fs/promises';
+import '../styles/toggles.css';
 import { renderMarkdown } from '../editor/content.mjs';
 import sourceCopy from '../content/home.md?raw';
 import Contact from '../components/Contact.astro';
@@ -47,6 +48,8 @@ const location = (import.meta.env.DEV
     main { width: min(100% - 2.5rem, 680px); margin: 0 auto; padding: 48px 0 96px; }
     header { position: relative; }
     header { padding-bottom: 48px; }
+    .nameplate { width: fit-content; max-width: 100%; }
+    .nameplate .location { display: block; width: fit-content; margin-left: auto; }
     h1 { font-size: clamp(2.6rem, 7vw, 4rem); line-height: 1; letter-spacing: -0.04em; margin: 24px 0 12px; transform: rotate(-1deg); }
     .photos { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; }
     .photos img { position: relative; width: 80px; height: 98px; object-fit: cover; background: #f2ede4; padding: 5px 5px 15px; box-shadow: 2px 4px 12px #0002; transition: transform .15s, box-shadow .15s; }
@@ -89,11 +92,14 @@ const location = (import.meta.env.DEV
         <img src="/pics/amazon.jpg" alt="" style="object-position: center 10%" />
         <img src="/pics/stupid_image.jpg" alt="" style="object-position: center 15%" />
       </div>
-      <h1 class="site-name" data-content-section="name">{name}</h1>
-      <span class="location" data-content-section="location">{location}</span>
+      <div class="nameplate">
+        <h1 class="site-name" data-content-section="name">{name}</h1>
+        <span class="location" data-content-section="location">{location}</span>
+      </div>
       <div class="intro" data-content-section="intro" set:html={introHtml} />
     </header>
     <Contact />
   </main>
+  <script>import '../toggles.js';</script>
 </body>
 </html>

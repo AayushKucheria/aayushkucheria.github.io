@@ -2,8 +2,8 @@ import { readFile, writeFile, rename, rm } from "node:fs/promises";
 import { createHash, randomUUID } from "node:crypto";
 import { marked } from "marked";
 import sanitizeHtml from "sanitize-html";
-export function renderMarkdown(markdown) {
-  return sanitizeHtml(marked.parse(markdown), {
+function cleanHtml(html) {
+  return sanitizeHtml(html, {
     allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img"]),
     allowedAttributes: {
       a: ["href", "title", "target", "rel"],
@@ -18,6 +18,30 @@ export function renderMarkdown(markdown) {
       }),
     },
   });
+}
+export function renderMarkdown(markdown) {
+  const tokens = marked.lexer(markdown);
+  const levels = [];
+  let html = "", body = [];
+  const flush = () => {
+    body.links = tokens.links;
+    html += cleanHtml(marked.parser(body));
+    body = [];
+  };
+  const close = () => { html += "</div></div></details>\n"; levels.pop(); };
+  for (const token of tokens) {
+    if (token.type !== "heading") { body.push(token); continue; }
+    flush();
+    while (levels.length && levels.at(-1) >= token.depth) close();
+    const label = token.text
+      ? cleanHtml(marked.Parser.parseInline(token.tokens))
+      : "Untitled";
+    html += `<details class="fold"><summary><h${token.depth} class="toggle-label">${label}</h${token.depth}></summary><div class="fold-panel"><div class="fold-body">`;
+    levels.push(token.depth);
+  }
+  flush();
+  while (levels.length) close();
+  return html;
 }
 export function createContentStore(path) {
   let queue = Promise.resolve();

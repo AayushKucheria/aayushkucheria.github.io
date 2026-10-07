@@ -1,17 +1,19 @@
 # Handoff — 2026-10-08
 
+## Completed
+
+The approved colored stitches design is implemented. The heading renderer is
+shared with `/write`; nested headings and direct edits preserve Markdown.
+All five starter section bodies contain only `abcd` / `efgh`. Contact title,
+links, name, location, and social destinations remain editable. The fixed
+newsletter is inside the contact toggle; social/coffee icons remain visible.
+
 ## Known issues / loose ends
 
-- The contact footer and `/write` support are complete. New content must
-  always include editor support; this standing rule is in `AGENTS.md`.
-- Separate design work remains in the working tree: nameplate positioning
-  and `prototypes/toggle-*.html`. Preserve those edits for that design session.
-- The existing Astro dependency tree has three npm audit advisories affecting
-  `http-cache-semantics`, `sharp`, and `source-map-js`. They were observed during
-  dependency installation; dependency upgrades were outside the writing editor
-  change. The added editor dependencies were not reported as vulnerable.
+Previously recorded dependency advisories affecting `http-cache-semantics`,
+`sharp`, and `source-map-js` remain outside this design change.
 
 ## Next logical step
 
-Continue the separate design review; reopen the writing room with
-`npm run dev` and visit `/write` when editing copy.
+Replace dummy section content using `/write` when ready; `##` and `###` headings
+receive the toggle styling automatically.

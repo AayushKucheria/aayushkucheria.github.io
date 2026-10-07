@@ -10,7 +10,7 @@ icons["buymeacoffee.com"] = "M4 7h13v2h2a3 3 0 0 1 0 6h-2a6 6 0 0 1-6 5h-1a6 6 0
 const genericIcon = "M14 3h7v7h-2V6.41l-9.3 9.3-1.41-1.42L17.59 5H14V3ZM5 5h6v2H5v12h12v-6h2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z";
 
 export function renderSection(section, markdown) {
-  if (section === "name" || section === "location") {
+  if (section === "name" || section === "location" || section === "contact-heading") {
     return markdown.trim().replace(/[&<>"']/g, character => ({
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
     })[character]);
