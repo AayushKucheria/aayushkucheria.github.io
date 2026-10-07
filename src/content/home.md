@@ -21,26 +21,22 @@
 
 -   These are some of my favorite books
     
-
--   Becoming Animal
-    
--   The Dream Machine
-    
--   Love and Will
-    
--   HPMOR
-    
--   The Philosopher of Palo Alto 
-    
-
+    -   Becoming Animal
+        
+    -   The Dream Machine
+        
+    -   Love and Will
+        
+    -   HPMOR
+        
+    -   The Philosopher of Palo Alto
+        
 -   And these two LW sequences
     
-
--   Otherness and control in the age of AGI (Carlsmith)
-    
--   Live Theory (Sahil)
-    
-
+    -   Otherness and control in the age of AGI (Carlsmith)
+        
+    -   Live Theory (Sahil)
+        
 -   Follow me on goodreads! I'm reading fantasy/sf nowadays
     
 
