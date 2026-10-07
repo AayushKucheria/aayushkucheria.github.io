@@ -6,7 +6,9 @@ Built with [Astro](https://astro.build). The custom domain is managed through Ra
 
 ## Project layout
 
-- `src/pages/index.astro` is the current site's source.
+- `src/pages/index.astro` is the page template (photos, name, location, styling).
+- `src/content/home.md` is the introduction's Markdown source, shared with the writing room.
+- `src/editor/` contains the permanent local writing room and its save API.
 - `public/pics/` holds the photos used by the current page.
 - `public/archive/2026-09-25/` is a self-contained snapshot of the older site, including its own images, styles, and script. Keep those files together so the archived URL continues to work.
 - `public/CNAME` and the favicons are copied to the site root.
@@ -23,3 +25,38 @@ npm install
 npm run dev      # localhost:4321
 npm run build    # builds to ./dist
 ```
+
+## Write directly on the website
+
+1. Run `npm run dev`.
+2. Open [the writing room](http://localhost:4321/write).
+3. Click the introduction and write. Enter adds bullets; Tab nests them and
+   Shift+Tab moves them out. Select text and use **Add link** or **Bold**.
+4. Use **Markdown view** for links, formatting and source text beside the page.
+
+Edits save automatically to `src/content/home.md` after a short pause.
+**Saved to website** means the file has been written. The preview uses the
+actual website in an iframe, so its photos, font and layout stay in sync.
+The next static build renders that same Markdown. Publishing uses the existing
+GitHub Pages workflow when changes are pushed to `main`.
+
+The writing room and save API run only in the local dev server. They are absent
+from static builds. **Open website** opens the normal page; refresh it to see
+saved changes in another tab. `npm run preview` previews a build and does not
+include the writing room.
+
+If a save fails, the draft stays in the browser. Retry saving or download the
+draft. If the source changed elsewhere, download the draft before choosing
+**Reload source**, which replaces the unsaved text with the file's current text.
+An unsaved draft from a previous session can be restored when reopening `/write`.
+
+The self-contained HTML files in `prototypes/` are earlier experiments. Use
+`/write` for edits that save into the project.
+
+## Checks
+
+- `npm test` — Markdown rendering and source save behavior.
+- `npm run test:browser` — real browser edits against an isolated project copy,
+  including saving, retry, conflicts and links. Install the test browser once
+  with `npx playwright install chromium` if it is missing.
+- `npm run test:build` — static output renders the source and excludes the editor.

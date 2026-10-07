@@ -1,0 +1,26 @@
+---
+---
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Website writing room</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#ddd5be;color:#352d22;font-family:system-ui,sans-serif}
+.tools{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 20px;background:#f8f4e9;border-bottom:1px solid #b7a98b}
+.tools strong{font-size:14px}.tools small{font-size:12px;margin-right:auto}button,.tools a{font:13px system-ui;border:1px solid #b7a98b;border-radius:6px;background:transparent;color:inherit;padding:8px 10px;cursor:pointer;text-decoration:none}button:disabled{opacity:.5;cursor:default}button[aria-pressed=true]{background:#ded3ba}
+.workspace{height:calc(100dvh - 62px);display:grid;grid-template-columns:1fr}.workspace.markdown{grid-template-columns:minmax(300px,420px) minmax(0,1fr)}
+.editor{display:none;padding:24px;background:#f8f4e9;overflow:auto;border-right:1px solid #b7a98b}.markdown .editor{display:block}label{display:block;font-weight:600;font-size:18px;margin-bottom:12px}.format-tools{display:flex;gap:8px;margin-bottom:12px}textarea{width:100%;min-height:65vh;resize:vertical;border:1px solid #b7a98b;border-radius:6px;padding:16px;background:#fffdf7;color:#352d22;font:15px/1.7 ui-monospace,SFMono-Regular,monospace;tab-size:2}textarea:focus{outline:2px solid #8c7655;outline-offset:2px}.editor p{font-size:13px;line-height:1.6}
+iframe{border:0;width:100%;height:100%;min-width:0;background:#ddd5be}.phone iframe{max-width:390px;justify-self:center;box-shadow:0 0 0 1px #b7a98b}.recovery{padding:12px 20px;background:#f0e8d4;display:flex;flex-wrap:wrap;gap:10px;align-items:center}.recovery[hidden]{display:none}.recovery span{margin-right:auto}
+@media(max-width:800px){.workspace.markdown{display:block;height:auto}.markdown .editor{border-right:0;border-bottom:1px solid #b7a98b}.markdown iframe{height:85vh}textarea{min-height:300px}.tools small{order:2;flex-basis:100%}}
+</style>
+</head>
+<body>
+<div class="tools"><strong>Website writing room</strong><small id="status" role="status">Opening your website…</small><button id="mode" aria-pressed="false">Markdown view</button><button id="link">Add link</button><button id="bold">Bold</button><button id="nest">Nest →</button><button id="outdent">← Move out</button><button id="read" aria-pressed="false">Read the page</button><button id="phone" aria-pressed="false">Phone width</button><a href="/" target="_blank" rel="noopener">Open website</a></div>
+<div id="recovery" class="recovery" hidden><span id="recovery-message"></span><button id="retry">Retry save</button><button id="restore">Restore draft</button><button id="reload">Reload source</button><button id="download">Download draft</button></div>
+<div id="workspace" class="workspace"><aside class="editor"><label for="markdown">Your website text</label><textarea id="markdown" spellcheck="true"></textarea><p>Links: <code>[words](https://example.com)</code><br>Bullets: <code>- thought</code> · Tab to nest, Shift+Tab to move out.<br><code>**bold**</code> · <code>*italic*</code></p><p id="source-note">Edits save automatically to your website.</p></aside><iframe id="site" src="/" title="Your website — edit the introduction directly"></iframe></div>
+<script>
+import './writer.js';
+</script>
+</body>
+</html>

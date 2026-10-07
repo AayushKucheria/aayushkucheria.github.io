@@ -1,16 +1,23 @@
 ---
+import { readFile } from 'node:fs/promises';
+import { renderMarkdown } from '../editor/content.mjs';
+import sourceCopy from '../content/home.md?raw';
+const markdown = import.meta.env.DEV
+  ? await readFile(new URL('../content/home.md', import.meta.url), 'utf8')
+  : sourceCopy;
+const introHtml = renderMarkdown(markdown);
 ---
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Aayush Kucheria — AI researcher and interface thinker." />
+  <meta name="description" content="Aayush Kucheria — home-cooked software and new kinds of digital interfaces." />
   <title>Aayush Kucheria</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet" />
-  <style>
+  <style is:global>
     :root {
       font-family: 'Shantell Sans', cursive;
       color: #2a2218;
@@ -29,45 +36,25 @@
       mix-blend-mode: multiply;
     }
     main { width: min(100% - 2.5rem, 680px); margin: 0 auto; padding: 48px 0 96px; }
-    header, section, footer { position: relative; }
+    header { position: relative; }
     header { padding-bottom: 48px; }
     h1 { font-size: clamp(2.6rem, 7vw, 4rem); line-height: 1; letter-spacing: -0.04em; margin: 24px 0 12px; transform: rotate(-1deg); }
-    h2 { font-size: 1.35rem; font-style: italic; margin: 0 0 22px; text-decoration: underline dotted #b09060; text-underline-offset: 7px; }
-    h3 { font-size: 1rem; margin: 0 0 6px; line-height: 1.35; }
-    p { line-height: 1.65; margin: 0 0 12px; color: #5a4830; }
-    a { color: inherit; text-decoration-color: #b09060; text-underline-offset: 3px; overflow-wrap: anywhere; }
-    a:hover { color: #724038; }
-    section, footer { padding: 38px 0; }
     .photos { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; }
     .photos img { width: 80px; height: 98px; object-fit: cover; background: #f2ede4; padding: 5px 5px 15px; box-shadow: 2px 4px 12px #0002; }
     .photos img:nth-child(odd) { transform: rotate(-3deg); }
     .photos img:nth-child(even) { transform: rotate(3deg); }
     .location { display: inline-block; padding: 6px 10px; margin: 0 0 16px; background: #f0e8d4; box-shadow: 1px 2px 7px #0002; font-size: .78rem; transform: rotate(2deg); }
-    .intro { font-size: 1rem; max-width: 60ch; }
-    article { background: #cec3ac; padding: 16px 20px; margin: 0 0 14px; box-shadow: 2px 3px 12px #00000016; }
-    article:nth-of-type(odd) { transform: rotate(-.3deg); }
-    article:nth-of-type(even) { transform: rotate(.3deg); }
-    article p:last-child { margin-bottom: 0; }
-    .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
-    .meta span { border: 1px solid #5a483066; padding: 2px 8px; font-size: .7rem; color: #5a4830; }
-    .question { padding-left: 1.5em; text-indent: -1.5em; }
-    .question span { color: #7a6a50; margin-right: .5em; }
-    .coda { font-style: italic; }
-    .plain-list { list-style: none; padding: 0; margin: 0; }
-    .plain-list li { padding: 8px 0; line-height: 1.5; }
-    .book-group { margin: 0 0 26px; }
-    .book-group h3 { color: #5a4830; font-size: .85rem; letter-spacing: .04em; margin-bottom: 8px; }
-    .book-group li { padding: 5px 0; }
-    footer { padding-bottom: 0; }
-    .contact-link { display: block; width: fit-content; margin: 0 0 10px; }
-    .contact-link.featured { background: #e6bfad; padding: 9px 13px; box-shadow: 2px 3px 10px #0002; font-weight: 700; text-decoration: none; }
-    .contact-link.coffee { background: #e6d28b; }
-    .socials { display: flex; flex-wrap: wrap; gap: 16px; margin: 18px 0 24px; }
-    .newsletter label { display: block; font-size: .85rem; margin-bottom: 8px; }
-    .newsletter input, .newsletter button { font: inherit; padding: 8px 10px; border: 1px solid #b09060; }
-    .newsletter input { width: min(100%, 280px); background: #faf7f0; }
-    .newsletter button { background: #cdbf9f; cursor: pointer; }
-    .newsletter small { display: block; margin-top: 6px; color: #7a6a50; }
+    .intro { font-size: 1rem; max-width: 60ch; color: #5a4830; }
+    .intro ul { padding-left: 1.4em; margin: 0; }
+    .intro li { line-height: 1.65; padding: 4px 0; overflow-wrap: anywhere; }
+    .intro li > ul { margin-top: 4px; }
+    .intro p { line-height: 1.65; margin: 0 0 12px; }
+    .intro a { color: inherit; text-decoration-color: #b09060; text-underline-offset: 3px; overflow-wrap: anywhere; }
+    .intro a:hover { color: #724038; }
+    .intro ol { padding-left: 1.6em; }
+    .intro blockquote { border-left: 2px solid #b09060; margin-left: 0; padding-left: 16px; }
+    .intro pre { overflow-x: auto; background: #f0e8d4; padding: 12px; }
+    .intro img { max-width: 100%; }
   </style>
 </head>
 <body>
@@ -81,114 +68,8 @@
       </div>
       <h1>Aayush Kucheria</h1>
       <span class="location">Based in Helsinki</span>
-      <p class="intro">Researcher and interface thinker. I care about AI being good for the people it touches — especially where a human and a model actually meet.</p>
+      <div class="intro" set:html={introHtml} />
     </header>
-
-    <section id="work" aria-labelledby="work-heading">
-      <h2 id="work-heading">work</h2>
-      <article>
-        <h3><a href="https://groundless.ai" target="_blank" rel="noopener">Groundless Alignment →</a></h3>
-        <p>Design × alignment. Interfaces as alignment surfaces — making AI legible, contestable, humane. Fellowship to full-time over 1.5 years.</p>
-        <div class="meta"><span>AISC 2026 team lead</span><span>guest lecturer, Gabriel Weil's AI &amp; Law '26</span></div>
-      </article>
-      <article>
-        <h3>PracticeSpace — co-founder</h3>
-        <p>LLM simulations of therapy patients for trainees. Founded with NHS CBT practitioners.</p>
-      </article>
-      <article>
-        <h3>Machine Learning</h3>
-        <p>BSc + MSc in machine learning at Aalto University, Finland.</p>
-        <div class="meta"><span>Latent ethical landscape of LLMs</span><span>Gaussian Modelling, University of Helsinki</span><span>talk: transformers</span></div>
-      </article>
-      <article>
-        <h3>ACL Workshop 2025</h3>
-        <p>adding soon</p>
-      </article>
-    </section>
-
-    <section id="about" aria-labelledby="about-heading">
-      <h2 id="about-heading">about</h2>
-      <p>I care about AI being good for the people it touches. Two questions hold most of my attention:</p>
-      <p class="question"><span>1</span> What's in the latent space, and can we learn to read it and reach in?</p>
-      <p class="question"><span>2</span> What happens where a human and an AI meet, and how do we design that interface?</p>
-      <p class="coda">Both questions point to something far more complex, subtle, and fertile than first appears, rewarding a kind of close attention I'm drawn towards.</p>
-    </section>
-
-    <section id="ideas" aria-labelledby="ideas-heading">
-      <h2 id="ideas-heading">steal these ideas</h2>
-      <p>Ideas I'd love to see exist but won't get to. Take any of them, no credit needed.</p>
-      <ul class="plain-list">
-        <li>A reader that shows the latent space of what you're reading</li>
-        <li>Therapy-sim for hard conversations you're about to have</li>
-        <li>An interface to "reach into" a model's reasoning and nudge it</li>
-        <li>A personal site that's a place, not a poster</li>
-        <li>Margin notes that argue back</li>
-        <li>A bookshelf that remembers why you loved each book</li>
-      </ul>
-    </section>
-
-    <section id="reading" aria-labelledby="reading-heading">
-      <h2 id="reading-heading">reading</h2>
-      <div class="book-group">
-        <h3>machines &amp; minds</h3>
-        <ul class="plain-list">
-          <li><a href="https://www.goodreads.com/book/show/722412.The_Dream_Machine" target="_blank" rel="noopener">The Dream Machine — M. Mitchell Waldrop</a></li>
-          <li><a href="https://www.goodreads.com/book/show/62707933-the-philosopher-of-palo-alto" target="_blank" rel="noopener">The Philosopher of Palo Alto — John Tinnell</a></li>
-          <li><a href="https://www.goodreads.com/book/show/703532.Mindstorms" target="_blank" rel="noopener">Mindstorms — Seymour Papert</a></li>
-        </ul>
-      </div>
-      <div class="book-group">
-        <h3>embodiment</h3>
-        <ul class="plain-list">
-          <li><a href="https://www.goodreads.com/book/show/48582.The_Spell_of_the_Sensuous" target="_blank" rel="noopener">The Spell of the Sensuous — David Abram</a></li>
-          <li><a href="https://www.goodreads.com/book/show/7822953-becoming-animal" target="_blank" rel="noopener">Becoming Animal — David Abram</a></li>
-          <li><a href="https://www.goodreads.com/book/show/1373530.Love_and_Will" target="_blank" rel="noopener">Love and Will — Rollo May</a></li>
-        </ul>
-      </div>
-      <div class="book-group">
-        <h3>AI futures</h3>
-        <ul class="plain-list">
-          <li><a href="https://www.goodreads.com/book/show/50485582-the-precipice" target="_blank" rel="noopener">The Precipice — Toby Ord</a></li>
-          <li><a href="https://www.lesswrong.com/s/BbAvHtorCZqp97X9W" target="_blank" rel="noopener">Otherness and Control in the Age of AGI — Joe Carlsmith</a></li>
-          <li><a href="https://www.lesswrong.com/s/aMz2JMvgXrLBkq4h3" target="_blank" rel="noopener">Live Theory Sequence — Sahil</a></li>
-          <li><a href="https://www.goodreads.com/book/show/50489349-the-alignment-problem" target="_blank" rel="noopener">The Alignment Problem — Brian Christian</a></li>
-        </ul>
-      </div>
-    </section>
-
-    <section id="now" aria-labelledby="now-heading">
-      <h2 id="now-heading">now</h2>
-      <p>Updated June 2026, from Helsinki.</p>
-      <article><h3>Reading</h3><p>Joe Carlsmith's "Otherness and Control in the Age of AGI."</p></article>
-      <article><h3>Building</h3><p>Rethinking this very site — from a single-screen poster into a place with corners.</p></article>
-      <article><h3>Leading</h3><p>The AISC 2026 team.</p></article>
-    </section>
-
-    <section id="community" aria-labelledby="community-heading">
-      <h2 id="community-heading">community</h2>
-      <ul class="plain-list">
-        <li>co-founded the EA chapter at Aalto</li>
-        <li>mentored EA + AI safety groups via CEA</li>
-      </ul>
-    </section>
-
-    <footer id="contact">
-      <h2>contact</h2>
-      <a class="contact-link featured" href="https://cal.com/aayushk/chat" target="_blank" rel="noopener">let's chat</a>
-      <a class="contact-link featured coffee" href="https://buymeacoffee.com/aayushkucheria" target="_blank" rel="noopener">buy me a coffee</a>
-      <a class="contact-link" href="mailto:aayush.kucheria@gmail.com">aayush.kucheria@gmail.com</a>
-      <div class="socials">
-        <a href="https://github.com/AayushKucheria" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://linkedin.com/in/aayushkucheria" target="_blank" rel="noopener">LinkedIn</a>
-        <a href="https://twitter.com/aay17ush" target="_blank" rel="noopener">X</a>
-      </div>
-      <form action="https://buttondown.com/api/emails/embed-subscribe/aayushk" method="post" class="newsletter">
-        <label for="bd-email">for occasional updates</label>
-        <input type="email" name="email" id="bd-email" placeholder="you@email.com" required />
-        <button type="submit">subscribe</button>
-        <small><a href="https://buttondown.com/refer/aayushk" target="_blank" rel="noopener">Powered by Buttondown.</a></small>
-      </form>
-    </footer>
   </main>
 </body>
 </html>
