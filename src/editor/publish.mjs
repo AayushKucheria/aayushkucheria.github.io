@@ -37,13 +37,19 @@ export function createPublisher({ root, files = Object.values(sections).map(s =>
       allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
       allowedAttributes: { ...sanitizeHtml.defaults.allowedAttributes, a: ['href', 'title', 'target', 'rel'], img: ['src', 'alt', 'title'] },
     }).replace(/>\s+</g, '><').replace(/\s+/g, ' ').trim();
-    const expected = Object.entries(sections).map(([id, section]) => normalize(renderSection(id, job.snapshot[`src/content/${section.file}`])));
+    const pages = [...new Set(Object.values(sections).map(section => section.page || '/'))];
     for (let attempt = 0; attempt < 20; attempt++) {
-      const response = await fetchLive(`https://aayush.world/?publish=${job.commit}`, { cache: 'no-store', signal: AbortSignal.timeout(15000) });
-      if (response.ok) {
+      let verified = true;
+      for (const page of pages) {
+        const expected = Object.entries(sections)
+          .filter(([, section]) => section.shared || (section.page || '/') === page)
+          .map(([id, section]) => normalize(renderSection(id, job.snapshot[`src/content/${section.file}`])));
+        const response = await fetchLive(`https://aayush.world${page}?publish=${job.commit}`, { cache: 'no-store', signal: AbortSignal.timeout(15000) });
+        if (!response.ok) { verified = false; break; }
         const actual = normalize(await response.text());
-        if (expected.every(text => actual.includes(text))) return;
+        if (!expected.every(text => actual.includes(text))) { verified = false; break; }
       }
+      if (verified) return;
       await pause(3000);
     }
     throw new Error('Deployment finished, but the updated page could not be verified yet. Try Publish again to check.');

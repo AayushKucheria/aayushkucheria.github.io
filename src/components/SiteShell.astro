@@ -1,0 +1,80 @@
+---
+import '../styles/toggles.css';
+import Editable from './Editable.astro';
+const { name, wide = false } = Astro.props;
+---
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="Aayush Kucheria — home-cooked software and new kinds of digital interfaces." />
+<title>{name}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400&display=swap" rel="stylesheet" />
+  <style is:global>
+    :root {
+      font-family: 'Shantell Sans', cursive;
+      color: #2a2218;
+      background: #ddd5be;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; min-width: 0; }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(0deg, transparent 0 2px, #281c0a0c 2px 3px),
+                  repeating-linear-gradient(90deg, transparent 0 2px, #281c0a0a 2px 3px);
+      mix-blend-mode: multiply;
+    }
+    main.wide { width: min(100% - 2.5rem, 1040px); }
+    main { width: min(100% - 2.5rem, 680px); margin: 0 auto; padding: 48px 0 96px; }
+    header { position: relative; }
+    header { padding-bottom: 48px; }
+    .nameplate { width: fit-content; max-width: 100%; }
+    .nameplate .location { display: block; width: fit-content; margin-left: auto; }
+    h1 { font-size: clamp(2.6rem, 7vw, 4rem); line-height: 1; letter-spacing: -0.04em; margin: 24px 0 12px; transform: rotate(-1deg); }
+    .photos { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; }
+    .photos img { position: relative; width: 80px; height: 98px; object-fit: cover; background: #f2ede4; padding: 5px 5px 15px; box-shadow: 2px 4px 12px #0002; transition: transform .15s, box-shadow .15s; }
+    .photos img:nth-child(odd) { transform: rotate(-3deg); }
+    .photos img:nth-child(even) { transform: rotate(3deg); }
+    .photos img:hover { transform: scale(1.35) translateY(8px); box-shadow: 4px 8px 24px #0005; z-index: 1; }
+    .location { position: relative; display: inline-block; padding: 12px 10px 6px; margin: 20px 0 16px; background: #f0e8d4; border-radius: 3px; box-shadow: 1px 2px 7px #0002; font-size: .78rem; transform: rotate(2deg); transform-origin: center -20px; transition: transform .45s ease-out; }
+    .location::before { content: ''; position: absolute; width: 1.5px; height: 26px; left: 50%; top: -20px; background: linear-gradient(to bottom, #9a7248, #c0a878); opacity: .7; }
+    .location::after { content: ''; position: absolute; top: 4px; left: 50%; transform: translateX(-50%); width: 7px; height: 7px; border-radius: 50%; background: #ddd5be; border: 1px solid #c0a070; }
+    .location:hover { animation: location-swing 1.75s ease-in-out infinite; }
+    @keyframes location-swing {
+      0%, 100% { transform: rotate(-2deg); }
+      50% { transform: rotate(6deg); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .photos img, .location { transition: none; }
+      .photos img:hover { transform: rotate(-3deg); }
+      .photos img:nth-child(even):hover { transform: rotate(3deg); }
+      .location:hover { animation: none; }
+    }
+    .intro { font-size: 1rem; max-width: 60ch; color: #5a4830; }
+    .intro ul { padding-left: 1.4em; margin: 0; }
+    .intro li { line-height: 1.65; padding: 4px 0; overflow-wrap: anywhere; }
+    .intro li > ul { margin-top: 4px; }
+    .intro p { line-height: 1.65; margin: 0 0 12px; }
+    .intro a { color: inherit; text-decoration-color: #b09060; text-underline-offset: 3px; overflow-wrap: anywhere; }
+    .intro a:hover { color: #724038; }
+    .intro ol { padding-left: 1.6em; }
+    .intro blockquote { border-left: 2px solid #b09060; margin-left: 0; padding-left: 16px; }
+    .intro pre { overflow-x: auto; background: #f0e8d4; padding: 12px; }
+    .intro img { max-width: 100%; }
+  </style>
+<style is:global>
+.site-nav { margin: 0 0 28px; color: #5a4830; font-size: .95rem; }
+.site-nav p { margin: 0; display: flex; align-items: center; gap: 20px; }
+.site-nav a { color: inherit; text-underline-offset: 5px; text-decoration-style: dashed; text-decoration-color: #b09060; }
+.site-nav a:hover { color: #724038; }
+.site-nav a:focus-visible { outline: 2px solid #724038; outline-offset: 5px; }
+</style>
+</head><body><main class:list={{ wide }}>
+<nav class="site-nav" aria-label="Main"><Editable section="navigation" /></nav>
+<slot />
+</main><script>import '../toggles.js';</script></body></html>

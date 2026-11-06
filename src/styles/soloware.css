@@ -1,0 +1,15 @@
+/* Cloth, paper, ink and stitches from the homepage. */
+.soloware-intro h1 { margin: 32px 0 22px; }
+.project-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin: 36px 0 48px; }
+.project-card { --ink: #566444; --wash: #80916624; min-width: 0; padding: 16px; border-top: 1px dashed color-mix(in srgb, var(--ink) 50%, transparent); background: #f0e8d4; border-radius: 3px; box-shadow: 2px 4px 12px #00000012; }
+.project-card:nth-child(3n + 2) { --ink: #855648; --wash: #af756424; }
+.project-card:nth-child(3n) { --ink: #54677a; --wash: #708da724; }
+.project-copy { padding: 14px 4px 2px; }
+.project-copy h2 { font-size: 1.2rem; line-height: 1.4; color: var(--ink); margin: 0 0 20px; padding: 3px 8px; background: var(--wash); width: fit-content; border-radius: 3px; overflow-wrap: anywhere; }
+.project-copy p { font-size: .86rem; }
+.project-copy p:last-child { border-top: 1px dashed color-mix(in srgb, var(--ink) 40%, transparent); padding-top: 12px; margin: 16px 0 4px; }
+.project-copy img { max-width: 100%; }
+.soloware-about { max-width: 680px; }
+.soloware-about:empty { display: none; }
+@media (max-width: 850px) { .project-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 540px) { .project-grid { grid-template-columns: minmax(0, 1fr); gap: 24px; } .project-copy p { font-size: .95rem; } }

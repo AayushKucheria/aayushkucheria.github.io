@@ -1,0 +1,23 @@
+---
+import { readFile } from 'node:fs/promises';
+import SiteShell from '../components/SiteShell.astro';
+import Editable from '../components/Editable.astro';
+import nameCopy from '../content/name.txt?raw';
+import '../styles/soloware.css';
+import { sections } from '../editor/sections.mjs';
+const projects = Object.keys(sections).filter(id => id.startsWith('project-'));
+const name = (import.meta.env.DEV
+  ? await readFile(new URL('../content/name.txt', import.meta.url), 'utf8')
+  : nameCopy).trim();
+---
+<SiteShell name={name} wide>
+  <Editable section="soloware-intro" class="soloware-intro intro" />
+  <section class="project-grid">
+    {projects.map(section => (
+      <article class="project-card">
+        <Editable section={section} class="project-copy intro" />
+      </article>
+    ))}
+  </section>
+  <Editable section="soloware-about" class="soloware-about intro" />
+</SiteShell>

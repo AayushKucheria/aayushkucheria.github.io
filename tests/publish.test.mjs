@@ -62,12 +62,13 @@ test('Deployment success is verified against the live response before Live is re
  const files=Object.values(sections).map(s=>`src/content/${s.file}`);
  await writeFile(join(root,files[0]),'- unique deployed dummy');
  let fetches=0;
- const publisher=createPublisher({root,files,log:()=>{},getRuns:async()=>[{status:'completed',conclusion:'success',url:'https://example.com/run'}],fetchLive:async()=>{
+ const publisher=createPublisher({root,files,log:()=>{},getRuns:async()=>[{status:'completed',conclusion:'success',url:'https://example.com/run'}],fetchLive:async(url)=>{
    fetches++;
-   const html=(await Promise.all(Object.entries(sections).map(async([id,section])=>renderSection(id,await readFile(join(root,'src/content',section.file),'utf8'))))).join('');
+   const path = new URL(url).pathname;
+   const html=(await Promise.all(Object.entries(sections).filter(([,section])=>section.shared || (section.page || '/')===path).map(async([id,section])=>renderSection(id,await readFile(join(root,'src/content',section.file),'utf8'))))).join('');
    return new Response(html);
  }});
- publisher.start();await publisher.wait();assert.equal(publisher.status().phase,'live');assert.equal(fetches,1);
+ publisher.start();await publisher.wait();assert.equal(publisher.status().phase,'live');assert.equal(fetches,2);
 }));
 test('A failed Pages workflow does not report Live or fetch the public site',()=>fixture(async({root,git})=>{
  const files=Object.values(sections).map(s=>`src/content/${s.file}`);
@@ -84,5 +85,5 @@ test('Live verification waits for changed hyperlink destinations, even when labe
    const html=(await Promise.all(Object.entries(sections).map(async([id,section])=>renderSection(id,await readFile(join(root,'src/content',section.file),'utf8'))))).join('');
    return new Response(fetches===1?html.replace('https://github.com/new-profile','https://github.com/old-profile'):html);
  }});
- publisher.start();await publisher.wait();assert.equal(publisher.status().phase,'live');assert.equal(fetches,2,'Old links must not be reported as published');
+ publisher.start();await publisher.wait();assert.equal(publisher.status().phase,'live');assert.equal(fetches,3,'Old links must not be reported as published');
 }));

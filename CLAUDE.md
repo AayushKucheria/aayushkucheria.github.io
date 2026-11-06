@@ -1,6 +1,7 @@
 # Personal Website
 
-The live site is a single static Astro page: `src/pages/index.astro`.
+The static Astro site has Home (`src/pages/index.astro`) and SoloWare
+(`src/pages/soloware.astro`), with shared styling in `src/components/SiteShell.astro`.
 Editable copy lives in `src/content/`: `home.md`, `contact.md`, `socials.md`,
 `name.txt`, and `location.txt`. The permanent writing room at `/write` uses
 the actual page in an iframe and saves each section independently through
@@ -59,3 +60,16 @@ The button flushes every region, locks editing, and shows phases with elapsed
 seconds. Reload resumes progress. GitHub CLI follows the matching Pages workflow;
 Live requires the public page to contain the committed content. Failed pushes
 retain the commit for retry. Content edits stay local until the button is pressed.
+
+## SoloWare
+
+`src/content/navigation.md` supplies shared Home/SoloWare labels and URLs.
+`soloware-intro.md` holds the visible page heading; `soloware-about.md` is empty
+until notes are supplied. `project-1.md` through `project-10.md` hold each name,
+optional description and repository link. These regions are registered in
+`src/editor/sections.mjs`; their page setting switches the `/write` preview.
+Navigation and card headings use ordinary Markdown rather than toggles.
+All new text/links save through the same revision and draft recovery machinery.
+Publish checks both live pages. `npm run test:soloware` checks the grid and saves.
+Descriptions, media and status tags await user input. Repository visibility
+remains private; public-release safety reviews have not been performed.

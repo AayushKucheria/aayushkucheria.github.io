@@ -46,6 +46,9 @@ function selectSection(id) {
   editor.value = active.markdown;
   status.textContent = active.status;
   syncTools();
+  if (!active.shared && frame.contentWindow?.location.pathname !== (active.page || "/")) {
+    frame.src = active.page || "/";
+  }
 }
 async function api(path, state, data) {
   const response = await fetch("/__writer/" + path + (data ? "" : "?section=" + state.id), {
@@ -80,6 +83,7 @@ function prepareFrame() {
     style.textContent = `
       [data-content-section][contenteditable]:not([contenteditable=false]):focus{outline:2px solid #8c7655;outline-offset:10px;border-radius:3px}
       [data-content-section][contenteditable]:not([contenteditable=false]):empty::before{content:"Write here…";color:#81745f}
+      [data-content-section="soloware-about"][contenteditable=true]:empty{display:block;min-height:48px}
       #contact .socials[contenteditable=true] ul{flex-wrap:wrap}
       #contact .socials[contenteditable=true] a{width:auto;height:auto;gap:8px;padding:4px 6px}
       #contact .socials[contenteditable=true] .social-label{position:static;width:auto;height:auto;clip-path:none;white-space:normal;overflow:visible}
@@ -113,10 +117,12 @@ function prepareFrame() {
   });
 }
 frame.addEventListener("load", () => {
+  $("open-website").href = frame.contentWindow.location.pathname;
   prepareFrame();
   Object.values(states).filter(state => state.ready).forEach(state => render(state));
 });
 async function render(state) {
+  if (!element(state)) return;
   const version = ++state.renderVersion;
   try {
     const result = await api("render", state, { markdown: state.markdown });
@@ -275,7 +281,7 @@ function richCommand(command, value) {
       }
       const url = prompt("Link URL", link?.getAttribute("href") || "https://");
       if (!url) return;
-      if (!/^(https?:\/\/|mailto:)/i.test(url)) return setStatus("Use an https://, http://, or mailto: link.");
+      if (!/^(https?:\/\/|mailto:|\/(?!\/))/i.test(url)) return setStatus("Use an https://, http://, mailto:, or local /path link.");
       if (link && link.contains(selection.focusNode)) {
         link.setAttribute("href", url);
         changed(readElement(active), false);

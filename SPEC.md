@@ -63,3 +63,32 @@ Use local Git and GitHub CLI authentication. Observe the matching Pages workflow
 and verify the live page contains the committed content before reporting Live.
 Log phase boundaries with elapsed milliseconds, without content or credentials.
 Publishing and saves remain loopback/same-origin only and absent from builds.
+
+
+## SoloWare — approved 6 November 2026
+
+- `/soloware/` uses the approved compact grid in the homepage's Shantell Sans,
+  cloth colors, paper patches and dashed borders. Shared navigation links both pages.
+- Initial content is only the ten supplied repository names and GitHub links,
+  in the supplied order. Descriptions, notes, media and status tags are empty.
+  The user will supply copy, final order and the meaning of stealability tags.
+- Keep all new text and destinations in `src/content/`, registered with `/write`.
+  Cards and the introduction use visible Markdown headings; notes use the existing
+  expandable headings. Selecting a region opens its page in the writing room.
+- Saves retain serialization, conflict checks and draft recovery. Publish flushes
+  every region and verifies each page's saved content before reporting Live.
+- Repository visibility stays unchanged. A safety review is required before
+  proposing any private repository for public release; none is reviewed yet.
+
+### Verified facts
+
+- Confirmed by measurement: the static build produces `/` and `/soloware/`;
+  shared page styling lives in `src/components/SiteShell.astro`.
+- Confirmed by measurement: `src/editor/sections.mjs` registers navigation,
+  SoloWare introduction/notes and ten independent project Markdown sources.
+- Confirmed by measurement: browser edits save to source, survive reopening
+  `/write`, and appear on the public page renderer. Phone widths down to 320px pass.
+- Confirmed by measurement: GitHub CLI reports all ten repositories private.
+  Links alone will be published; source code and access permissions stay private.
+- Confirmed by measurement: `.github/workflows/deploy.yml` deploys static output
+  to GitHub Pages on pushes to main. Publication is explicitly authorized.

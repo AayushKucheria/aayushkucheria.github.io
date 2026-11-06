@@ -6,7 +6,9 @@ Built with [Astro](https://astro.build). The custom domain is managed through Ra
 
 ## Project layout
 
-- `src/pages/index.astro` is the page template (photos, name, location, styling).
+- `src/pages/index.astro` is the Home template (photos, name, location).
+  `src/pages/soloware.astro` is the software grid. Both use shared styling in
+  `src/components/SiteShell.astro`.
   Photos enlarge on hover; the Helsinki tag hangs from a string and swings on
   hover. Both effects respect reduced motion preferences.
 - `src/content/home.md` holds the introduction and expandable sections, shared with the writing room.
@@ -99,3 +101,20 @@ fixed widgets such as Buttondown remain separate. This rule is recorded in
   rapid clicks, reduced motion, and operation without JavaScript.
 - `node tests/header-browser.mjs` — with the dev server running, checks photo
   hover and reset, the hanging tag, reduced motion, and mobile widths.
+
+## SoloWare
+
+Open `/soloware/` for the ten-project grid. In `/write`, select **SoloWare project
+1–10** to edit a name, description or GitHub link. The preview switches pages
+automatically. Use **SoloWare introduction**, **SoloWare notes**, or **Navigation**
+for those regions. Notes start empty; Markdown view lets you add them.
+
+Each project uses `src/content/project-N.md`: a `## name`, optional description,
+and a Markdown repository link. Navigation and project headings stay visible;
+notes retain the homepage's expandable headings. All regions use existing
+local autosave, conflict checks and draft recovery. Publish includes them and
+verifies both pages. `npm run test:soloware` exercises saves and reopening.
+
+The initial list uses the supplied order, names and links. Descriptions, status
+tags and demos will be added incrementally. Linked repositories are currently
+private; changing repository visibility is a separate review and action.

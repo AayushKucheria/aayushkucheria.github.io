@@ -1,4 +1,14 @@
-# Handoff — 2026-10-08
+# Handoff — 2026-11-06
+
+## SoloWare follow-up
+
+The user approved the compact grid in the homepage's style and requested an
+immediate public version with ten names and GitHub links only. User-provided
+order is provisional. Copy, demos and stealability tag definitions await the
+user; do not invent them. All ten repositories are private (verified with gh).
+No source/history safety review has been done and no visibility was changed.
+Review private repositories before proposing public release. GitHub app needs
+reauthentication; local gh works. `/write` edits all new content and navigation.
 
 ## Decided but not built
 

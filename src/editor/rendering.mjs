@@ -1,4 +1,5 @@
-import { renderMarkdown } from "./content.mjs";
+import { sections } from "./sections.mjs";
+import { renderProse, renderMarkdown } from "./content.mjs";
 
 const icons = {
   "github.com": "M12 .75a11.25 11.25 0 0 0-3.558 21.922c.562.103.768-.244.768-.542 0-.267-.01-.975-.015-1.913-3.13.68-3.791-1.508-3.791-1.508-.511-1.299-1.248-1.645-1.248-1.645-1.021-.698.077-.684.077-.684 1.129.08 1.723 1.159 1.723 1.159 1.003 1.719 2.633 1.223 3.275.935.102-.727.392-1.223.714-1.504-2.499-.285-5.126-1.25-5.126-5.566 0-1.23.44-2.233 1.159-3.021-.116-.285-.502-1.43.11-2.98 0 0 .944-.302 3.094 1.154a10.79 10.79 0 0 1 5.635 0c2.148-1.456 3.09-1.154 3.09-1.154.614 1.55.228 2.695.112 2.98.721.788 1.158 1.791 1.158 3.021 0 4.327-2.631 5.278-5.138 5.557.404.35.764 1.04.764 2.096 0 1.513-.014 2.733-.014 3.104 0 .3.202.651.774.541A11.25 11.25 0 0 0 12 .75Z",
@@ -14,6 +15,10 @@ export function renderSection(section, markdown) {
     return markdown.trim().replace(/[&<>"']/g, character => ({
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
     })[character]);
+  }
+  if (sections[section]?.prose) {
+    const html = renderProse(markdown);
+    return section === "navigation" ? html.replace(/ target="_blank"/g, "") : html;
   }
   const html = renderMarkdown(markdown);
   if (section !== "socials") return html;

@@ -70,3 +70,20 @@ requested turning it into a permanent source editor; this authorizes proceeding.
   editing DOM and selection intact.
 - Passed browser regression: toolbar Nest, Tab, Shift+Tab, source save, reopening,
   and public rendering. Restored reading groups; the user published the repair.
+
+
+## SoloWare — approved for publication
+
+- Browser test first failed for the missing grid, then for the increase from
+  six template cards to ten real project links. Both behaviors now pass.
+- Implemented shared homepage styling, editable navigation, ten independent
+  project sources, an empty editable notes region and preview page switching.
+- Publish verifies Home and SoloWare separately. Existing content-only commits,
+  conflict handling, draft recovery and live progress remain in use.
+- Source tests, static build and isolated SoloWare browser checks pass.
+  Existing writing-room regression checks pass, including save retry/conflicts.
+- Toggle browser checks pass after replacing obsolete dummy-copy assertions
+  with checks against the current source headings.
+- Publish to main and verify the Pages workflow and public URLs.
+- Deferred: user copy, ordering, stealability tags, demo assets and safety reviews
+  before changing any repository visibility. All ten repositories remain private.

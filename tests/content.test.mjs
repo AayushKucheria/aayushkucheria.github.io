@@ -71,3 +71,13 @@ test("reference links inside heading labels use the document definitions", () =>
   const html = renderMarkdown("## [abcd][site]\n- efgh\n\n[site]: https://example.com");
   assert.match(html, /<h2 class="toggle-label"><a href="https:\/\/example.com"/);
 });
+
+test('SoloWare cards keep headings visible and sanitize content; navigation keeps local destinations', () => {
+  const html = renderSection('project-1', '## Pickle\n\nOne.  \nTwo.  \nThree.\n\n[GitHub](https://github.com/example/tool)\n\n<script>bad()</script>\n[bad](javascript:alert(1))');
+  assert.match(html, /<h2>Pickle<\/h2>/);
+  assert.doesNotMatch(html, /<details|<script|href="javascript:/);
+  assert.match(html, /href="https:\/\/github.com\/example\/tool"/);
+  const nav = renderSection('navigation', '[Home](/) · [SoloWare](/soloware/)');
+  assert.match(nav, /href="\/soloware\/"/);
+  assert.doesNotMatch(nav, /target="_blank"/);
+});

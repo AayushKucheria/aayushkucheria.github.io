@@ -19,6 +19,9 @@ function cleanHtml(html) {
     },
   });
 }
+export function renderProse(markdown) {
+  return cleanHtml(marked.parse(markdown));
+}
 export function renderMarkdown(markdown) {
   const tokens = marked.lexer(markdown);
   const levels = [];

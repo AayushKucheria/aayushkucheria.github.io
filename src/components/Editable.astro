@@ -1,0 +1,12 @@
+---
+import { readFile } from 'node:fs/promises';
+import { sections } from '../editor/sections.mjs';
+import { renderSection } from '../editor/rendering.mjs';
+const { section, class: className } = Astro.props;
+const sources = import.meta.glob('../content/*', { query: '?raw', import: 'default', eager: true });
+const file = sections[section].file;
+const copy = import.meta.env.DEV
+  ? await readFile(new URL(`../content/${file}`, import.meta.url), 'utf8')
+  : sources[`../content/${file}`];
+---
+<div class={className} data-content-section={section} set:html={renderSection(section, copy)} />

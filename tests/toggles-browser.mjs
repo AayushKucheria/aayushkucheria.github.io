@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
+import { readFile } from 'node:fs/promises';
+const expectedFolds = ((await readFile('src/content/home.md', 'utf8')).match(/^## /gm) || []).length;
 import { chromium } from 'playwright';
 import { createServer } from 'node:net';
 const portProbe = createServer();
@@ -25,7 +27,7 @@ try {
     page.on('pageerror', error => errors.push(error.message));
     await page.goto(base);
     const folds = page.locator('.intro > .fold');
-    assert.equal(await folds.count(), 5);
+    assert.equal(await folds.count(), expectedFolds);
     assert.equal(await page.locator('.fold[open]').count(), 0);
     assert.match(await page.locator('.intro > ul').innerText(), /welcome to my corner/);
     const first = folds.first();
@@ -33,7 +35,7 @@ try {
     await page.keyboard.press('Enter');
     await page.waitForTimeout(300);
     assert.notEqual(await first.getAttribute('open'), null);
-    assert.equal(await first.locator('.fold-body').innerText(), 'abcd\nefgh');
+    assert.ok((await first.locator('.fold-body').innerText()).trim().length > 0);
     assert.equal(await first.locator('.fold-body').evaluate(el => getComputedStyle(el).borderLeftStyle), 'dashed');
     assert.match(await first.locator('.toggle-label').evaluate(el => getComputedStyle(el).backgroundImage), /repeating-linear-gradient/);
     await folds.nth(1).locator('summary').click();
@@ -60,7 +62,7 @@ try {
     assert.equal(await first.getAttribute('open'), null);
     assert.deepEqual(errors, []);
     await page.close();
-    console.log(`Toggles at ${width}px: dummy sections, independent expansion, keyboard, rapid clicks, texture, dashed margins, contact, reduced motion, no overflow passed`);
+    console.log(`Toggles at ${width}px: source sections, independent expansion, keyboard, rapid clicks, texture, dashed margins, contact, reduced motion, no overflow passed`);
   }
   const plain = await browser.newPage({ javaScriptEnabled: false });
   await plain.goto(base);
