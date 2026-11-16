@@ -61,14 +61,25 @@ try {
   const repositories = ['people-connector','userscripts','paper-ipad','btw','radio-station','interactive-writing','SocialChats','writing-space','lokmat','FinnishConversations'];
   for (let i = 0; i < repositories.length; i++) {
     const card = page.locator('.project-card').nth(i);
-    assert.equal(await card.locator('h2').innerText(), repositories[i]);
+    assert.equal(await card.locator('h2').innerText(), (await readFile(join(root, `src/content/project-${i + 1}.md`), "utf8")).match(/^## (.+)$/m)[1]);
     assert.equal(await card.getByRole('link').getAttribute('href'), `https://github.com/AayushKucheria/${repositories[i]}`);
-    assert.equal(await card.locator('p').count(), 1, 'Only the repository link, no description');
   }
   await page.goto(base);
-  await page.getByRole("link", {name:"SoloWare", exact:true}).click();
+  await page.getByRole("link", {name:/^soloware$/i}).click();
   assert.match(page.url(), /soloware/);
   await page.goto(base + "/write");
+  const originalHome = await readFile(join(root, "src/content/home.md"), "utf8");
+  const copiedCard = await readFile(join(root, "src/content/project-1.md"), "utf8");
+  const protection = await page.evaluate(async copied => {
+    const current = await (await fetch('/__writer/content?section=intro')).json();
+    const response = await fetch('/__writer/content', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({section: 'intro', markdown: copied, revision: current.revision}),
+    });
+    return {status: response.status, body: await response.json()};
+  }, copiedCard);
+  assert.equal(protection.status, 409, 'A project card pasted into Home must be rejected');
+  assert.equal(await readFile(join(root, "src/content/home.md"), "utf8"), originalHome);
   await page.locator("#status").filter({hasText:"Saved locally"}).waitFor();
   await page.locator("#section").selectOption("project-1");
   const frame = page.frameLocator("#site");

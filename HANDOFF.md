@@ -22,3 +22,13 @@ reassessed.
 
 When the user defines the status labels and ordering, add them to the shared
 content and `/write` workflow, then verify the live page after publishing.
+
+## Home content incident — 16 November
+
+Commit `f328084` had replaced `src/content/home.md` with an exact copy of
+`project-1.md`; the live Home page lost its introduction. The previous Home
+source was restored from `f328084^`. A writing-room save guard now rejects an
+exact SoloWare project copy submitted as the Home introduction. The historical
+editor action that sent the copy to Home could not be reconstructed from the
+commit; investigate if it recurs. The regression is in
+`tests/soloware-browser.mjs`, with a source check in `tests/home-content.test.mjs`.

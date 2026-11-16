@@ -10,7 +10,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "test": "node --test tests/content.test.mjs tests/publish.test.mjs",
+    "test": "node --test tests/content.test.mjs tests/home-content.test.mjs tests/publish.test.mjs",
     "test:soloware": "node tests/soloware-browser.mjs",
     "test:browser": "node tests/writer-browser.mjs",
     "test:build": "npm run build && node --test tests/build.test.mjs",

@@ -90,6 +90,12 @@ export default function writingRoom({ publishOptions = {} } = {}) {
               return respond(409, { error: "Publishing is in progress. Wait for it to finish before saving." });
             if (typeof data.revision !== "string")
               return respond(400, { error: "Source revision is required." });
+            if (section === "intro") {
+              const projectIds = Object.keys(sections).filter(id => id.startsWith("project-"));
+              const projectCopies = await Promise.all(projectIds.map(id => stores[id].read()));
+              if (projectCopies.some(copy => copy.markdown.trim() === data.markdown.trim()))
+                return respond(409, { error: "This text matches a SoloWare project. Home was not changed. Select that project in the writing room before editing it." });
+            }
             console.info(
               JSON.stringify({
                 event: "writer-save",
