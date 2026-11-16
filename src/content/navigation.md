@@ -1,1 +1,1 @@
-[Home](/) · [SoloWare](/soloware/)
+[Home](/) · [Soloware](/soloware/)
