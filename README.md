@@ -115,6 +115,7 @@ notes retain the homepage's expandable headings. All regions use existing
 local autosave, conflict checks and draft recovery. Publish includes them and
 verifies both pages. `npm run test:soloware` exercises saves and reopening.
 
-The initial list uses the supplied order, names and links. Descriptions, status
-tags and demos will be added incrementally. Linked repositories are currently
-private; changing repository visibility is a separate review and action.
+The list began with the supplied order, names and links. Titles and a few notes
+have since been edited through `/write`. Status tags and demos are still to come.
+All ten repositories were private when checked on 6 November 2026; review
+their current visibility and contents before changing access.

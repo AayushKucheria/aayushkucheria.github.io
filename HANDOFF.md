@@ -1,28 +1,24 @@
-# Handoff — 2026-11-06
+# Handoff — 2026-11-16
 
 ## SoloWare follow-up
 
-The user approved the compact grid in the homepage's style and requested an
-immediate public version with ten names and GitHub links only. User-provided
-order is provisional. Copy, demos and stealability tag definitions await the
-user; do not invent them. All ten repositories are private (verified with gh).
-No source/history safety review has been done and no visibility was changed.
-Review private repositories before proposing public release. GitHub app needs
-reauthentication; local gh works. `/write` edits all new content and navigation.
+The ten-project grid is live and editable through `/write`. The user has begun
+replacing project titles and adding short notes; the current source is in
+`src/content/project-1.md` through `project-10.md`. The list order remains
+provisional. The user will define the stealability status tags and may add
+descriptions and demos. Preserve their current copy when making those changes.
 
-## Decided but not built
+All ten linked repositories were private when checked on 6 November. Their
+current visibility and code/history have not been reassessed. Review each
+repository before proposing a visibility change; none was changed in this work.
 
-Typography exploration is deferred. See PLAN.md for candidate fonts; Source
-Serif 4 is the current first choice to compare against actual site text.
+## Other deferred work
 
-## Known issues / loose ends
-
-Previously recorded dependency advisories for http-cache-semantics, sharp, and
-source-map-js have not been reassessed in this session.
+Typography exploration remains in `PLAN.md`; Source Serif 4 was the first font
+to compare. Dependency advisories noted in the earlier handoff have not been
+reassessed.
 
 ## Next logical step
 
-Resume typography exploration when requested; run `npm run dev` to reopen the
-local writing room. Publish and the nested-bullet fix are implemented and tested.
-The user published the corrected reading groups. Autosave remains local, and
-Publish uses local Git/GitHub CLI credentials; `/write` is absent from production.
+When the user defines the status labels and ordering, add them to the shared
+content and `/write` workflow, then verify the live page after publishing.

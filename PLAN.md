@@ -84,6 +84,8 @@ requested turning it into a permanent source editor; this authorizes proceeding.
   Existing writing-room regression checks pass, including save retry/conflicts.
 - Toggle browser checks pass after replacing obsolete dummy-copy assertions
   with checks against the current source headings.
-- Publish to main and verify the Pages workflow and public URLs.
-- Deferred: user copy, ordering, stealability tags, demo assets and safety reviews
-  before changing any repository visibility. All ten repositories remain private.
+- Published on 6 November and verified `/soloware/` with ten exact repository
+  links after a successful GitHub Pages workflow. The user later published
+  title and short-note edits through `/write`.
+- Deferred: final order, stealability tags, demo assets and repository safety
+  reviews before changing any visibility. All ten were private on 6 November.

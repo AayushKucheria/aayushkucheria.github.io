@@ -71,5 +71,6 @@ optional description and repository link. These regions are registered in
 Navigation and card headings use ordinary Markdown rather than toggles.
 All new text/links save through the same revision and draft recovery machinery.
 Publish checks both live pages. `npm run test:soloware` checks the grid and saves.
-Descriptions, media and status tags await user input. Repository visibility
-remains private; public-release safety reviews have not been performed.
+The user has begun editing titles and short notes. Media and status tags await
+user input. All ten repositories were private when checked on 6 November 2026;
+their current visibility and public-release safety have not been reassessed.
