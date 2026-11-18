@@ -1,15 +1,47 @@
-/* Cloth, paper, ink and stitches from the homepage. */
+/* Cloth, paper, ink and stitches from the homepage. Approved design: prototypes/soloware-alternating-rows.html */
 .soloware-intro h1 { margin: 32px 0 22px; }
-.project-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; margin: 36px 0 48px; }
-.project-card { --ink: #566444; --wash: #80916624; min-width: 0; padding: 16px; border-top: 1px dashed color-mix(in srgb, var(--ink) 50%, transparent); background: #f0e8d4; border-radius: 3px; box-shadow: 2px 4px 12px #00000012; }
-.project-card:nth-child(3n + 2) { --ink: #855648; --wash: #af756424; }
-.project-card:nth-child(3n) { --ink: #54677a; --wash: #708da724; }
-.project-copy { padding: 14px 4px 2px; }
-.project-copy h2 { font-size: 1.2rem; line-height: 1.4; color: var(--ink); margin: 0 0 20px; padding: 3px 8px; background: var(--wash); width: fit-content; border-radius: 3px; overflow-wrap: anywhere; }
-.project-copy p { font-size: .86rem; }
-.project-copy p:last-child { border-top: 1px dashed color-mix(in srgb, var(--ink) 40%, transparent); padding-top: 12px; margin: 16px 0 4px; }
-.project-copy img { max-width: 100%; }
+
+/* Featured projects: one per row. A demo image (animated WebP/GIF) sits as a tilted print beside the text,
+   switching sides on each row. Links in the last paragraph become buttons: GitHub = "Steal", anything else = "Use",
+   and a link to "#" is a faded, disabled button. */
+.project-rows { max-width: 900px; margin: 36px 0 32px; }
+.project-row { --ink: #566444; --wash: #80916624; --tilt: 1.4deg; margin: 0 0 56px; }
+.project-row:nth-child(4n + 1), .project-row:nth-child(4n) { --ink: #855648; --wash: #af756424; --tilt: -1.6deg; }
+.project-row:nth-child(4n + 3) { --ink: #54677a; --wash: #708da724; --tilt: -1.2deg; }
+.project-copy { max-width: none; }
+.project-copy h2 { font-size: 1.2rem; line-height: 1.4; color: var(--ink); margin: 0 0 12px; padding: 3px 10px; background: var(--wash); width: fit-content; border-radius: 3px; overflow-wrap: anywhere; }
+.project-copy p { font-size: .95rem; margin: 0 0 8px; max-width: 52ch; }
+.project-copy:has(img) { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); grid-template-rows: 1fr repeat(6, auto) 1fr; column-gap: 40px; }
+.project-copy:has(img) > * { grid-column: 2; }
+.project-copy:has(img)::before { content: ''; grid-column: 2; } /* fills the top 1fr row so the text sits centred beside the demo */
+.project-copy > p:has(img) { grid-column: 1; grid-row: 1 / -1; align-self: center; max-width: none; margin: 0; }
+.project-row:nth-child(even) .project-copy:has(img) { grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); }
+.project-row:nth-child(even) .project-copy:has(img) > *, .project-row:nth-child(even) .project-copy:has(img)::before { grid-column: 1; }
+.project-row:nth-child(even) .project-copy > p:has(img) { grid-column: 2; }
+.project-copy img { display: block; width: 100%; background: #f2ede4; padding: 7px 7px 20px; box-shadow: 2px 4px 14px #0002; transform: rotate(var(--tilt)); transition: transform .25s; }
+.project-copy img:hover { transform: rotate(0) scale(1.01); }
+.project-copy > p:last-child:has(a) { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 16px; }
+.project-copy > p:last-child a { display: inline-flex; align-items: center; font-weight: 500; font-size: .88rem; padding: 6px 15px; border-radius: 3px; text-decoration: none; color: #f8f4e9; background: var(--ink); box-shadow: 1px 2px 6px #0002; transition: transform .15s; }
+.project-copy > p:last-child a:is([href*="github.com"], [aria-disabled]) { color: var(--ink); background: #f0e8d4; box-shadow: none; outline: 1.5px dashed color-mix(in srgb, var(--ink) 60%, transparent); outline-offset: -5px; padding: 8px 17px; }
+.project-copy > p:last-child a:hover { color: inherit; transform: rotate(-1.5deg) translateY(-1px); }
+.project-copy > p:last-child a:not([href*="github.com"]):hover { color: #f8f4e9; }
+.project-copy > p:last-child a:is([href*="github.com"], [aria-disabled]):hover { color: var(--ink); }
+.project-copy > p:last-child a[aria-disabled] { opacity: .45; pointer-events: none; }
+.project-copy > p:last-child a:focus-visible { outline: 2px solid #724038; outline-offset: 4px; }
+
+/* Everything else: a quiet list. */
+.also-made { max-width: 680px; border-top: 1px dashed #b09060; padding-top: 24px; margin-bottom: 40px; }
+.also-heading h2 { font-size: 1.05rem; font-weight: 500; margin: 0 0 10px; }
+.also-made ul { margin: 0; padding-left: 1.2em; color: #5a4830; }
+.also-made li { padding: 4px 0; }
+.also-copy { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; }
+.also-copy h2 { font-size: .95rem; font-weight: 500; margin: 0; }
+.also-copy p { font-size: .85rem; margin: 0; line-height: 1.55; opacity: .85; }
+
 .soloware-about { max-width: 680px; }
 .soloware-about:empty { display: none; }
-@media (max-width: 850px) { .project-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 540px) { .project-grid { grid-template-columns: minmax(0, 1fr); gap: 24px; } .project-copy p { font-size: .95rem; } }
+@media (prefers-reduced-motion: reduce) { .project-copy img, .project-copy > p:last-child a { transition: none; } }
+@media (max-width: 760px) {
+  .project-copy:has(img), .project-row:nth-child(even) .project-copy:has(img) { display: block; }
+  .project-copy > p:has(img) { margin: 0 0 28px; }
+}

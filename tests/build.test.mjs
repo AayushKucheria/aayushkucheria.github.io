@@ -24,6 +24,7 @@ test('SoloWare and navigation render every registered shared source in static ou
     if (section.page === '/soloware/' || section.shared) assert.ok(solo.includes(html), `SoloWare includes ${id}`);
     if (section.shared) assert.ok(home.includes(html), `Home includes ${id}`);
   }
-  assert.equal((solo.match(/class="project-card"/g) || []).length, 10);
+  assert.equal((solo.match(/class="project-row"/g) || []).length, 4);
+  assert.equal((solo.match(/class="also-copy intro"/g) || []).length, 6);
   assert.doesNotMatch(solo, /__writer|contenteditable|Website writing room/);
 });

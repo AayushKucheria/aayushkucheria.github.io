@@ -18,7 +18,9 @@ export function renderSection(section, markdown) {
   }
   if (sections[section]?.prose) {
     const html = renderProse(markdown);
-    return section === "navigation" ? html.replace(/ target="_blank"/g, "") : html;
+    if (section === "navigation") return html.replace(/ target="_blank"/g, "");
+    // A link to "#" is a button whose destination isn't ready yet: shown, but disabled.
+    return html.replace(/<a href="#" target="_blank" rel="noopener noreferrer">/g, '<a href="#" aria-disabled="true" tabindex="-1" title="Coming soon">');
   }
   const html = renderMarkdown(markdown);
   if (section !== "socials") return html;

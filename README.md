@@ -7,7 +7,7 @@ Built with [Astro](https://astro.build). The custom domain is managed through Ra
 ## Project layout
 
 - `src/pages/index.astro` is the Home template (photos, name, location).
-  `src/pages/soloware.astro` is the software grid. Both use shared styling in
+  `src/pages/soloware.astro` lists software in featured rows. Both use shared styling in
   `src/components/SiteShell.astro`.
   Photos enlarge on hover; the Helsinki tag hangs from a string and swings on
   hover. Both effects respect reduced motion preferences.
@@ -104,16 +104,24 @@ fixed widgets such as Buttondown remain separate. This rule is recorded in
 
 ## SoloWare
 
-Open `/soloware/` for the ten-project grid. In `/write`, select **SoloWare project
-1–10** to edit a name, description or GitHub link. The preview switches pages
-automatically. Use **SoloWare introduction**, **SoloWare notes**, or **Navigation**
-for those regions. Notes start empty; Markdown view lets you add them.
+Open `/soloware/` for the projects. `featuredProjects` in `src/editor/sections.mjs`
+picks the four shown as large rows (radio-station, btw, paper-ipad, lokmat), in
+order; the other six form the "also made" list under the editable
+`soloware-also.md` heading. In `/write`, featured rows are labelled **SoloWare
+featured 1–4**; the rest keep **SoloWare project N**. The preview switches pages
+automatically.
 
-Each project uses `src/content/project-N.md`: a `## name`, optional description,
-and a Markdown repository link. Navigation and project headings stay visible;
-notes retain the homepage's expandable headings. All regions use existing
-local autosave, conflict checks and draft recovery. Publish includes them and
-verifies both pages. `npm run test:soloware` exercises saves and reopening.
+Each project uses `src/content/project-N.md`: a `## name`, optional notes, and
+links. In a featured row, links in the last paragraph become buttons: a
+github.com link is a dashed **Steal** patch, any other link a solid **Use**
+button, and a link to `#` (e.g. `[Steal it ↗](#)`) shows a faded, disabled
+button until the real destination is ready. Add `![demo](/soloware/name.webp)` anywhere to show a demo: the image
+becomes a tilted print beside the text, alternating sides. Use an animated WebP
+or GIF placed in `public/soloware/`; keep each a few MB. Without an image the row
+is text only. The approved design is `prototypes/soloware-alternating-rows.html`.
+All regions use existing local autosave, conflict checks and draft recovery.
+Publish includes them and verifies both pages. `npm run test:soloware` exercises
+saves, reopening, buttons and the demo layout.
 
 The list began with the supplied order, names and links. Titles and a few notes
 have since been edited through `/write`. Status tags and demos are still to come.

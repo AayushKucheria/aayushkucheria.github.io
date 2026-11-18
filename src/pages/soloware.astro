@@ -4,20 +4,28 @@ import SiteShell from '../components/SiteShell.astro';
 import Editable from '../components/Editable.astro';
 import nameCopy from '../content/name.txt?raw';
 import '../styles/soloware.css';
-import { sections } from '../editor/sections.mjs';
-const projects = Object.keys(sections).filter(id => id.startsWith('project-'));
+import { sections, featuredProjects } from '../editor/sections.mjs';
+const others = Object.keys(sections).filter(id => id.startsWith('project-') && !featuredProjects.includes(id));
 const name = (import.meta.env.DEV
   ? await readFile(new URL('../content/name.txt', import.meta.url), 'utf8')
   : nameCopy).trim();
 ---
 <SiteShell name={name} wide>
   <Editable section="soloware-intro" class="soloware-intro intro" />
-  <section class="project-grid">
-    {projects.map(section => (
-      <article class="project-card">
+  <section class="project-rows">
+    {featuredProjects.map(section => (
+      <article class="project-row">
         <Editable section={section} class="project-copy intro" />
       </article>
     ))}
+  </section>
+  <section class="also-made">
+    <Editable section="soloware-also" class="also-heading intro" />
+    <ul>
+      {others.map(section => (
+        <li><Editable section={section} class="also-copy intro" /></li>
+      ))}
+    </ul>
   </section>
   <Editable section="soloware-about" class="soloware-about intro" />
 </SiteShell>

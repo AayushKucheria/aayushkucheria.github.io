@@ -1,0 +1,83 @@
+<!doctype html>
+<!-- SoloWare featured rows — Alternating rows.
+Shows: one column, four featured projects the owner chose (radio-station, btw, paper-ipad, lokmat), each with a
+demo-loop slot framed as a tilted photo print, title patch, short note, and Use / Steal buttons. Remaining projects
+sit in a quiet "also made" list. SocialChats is left off (owner's note: "felt stressful").
+Honest placeholders: the video slot is a wireframe (click pauses the loop), notes are the owner's existing words,
+and grey italic text marks copy still to be written. "Use it" appears only where a live version exists (shown on
+radio-station as an example; its URL is not filled in). Styles copy the live site: Shantell Sans, cloth texture,
+warm inks, washes, small tilts. -->
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SoloWare — Alternating rows</title>
+<link href="https://fonts.googleapis.com/css2?family=Shantell+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+:root{font-family:'Shantell Sans',cursive;color:#2a2218;background:#ddd5be}
+body{margin:0}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 2px,#281c0a0c 2px 3px),repeating-linear-gradient(90deg,transparent 0 2px,#281c0a0a 2px 3px);mix-blend-mode:multiply}
+main{width:min(100% - 2.5rem,1040px);margin:0 auto;padding:40px 0 96px}
+.notice{font:13px/1.5 system-ui;padding:10px 14px;background:#f0e8d4;border:1px dashed #b7a98b;margin-bottom:12px;color:#5a4830}
+.compare{display:flex;gap:16px;flex-wrap:wrap;font:14px/1.5 system-ui;margin:0 0 28px;color:#5a4830}
+.compare a{color:inherit}.compare a[aria-current=page]{font-weight:700;text-decoration-thickness:2px}
+.site-nav{margin:0 0 28px;color:#5a4830;font-size:.95rem;display:flex;gap:20px}
+.site-nav a{color:inherit;text-underline-offset:5px;text-decoration-style:dashed;text-decoration-color:#b09060}
+h1{font-size:clamp(2.6rem,7vw,4rem);line-height:1;letter-spacing:-.04em;margin:32px 0 22px;transform:rotate(-1deg)}
+.lede{color:#5a4830;max-width:60ch;line-height:1.65;margin:0 0 56px}
+.feature{--ink:#566444;--wash:#80916624;margin:0 0 88px}
+.feature h2{font-size:1.45rem;line-height:1.35;color:var(--ink);margin:0 0 18px;padding:4px 10px;background:var(--wash);width:fit-content;border-radius:3px}
+.feature p{color:#5a4830;line-height:1.7;margin:0 0 12px;max-width:52ch}
+.todo{font-style:italic;opacity:.6}
+.print{background:#f2ede4;padding:10px 10px 30px;box-shadow:2px 4px 14px #0002;transform:rotate(var(--tilt));transition:transform .25s}
+.print:hover{transform:rotate(0) scale(1.01)}
+.screen{position:relative;aspect-ratio:16/10;background:#e3decf;overflow:hidden;cursor:pointer;border:0;width:100%;padding:0;font:inherit;color:inherit;display:block}
+.screen .wire{position:absolute;inset:14% 12%;display:grid;grid-template-columns:1fr 2fr;gap:8px;opacity:.5}
+.screen .wire i{border:1px solid #9b937a;background:#f8f4e9;border-radius:2px}
+.screen .wire i:first-child{grid-row:span 3}
+.screen .cursor{position:absolute;width:14px;height:14px;border-radius:50%;background:var(--ink);opacity:.55;animation:wander 7s ease-in-out infinite}
+.screen.paused .cursor{animation-play-state:paused}
+@keyframes wander{0%{left:20%;top:30%}30%{left:60%;top:40%}55%{left:55%;top:70%}80%{left:30%;top:60%}100%{left:20%;top:30%}}
+@media (prefers-reduced-motion:reduce){.screen .cursor{animation:none;left:40%;top:45%}}
+.screen .label{position:absolute;left:10px;bottom:8px;font:11px system-ui;color:#685b45;background:#f8f4e9cc;padding:2px 6px;border-radius:2px}
+.caption{font-size:.8rem;color:#8a7658;margin:8px 2px 0;text-align:center}
+.actions{display:flex;gap:14px;margin-top:22px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;font:500 .95rem 'Shantell Sans',cursive;padding:8px 18px;border-radius:3px;text-decoration:none;transition:transform .15s}
+.btn:hover{transform:rotate(-1.5deg) translateY(-1px)}
+.btn.use{background:var(--ink);color:#f8f4e9;box-shadow:1px 2px 6px #0002}
+.btn.steal{color:var(--ink);background:#f0e8d4;outline:1.5px dashed color-mix(in srgb,var(--ink) 60%,transparent);outline-offset:-5px;padding:10px 20px}
+.btn:focus-visible{outline:2px solid #724038;outline-offset:4px}
+.also{border-top:1px dashed #b09060;padding-top:24px;max-width:680px}
+.also h3{font-size:1.05rem;color:#5a4830;margin:0 0 10px;font-weight:500}
+.also ul{margin:0;padding-left:1.2em;color:#5a4830}.also li{padding:4px 0;line-height:1.55;font-size:.92rem}
+.also a{color:inherit;text-decoration-color:#b09060;text-underline-offset:3px}
+
+.features{max-width:900px}
+.feature{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:40px;align-items:center;margin:0 0 56px}
+.feature h2{font-size:1.2rem;margin:0 0 12px}
+.feature p{font-size:.95rem;margin:0 0 8px}
+.print{padding:7px 7px 20px}
+.actions{margin-top:16px}
+.btn{font-size:.88rem;padding:6px 15px}.btn.steal{padding:8px 17px}
+.feature:nth-of-type(even){grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr)}.feature:nth-of-type(even) .media{order:2}
+@media (max-width:760px){.feature,.feature:nth-of-type(even){grid-template-columns:1fr;gap:28px}.feature:nth-of-type(even) .media{order:0}}
+</style></head><body><main>
+<div class="notice">Layout study · Alternating rows · video slots and grey italic copy are placeholders</div>
+<div class="compare"><span>Compare:</span><a href="soloware-alternating-rows.html" aria-current=page>A · Alternating rows</a><a href="soloware-stacked-rows.html">B · Video on top</a></div>
+<nav class="site-nav"><a href="#">Home</a><a href="#" aria-current="page">Soloware</a></nav>
+<h1>SoloWare</h1>
+<p class="lede todo">One line here about what this page is, in your words.</p>
+<section class="features"><article class="feature" style="--ink:#855648;--wash:#af756424">
+<div class="media"><div class="print" style="--tilt:-1.6deg"><button class="screen" aria-label="Pause or play demo loop"><div class="wire" aria-hidden="true"><i></i><i></i><i></i><i></i></div><span class="cursor"></span><span class="label">demo loop goes here · ~15s screen recording</span></button></div></div>
+<div class="text"><h2>listening to indie radios in rhythm with the day</h2><div class="body"><p>there's something warm about radios, especially ones run with love</p><p class="todo">A couple more sentences in your words: what it does for you, and what you cared about while making it.</p></div><div class="actions"><a class="btn use" href="#">Use it ↗</a><a class="btn steal" href="https://github.com/AayushKucheria/radio-station">Steal it ↗</a></div></div>
+</article><article class="feature" style="--ink:#566444;--wash:#80916624">
+<div class="media"><div class="print" style="--tilt:1.4deg"><button class="screen" aria-label="Pause or play demo loop"><div class="wire" aria-hidden="true"><i></i><i></i><i></i><i></i></div><span class="cursor"></span><span class="label">demo loop goes here · ~15s screen recording</span></button></div></div>
+<div class="text"><h2>btw: a browser extension that lets me say hi to the internet people I read</h2><div class="body"><p>an internet where we're saying hi to each other is a nicer internet</p><p class="todo">A couple more sentences in your words: what it does for you, and what you cared about while making it.</p></div><div class="actions"><a class="btn steal" href="https://github.com/AayushKucheria/btw">Steal it ↗</a></div></div>
+</article><article class="feature" style="--ink:#54677a;--wash:#708da724">
+<div class="media"><div class="print" style="--tilt:-1.2deg"><button class="screen" aria-label="Pause or play demo loop"><div class="wire" aria-hidden="true"><i></i><i></i><i></i><i></i></div><span class="cursor"></span><span class="label">demo loop goes here · ~15s screen recording</span></button></div></div>
+<div class="text"><h2>iPad PDF reader where all my scribbles are sensibly parsed</h2><div class="body"><p>There's something to scribbling around</p><p class="todo">A couple more sentences in your words: what it does for you, and what you cared about while making it.</p></div><div class="actions"><a class="btn steal" href="https://github.com/AayushKucheria/paper-ipad">Steal it ↗</a></div></div>
+</article><article class="feature" style="--ink:#855648;--wash:#af756424">
+<div class="media"><div class="print" style="--tilt:1.8deg"><button class="screen" aria-label="Pause or play demo loop"><div class="wire" aria-hidden="true"><i></i><i></i><i></i><i></i></div><span class="cursor"></span><span class="label">demo loop goes here · ~15s screen recording</span></button></div></div>
+<div class="text"><h2>a newspaper delivered daily to me from my read-it-later collection</h2><div class="body"><p class="todo">A couple more sentences in your words: what it does for you, and what you cared about while making it.</p></div><div class="actions"><a class="btn steal" href="https://github.com/AayushKucheria/lokmat">Steal it ↗</a></div></div>
+</article></section>
+<section class="also"><h3>also made</h3><ul><li><a href="https://github.com/AayushKucheria/people-connector">people-connector</a></li><li><a href="https://github.com/AayushKucheria/userscripts">my scripts for a nicer internet</a></li><li><a href="https://github.com/AayushKucheria/interactive-writing">write in a beautiful space, with whispers from people I've read</a></li><li><a href="https://github.com/AayushKucheria/writing-space">writing-space</a></li><li><a href="https://github.com/AayushKucheria/FinnishConversations">practicing talking in Finnish, in real situations, based on what I know in anki</a></li></ul></section>
+</main>
+<script>document.querySelectorAll('.screen').forEach(s=>s.addEventListener('click',()=>s.classList.toggle('paused')));</script>
+</body></html>

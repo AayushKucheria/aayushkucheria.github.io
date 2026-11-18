@@ -77,6 +77,9 @@ test('SoloWare cards keep headings visible and sanitize content; navigation keep
   assert.match(html, /<h2>Pickle<\/h2>/);
   assert.doesNotMatch(html, /<details|<script|href="javascript:/);
   assert.match(html, /href="https:\/\/github.com\/example\/tool"/);
+  const pending = renderSection('project-5', '[Steal it ↗](#)');
+  assert.match(pending, /<a href="#" aria-disabled="true" tabindex="-1"/);
+  assert.doesNotMatch(pending, /target=/);
   const nav = renderSection('navigation', '[Home](/) · [SoloWare](/soloware/)');
   assert.match(nav, /href="\/soloware\/"/);
   assert.doesNotMatch(nav, /target="_blank"/);

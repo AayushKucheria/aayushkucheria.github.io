@@ -8,7 +8,12 @@ export const sections = {
   navigation: { label: "Navigation", file: "navigation.md", prose: true, shared: true },
   "soloware-intro": { label: "SoloWare introduction", file: "soloware-intro.md", prose: true, page: "/soloware/" },
   "soloware-about": { label: "SoloWare notes", file: "soloware-about.md", page: "/soloware/" },
+  "soloware-also": { label: "SoloWare “also made” heading", file: "soloware-also.md", prose: true, page: "/soloware/" },
   ...Object.fromEntries(Array.from({ length: 10 }, (_, i) => [
     `project-${i + 1}`, { label: `SoloWare project ${i + 1}`, file: `project-${i + 1}.md`, prose: true, page: "/soloware/" },
   ])),
 };
+
+// Shown as large rows, in this order; every other project goes in the "also made" list.
+export const featuredProjects = ["project-5", "project-4", "project-3", "project-9"];
+for (const [n, id] of featuredProjects.entries()) sections[id].label = `SoloWare featured ${n + 1}`;

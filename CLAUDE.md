@@ -66,11 +66,14 @@ retain the commit for retry. Content edits stay local until the button is presse
 `src/content/navigation.md` supplies shared Home/SoloWare labels and URLs.
 `soloware-intro.md` holds the visible page heading; `soloware-about.md` is empty
 until notes are supplied. `project-1.md` through `project-10.md` hold each name,
-optional description and repository link. These regions are registered in
+optional description and links. `featuredProjects` in `sections.mjs` picks four
+single-column rows (approved: `prototypes/soloware-alternating-rows.html`) with an
+optional demo image and Use/Steal buttons from the last paragraph's links; the
+rest sit in an "also made" list headed by `soloware-also.md`. These regions are registered in
 `src/editor/sections.mjs`; their page setting switches the `/write` preview.
 Navigation and card headings use ordinary Markdown rather than toggles.
 All new text/links save through the same revision and draft recovery machinery.
-Publish checks both live pages. `npm run test:soloware` checks the grid and saves.
-The user has begun editing titles and short notes. Media and status tags await
-user input. All ten repositories were private when checked on 6 November 2026;
+Publish checks both live pages. `npm run test:soloware` checks the rows, list and saves.
+The user has begun editing titles and short notes. Demo loops and Use URLs
+await user input. All ten repositories were private when checked on 6 November 2026;
 their current visibility and public-release safety have not been reassessed.

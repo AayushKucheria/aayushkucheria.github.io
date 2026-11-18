@@ -56,14 +56,23 @@ try {
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto(base + "/soloware/");
-  assert.equal(await page.locator(".project-card").count(), 10, "SoloWare shows all ten projects");
-  assert.match(await page.locator("body").innerText(), /people-connector/);
   const repositories = ['people-connector','userscripts','paper-ipad','btw','radio-station','interactive-writing','SocialChats','writing-space','lokmat','FinnishConversations'];
-  for (let i = 0; i < repositories.length; i++) {
-    const card = page.locator('.project-card').nth(i);
-    assert.equal(await card.locator('h2').innerText(), (await readFile(join(root, `src/content/project-${i + 1}.md`), "utf8")).match(/^## (.+)$/m)[1]);
-    assert.equal(await card.getByRole('link').getAttribute('href'), `https://github.com/AayushKucheria/${repositories[i]}`);
+  const featured = [5, 4, 3, 9], others = [1, 2, 6, 7, 8, 10];
+  const projects = [...featured.map(n => ['.project-row', n]), ...others.map(n => ['.also-made li', n])];
+  assert.equal(await page.locator(".project-row").count(), 4, "four featured rows");
+  assert.equal(await page.locator(".also-made li").count(), 6, "six projects in the also-made list");
+  for (const [selector, n] of projects) {
+    const card = page.locator(selector).nth((selector === '.project-row' ? featured : others).indexOf(n));
+    assert.equal(await card.locator('h2').innerText(), (await readFile(join(root, `src/content/project-${n}.md`), "utf8")).match(/^## (.+)$/m)[1]);
+    const href = await card.locator('a').last().getAttribute('href');
+    assert.equal(href, n === 3 || selector !== '.project-row' ? `https://github.com/AayushKucheria/${repositories[n - 1]}` : '#');
   }
+  const steal = page.locator('.project-row').nth(2).getByRole('link', {name: /Steal it/});
+  assert.equal(await steal.evaluate(a => getComputedStyle(a).outlineStyle), 'dashed', 'GitHub link renders as a Steal button');
+  const pending = page.locator('.project-row').first().locator('a', {hasText: 'Steal it'});
+  assert.equal(await pending.getAttribute('aria-disabled'), 'true');
+  assert.equal(await pending.evaluate(a => getComputedStyle(a).pointerEvents), 'none', 'a Steal link to # is disabled');
+  assert.equal(await page.locator('.also-heading h2').innerText(), 'also made');
   await page.goto(base);
   await page.getByRole("link", {name:/^soloware$/i}).click();
   assert.match(page.url(), /soloware/);
@@ -81,10 +90,21 @@ try {
   assert.equal(protection.status, 409, 'A project card pasted into Home must be rejected');
   assert.equal(await readFile(join(root, "src/content/home.md"), "utf8"), originalHome);
   await page.locator("#status").filter({hasText:"Saved locally"}).waitFor();
+  await page.locator("#section").selectOption("project-5");
+  const frame0 = page.frameLocator("#site");
+  await frame0.locator('[data-content-section="project-5"][contenteditable=true]').waitFor();
+  await page.getByRole("button", {name:"Markdown view", exact:true}).click();
+  const featuredCopy = "## Radio pickle\n\n![demo](/favicon.svg)\n\nWarm.\n\n[Use it ↗](https://example.com/radio) [Steal it ↗](https://github.com/example/radio)";
+  await page.locator("#markdown").fill(featuredCopy);
+  await page.locator("#status").filter({hasText:"Saved locally"}).waitFor();
+  assert.equal(await readFile(join(root,"src/content/project-5.md"),"utf8"),featuredCopy);
+  await page.locator("#section").selectOption("soloware-also");
+  await frame0.locator('[data-content-section="soloware-also"]').waitFor();
+  await page.locator("#markdown").fill("## other pickles");
+  await page.locator("#status").filter({hasText:"Saved locally"}).waitFor();
   await page.locator("#section").selectOption("project-1");
   const frame = page.frameLocator("#site");
   await frame.locator('[data-content-section="project-1"][contenteditable=true]').waitFor();
-  await page.getByRole("button", {name:"Markdown view", exact:true}).click();
   const copy = "## Updated pickle\n\nOne silly sentence.  \nAnother silly sentence.  \nThe last silly sentence.\n\n[New repository](https://github.com/example/pickle)";
   await page.locator("#markdown").fill(copy);
   await page.locator("#status").filter({hasText:"Saved locally"}).waitFor();
@@ -110,6 +130,12 @@ try {
   await page.goto(base + "/soloware/");
   await page.getByRole("heading", {name:"Updated pickle"}).waitFor();
   await page.getByRole("heading", {name:"PickleWare"}).waitFor();
+  await page.getByRole("heading", {name:"other pickles"}).waitFor();
+  const radio = page.locator('.project-row').first();
+  assert.equal(await radio.getByRole("link",{name:/Use it/}).getAttribute("href"),"https://example.com/radio");
+  await page.setViewportSize({width:1280,height:900});
+  const [img, title] = await Promise.all([radio.locator('img').boundingBox(), radio.locator('h2').boundingBox()]);
+  assert.ok(img.x + img.width <= title.x, 'demo sits beside the text on wide screens');
   assert.equal(await page.getByRole("link",{name:"New repository"}).getAttribute("href"),"https://github.com/example/pickle");
   assert.equal(await page.getByRole("link",{name:"Pickles"}).getAttribute("href"),"/soloware/");
   for(const width of [1280,768,390,320]) {
