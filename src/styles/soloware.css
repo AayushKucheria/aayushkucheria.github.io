@@ -43,5 +43,5 @@
 @media (prefers-reduced-motion: reduce) { .project-copy img, .project-copy > p:last-child a { transition: none; } }
 @media (max-width: 760px) {
   .project-copy:has(img), .project-row:nth-child(even) .project-copy:has(img) { display: block; }
-  .project-copy > p:has(img) { margin: 0 0 28px; }
+  .project-copy > p:has(img) { margin: 4px 0 20px; }
 }

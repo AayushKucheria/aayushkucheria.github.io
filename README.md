@@ -117,8 +117,10 @@ github.com link is a dashed **Steal** patch, any other link a solid **Use**
 button, and a link to `#` (e.g. `[Steal it ↗](#)`) shows a faded, disabled
 button until the real destination is ready. Add `![demo](/soloware/name.webp)` anywhere to show a demo: the image
 becomes a tilted print beside the text, alternating sides. Use an animated WebP
-or GIF placed in `public/soloware/`; keep each a few MB. Without an image the row
-is text only. The approved design is `prototypes/soloware-alternating-rows.html`.
+or GIF placed in `public/soloware/`; keep each a few MB. Until a recording exists, each
+featured row uses `![demo coming soon](/soloware/demo-placeholder.svg)`, a
+wireframe screen; swap the path for the real demo. Without an image the row is
+text only. The approved design is `prototypes/soloware-alternating-rows.html`.
 All regions use existing local autosave, conflict checks and draft recovery.
 Publish includes them and verifies both pages. `npm run test:soloware` exercises
 saves, reopening, buttons and the demo layout.
